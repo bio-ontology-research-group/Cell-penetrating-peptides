@@ -4,7 +4,7 @@ ontology_normalizer.py
 Normalize biomedical entity strings to CLO (cell lines) or CHEBI (chemicals)
 using four methods:
     1. Exact + synonym match   (lexical dictionary lookup)
-    2. Bert                  (BERT-based synonym marginalization, HuggingFace)
+    2. Biosyn                  (BERT-based synonym marginalization, HuggingFace)
     3. Graph RAG                     (Graph retrieval + LLM reranking)
 
 Usage
@@ -969,7 +969,6 @@ def run_pipeline(
     obo_path: str,
     output_path: str,
     methods: List[str],
-    spacy_model: str,
     fuzzy_threshold: float,
     biosyn_batch: int,
     rag_backend: str = "openrouter",
@@ -1089,8 +1088,6 @@ def parse_args():
     p.add_argument("--methods",  nargs="+", default=AVAILABLE_METHODS,
                     choices=AVAILABLE_METHODS,
                     help="Which methods to run (space-separated)")
-    p.add_argument("--spacy-model",      default="en_core_sci_md",
-                    help="scispaCy model name")
     p.add_argument("--fuzzy-threshold",  type=float, default=0.92,
                     help="Fuzzy match threshold for exact method (0–1)")
     p.add_argument("--biosyn-batch",     type=int, default=128,
@@ -1115,7 +1112,6 @@ if __name__ == "__main__":
         obo_path        = args.obo,
         output_path     = args.output,
         methods         = args.methods,
-        spacy_model     = args.spacy_model,
         fuzzy_threshold = args.fuzzy_threshold,
         biosyn_batch    = args.biosyn_batch,
         rag_backend     = args.rag_backend,
