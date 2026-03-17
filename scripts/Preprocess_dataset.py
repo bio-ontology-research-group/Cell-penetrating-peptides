@@ -844,14 +844,14 @@ if __name__ == "__main__":
     cleaned_df = preprocessor.preprocess()
 
     # Save cleaned data
-    cleaned_df.to_csv('data/Natural_CPP3_download_annotated_final_cleaned.csv', index=False)
+    #cleaned_df.to_csv('data/Natural_CPP3_download_annotated_final_cleaned.csv', index=False)
 
     #df = pd.read_csv('data/Natural_CPP3_download_annotated_cleaned.csv')  # latest starting point
     
     preprocessor.add_sequence_ids(id_col="CPP_ID", prefix="https://w3id.org/cpp/dataset/mechanisms/CPP_00", width=4)
     
     cleaned_df = preprocessor.df
-    cleaned_df.to_csv('data/preprocessed_data.csv', index=False)
+    cleaned_df.to_csv('data/Natural_CPP3_download_annotated_preprocessed.csv', index=False)
     
     # Get detailed statistics
     stats = preprocessor.get_stats()
