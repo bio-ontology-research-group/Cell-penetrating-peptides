@@ -262,7 +262,7 @@ class ExactSynonymNormalizer:
     RapidFuzz (threshold configurable, default 0.92).
     """
 
-    def __init__(self, obo_path: str, fuzzy_threshold: float = 0.92):
+    def __init__(self, obo_path: str, fuzzy_threshold: float = 0.92, ontology: str = None):
         import pronto
         from rapidfuzz import fuzz, process
 
@@ -277,10 +277,18 @@ class ExactSynonymNormalizer:
         except Exception as e:
             raise RuntimeError(f"Could not parse ontology file: {e}") from e
 
+        # Build a set of accepted CURIE prefixes — only the target ontology.
+        # Rejects imported/external terms (UBERON, RO, BFO, etc.).
+        _accepted_prefix = f"{ontology}:" if ontology else None
+
         added = 0
+        skipped = 0
         terms = list(onto.terms())
         for term in terms:
             curie = term.id
+            if _accepted_prefix and not curie.startswith(_accepted_prefix):
+                skipped += 1
+                continue
             pref  = term.name or ""
             entry_pref = {"curie": curie, "label": pref, "match_type": "exact_pref"}
             entry_syn  = {"curie": curie, "label": pref, "match_type": "exact_syn"}
@@ -969,6 +977,7 @@ def run_pipeline(
     obo_path: str,
     output_path: str,
     methods: List[str],
+    spacy_model: str,
     fuzzy_threshold: float,
     biosyn_batch: int,
     rag_backend: str = "openrouter",
@@ -985,30 +994,39 @@ def run_pipeline(
     texts = df[column].fillna("").tolist()
     log.info("Loaded %d rows, column='%s'", len(df), column)
 
-    # ── run each method ───────────────────────────────────────────────────────
-    _biosyn_results: List[Dict] = []   # populated when biosyn runs; used as RAG fallback
+    # ── enforce canonical order: exact → biosyn → rag ────────────────────────
+    # If rag is requested, biosyn must also run (index reuse + fallback).
+    _ORDER = ["exact", "biosyn", "rag"]
+    methods = [m for m in _ORDER if m in methods]
+    if "rag" in methods and "biosyn" not in methods:
+        log.info("RAG requires BioSyn — auto-adding 'biosyn' before 'rag'.")
+        methods = [m for m in _ORDER if m in methods + ["biosyn"]]
+    log.info("Execution order: %s", " → ".join(methods))
+
+    # ── run each method — collect raw results ────────────────────────────────
+    # Raw results are stored here; cascade logic is applied afterwards.
+    _NIL: Dict = {"curie": None, "label": None, "score": 0.0, "match_type": "NIL"}
+    raw: Dict[str, List[Dict]] = {}
+    biosyn_normalizer = None
+
     for method in methods:
         t0 = time.time()
         log.info("=" * 60)
         log.info("Running method: %s", method.upper())
 
         if method == "exact":
-            normalizer = ExactSynonymNormalizer(obo_path, fuzzy_threshold)
-            results = normalizer.run(texts)
-            prefix = "exact"
+            normalizer = ExactSynonymNormalizer(obo_path, fuzzy_threshold, ontology=ontology)
+            raw["exact"] = normalizer.run(texts)
 
         elif method == "biosyn":
             biosyn_normalizer = BERTNormalizer(
                 obo_path, ontology,
-                batch_size  = biosyn_batch,
+                batch_size = biosyn_batch,
             )
-            results = biosyn_normalizer.run(texts)
-            _biosyn_results = results   # cache for RAG fallback
-            prefix = "biosyn"
+            raw["biosyn"] = biosyn_normalizer.run(texts)
 
         elif method == "rag":
-            # Reuse an already-built BioSyn index if available, otherwise build one.
-            if "biosyn_normalizer" not in dir():
+            if biosyn_normalizer is None:
                 log.info("RAG: BioSyn index not cached — building now …")
                 biosyn_normalizer = BERTNormalizer(obo_path, ontology, batch_size=biosyn_batch)
             _defaults = {"openrouter": "stepfun/step-3.5-flash:free", "ollama": "llama3.2"}
@@ -1018,13 +1036,10 @@ def run_pipeline(
                 model    = rag_model or _defaults.get(rag_backend, "llama3.2"),
                 base_url = rag_url,
             )
-
-            if _biosyn_results:
-                normalizer._biosyn_cache = {
-                    texts[i]: r for i, r in enumerate(_biosyn_results)
-                }
-            results = normalizer.run(texts)
-            prefix = "rag"
+            # Pass BioSyn raw results so RAG falls back to them when unconfident.
+            if "biosyn" in raw:
+                normalizer._biosyn_cache = {texts[i]: r for i, r in enumerate(raw["biosyn"])}
+            raw["rag"] = normalizer.run(texts)
 
         else:
             log.warning("Unknown method '%s', skipping.", method)
@@ -1034,16 +1049,46 @@ def run_pipeline(
         log.info("%s finished in %.1fs (%.0f ms/query)",
                  method, elapsed, 1000 * elapsed / max(len(texts), 1))
 
+    # ── cascade: exact beats biosyn beats rag ────────────────────────────────
+    # Priority for each output column set:
+    #   biosyn_* : exact match (if found) → biosyn cosine similarity
+    #   rag_*    : exact match (if found) → rag LLM+graph (which already falls
+    #              back to biosyn internally when unconfident)
+    exact_raw = raw.get("exact", [_NIL] * len(texts))
 
-        df[f"{prefix}_curie"]      = [r.get("curie") for r in results]
+    _FULL_EXACT = {"exact_pref", "exact_syn", "prefix_truncated"}
+
+    def _cascade(primary_raw: List[Dict], method_name: str) -> List[Dict]:
+        out = []
+        for i, r in enumerate(primary_raw):
+            e = exact_raw[i]
+            if e.get("match_type") in _FULL_EXACT:
+                out.append({**e, "method": method_name})
+            else:
+                out.append(r)
+        return out
+
+    cascaded: Dict[str, List[Dict]] = {}
+    if "exact" in raw:
+        cascaded["exact"] = raw["exact"]
+    if "biosyn" in raw:
+        cascaded["biosyn"] = _cascade(raw["biosyn"], "biosyn")
+    if "rag" in raw:
+        cascaded["rag"] = _cascade(raw["rag"], "rag")
+
+    # ── write cascaded results to dataframe ───────────────────────────────────
+    # CURIEs are output in OBO standard format (e.g. "CLO:0001008").
+    # If your gold standard uses underscores ("CLO_0001008") normalise at
+    # evaluation time: df['col'].str.replace(':', '_', n=1)
+    for prefix, results in cascaded.items():
+        df[f"{prefix}_curie"]      = [r.get("curie")      for r in results]
         df[f"{prefix}_label"]      = [r.get("label")      for r in results]
         df[f"{prefix}_score"]      = [r.get("score")      for r in results]
         df[f"{prefix}_match_type"] = [r.get("match_type") for r in results]
 
         nil_count = sum(1 for r in results if r.get("curie") is None)
-        log.info("%s hit rate: %.1f%%  (%d NIL / %d total)",
-                    method,
-                 100 * (1 - nil_count / max(len(texts), 1)),
+        log.info("%s (cascaded) hit rate: %.1f%%  (%d NIL / %d total)",
+                 prefix, 100 * (1 - nil_count / max(len(texts), 1)),
                     nil_count, len(texts))
 
     # ── save output ───────────────────────────────────────────────────────────
@@ -1056,8 +1101,7 @@ def run_pipeline(
     print("\n── Summary ──────────────────────────────────────────────────")
     print(f"{'Method':<12} {'Hit Rate':>10}  {'Avg Score':>10}  {'NIL count':>10}")
     print("-" * 50)
-    for method in methods:
-        prefix = method
+    for prefix in cascaded:
         if f"{prefix}_curie" not in df.columns:
             continue
         hits       = df[f"{prefix}_curie"].notna().sum()
