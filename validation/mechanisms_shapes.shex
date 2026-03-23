@@ -1,0 +1,192 @@
+PREFIX sio:     <http://semanticscience.org/resource/>
+PREFIX mech:    <https://w3id.org/cpp/dataset/mechanisms/>
+PREFIX cpps:    <https://w3id.org/cpp/schema#>
+PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:    <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:     <http://www.w3.org/2002/07/owl#>
+PREFIX xsd:     <http://www.w3.org/2001/XMLSchema#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+
+# ==========================================================================
+# ABox Shapes for the CPP Mechanisms Dataset  (mechanisms.ttl)
+#
+# All entities are owl:NamedIndividual instances typed with a specific
+# class IRI — no TBox (rdfs:subClassOf) constraints here.
+#
+# Shape → focus class                    Structural constraint
+# ─────────────────────────────────────────────────────────────────────────
+# CPPShape              mech:CellPenetratingPeptide  ∃sio:SIO_000313.Complex
+# GeneShape             sio:SIO_010035               ∃sio:SIO_000008.Role
+# InhibitorShape        sio:SIO_010435               ∃sio:SIO_000008.Role
+# CellLineShape         sio:SIO_010054               —
+# SubcellularEntityShape sio:SIO_001400              —
+# UptakeMechanismShape  cpps:UptakeMechanism         —
+# CPPComplexShape       mech:CPP-Complex             ∃sio:SIO_000369.{CPP,Cargo}
+# CargoShape            mech:Cargo                   ∃sio:SIO_000008.Role
+# ExperimentShape       sio:SIO_000994               ∃sio:SIO_000557.Document
+# DocumentShape         sio:SIO_000148               —
+# ==========================================================================
+
+
+# --------------------------------------------------------------------------
+# CPP  (mech:CellPenetratingPeptide individual)
+# --------------------------------------------------------------------------
+
+<CPPShape> {
+    rdf:type           [ owl:NamedIndividual ]            ;
+    rdf:type           [ mech:CellPenetratingPeptide ]    ;
+
+    # has-component-part → CPP-Complex(es)
+    sio:SIO_000313     IRI                               + ;
+
+    # Optional annotation properties
+    cpps:sequence                xsd:string              ? ;
+    cpps:smiles                  xsd:string              ? ;
+    cpps:dssp                    xsd:string              ? ;
+    cpps:chirality               xsd:string              ? ;
+    cpps:linearity               xsd:string              ? ;
+    cpps:ionicState              xsd:string              ? ;
+    cpps:peptideName             xsd:string              ? ;
+    cpps:sourceOfPeptide         xsd:string              ? ;
+    cpps:nTerminalModification   xsd:string              ? ;
+    cpps:cTerminalModification   xsd:string              ? ;
+    cpps:chemicalModification    xsd:string              ? ;
+    rdfs:label                   xsd:string              ? ;
+}
+
+
+# --------------------------------------------------------------------------
+# Gene  (sio:SIO_010035 individual — Ensembl)
+# --------------------------------------------------------------------------
+
+<GeneShape> {
+    rdf:type           [ owl:NamedIndividual ]            ;
+    rdf:type           [ sio:SIO_010035 ]                 ;
+
+    # has-attribute → activator_role individual
+    sio:SIO_000008     IRI                               + ;
+
+    rdfs:label         xsd:string                        ? ;
+    dcterms:identifier xsd:string                        ? ;
+}
+
+
+# --------------------------------------------------------------------------
+# Inhibitor  (sio:SIO_010435 individual — ChEBI)
+# --------------------------------------------------------------------------
+
+<InhibitorShape> {
+    rdf:type           [ owl:NamedIndividual ]            ;
+    rdf:type           [ sio:SIO_010435 ]                 ;
+
+    # has-attribute → inhibitor_role individual
+    sio:SIO_000008     IRI                               + ;
+
+    rdfs:label         xsd:string                        ? ;
+    dcterms:identifier xsd:string                        ? ;
+}
+
+
+# --------------------------------------------------------------------------
+# Cell Line  (sio:SIO_010054 individual — CLO)
+# --------------------------------------------------------------------------
+
+<CellLineShape> {
+    rdf:type           [ owl:NamedIndividual ]            ;
+    rdf:type           [ sio:SIO_010054 ]                 ;
+
+    rdfs:label         xsd:string                        ? ;
+    dcterms:identifier xsd:string                        ? ;
+    cpps:cellLine      xsd:string                        ? ;
+}
+
+
+# --------------------------------------------------------------------------
+# Subcellular Entity  (sio:SIO_001400 individual — GO Cellular Component)
+# --------------------------------------------------------------------------
+
+<SubcellularEntityShape> {
+    rdf:type           [ owl:NamedIndividual ]            ;
+    rdf:type           [ sio:SIO_001400 ]                 ;
+
+    rdfs:label         xsd:string                        ? ;
+    dcterms:identifier xsd:string                        ? ;
+}
+
+
+# --------------------------------------------------------------------------
+# Uptake Mechanism  (cpps:UptakeMechanism individual — GO Process)
+# --------------------------------------------------------------------------
+
+<UptakeMechanismShape> {
+    rdf:type           [ owl:NamedIndividual ]            ;
+    rdf:type           [ cpps:UptakeMechanism ]           ;
+
+    rdfs:label         xsd:string                        ? ;
+    dcterms:identifier xsd:string                        ? ;
+}
+
+
+# --------------------------------------------------------------------------
+# CPP-Complex  (mech:CPP-Complex individual)
+# --------------------------------------------------------------------------
+
+<CPPComplexShape> {
+    rdf:type           [ owl:NamedIndividual ]            ;
+    rdf:type           [ mech:CPP-Complex ]               ;
+
+    # has-component-part → CPP individual + Cargo individual
+    sio:SIO_000369     IRI                               + ;
+
+    # is-located-in → subcellular entity (optional — not all complexes have it)
+    sio:SIO_000061     IRI                               * ;
+    dcterms:identifier xsd:string                        ? ;
+}
+
+
+# --------------------------------------------------------------------------
+# Cargo  (mech:Cargo individual — ChEBI molecule delivered by CPP)
+# --------------------------------------------------------------------------
+
+<CargoShape> {
+    rdf:type           [ owl:NamedIndividual ]            ;
+    rdf:type           [ mech:Cargo ]                     ;
+
+    # has-attribute → cargo_role individual
+    sio:SIO_000008     IRI                               + ;
+
+    rdfs:label         xsd:string                        ? ;
+    dcterms:identifier xsd:string                        ? ;
+}
+
+
+# --------------------------------------------------------------------------
+# Experiment  (sio:SIO_000994 individual)
+# --------------------------------------------------------------------------
+
+<ExperimentShape> {
+    rdf:type           [ owl:NamedIndividual ]            ;
+    rdf:type           [ sio:SIO_000994 ]                 ;
+
+    # is-cited-by → Document (provenance)
+    sio:SIO_000557     IRI                               + ;
+
+    rdfs:label         xsd:string                        ? ;
+    dcterms:identifier xsd:string                        ? ;
+    cpps:uptakeEfficiency  xsd:string                    ? ;
+    cpps:inVitroModel      xsd:string                    ? ;
+    cpps:inVivoModel       xsd:string                    ? ;
+}
+
+
+# --------------------------------------------------------------------------
+# Document  (sio:SIO_000148 individual — PubMed / patent)
+# --------------------------------------------------------------------------
+
+<DocumentShape> {
+    rdf:type           [ owl:NamedIndividual ]            ;
+    rdf:type           [ sio:SIO_000148 ]                 ;
+
+    rdfs:label         xsd:string                        ? ;
+    dcterms:identifier xsd:string                        ? ;
+}
