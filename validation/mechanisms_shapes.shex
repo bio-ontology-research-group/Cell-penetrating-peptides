@@ -122,7 +122,7 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
     rdf:type           [ owl:NamedIndividual ]            ;
     rdf:type           [ cpps:UptakeMechanism ]           ;
 
-    rdfs:label         xsd:string                        ? ;
+    rdfs:label         xsd:string                        * ;
     dcterms:identifier xsd:string                        ? ;
 }
 
@@ -168,8 +168,8 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
     rdf:type           [ owl:NamedIndividual ]            ;
     rdf:type           [ sio:SIO_000994 ]                 ;
 
-    # is-cited-by → Document (provenance)
-    sio:SIO_000557     IRI                               + ;
+    # is-cited-by → Document (provenance, optional when no PubMed/patent available)
+    sio:SIO_000557     IRI                               * ;
 
     rdfs:label         xsd:string                        ? ;
     dcterms:identifier xsd:string                        ? ;
