@@ -84,8 +84,8 @@ SIO_HAS_PROPER_PART  = "http://semanticscience.org/resource/SIO_000053"  # has p
 SIO_IS_PROPER_PART   = "http://semanticscience.org/resource/SIO_000093"  # is proper part of
 
 # CPP namespaces
-CPP_SCHEMA_NS          = "https://w3id.org/cpp/schema#"
-CPP_DATASET_MECHS_NS   = "https://w3id.org/cpp/dataset/mechanisms/"
+CPP_SCHEMA_NS          = "https://cppkg.bio2vec.net/schema#"
+CPP_DATASET_NS   = "https://cppkg.bio2vec.net/dataset/"
 
 # TBox: UptakeMechanism class lives in the schema namespace (not the dataset)
 UPTAKE_MECHANISM_CLASS = CPP_SCHEMA_NS + "UptakeMechanism"
@@ -97,7 +97,7 @@ SIO_OWL = "Ontology/sio.owl"
 # ============================================================================
 
 # F1 / F3 — Dataset IRI (globally unique, persistent) + versioned ontology IRI
-DATASET_IRI       = "https://w3id.org/cpp/dataset/mechanisms"
+DATASET_IRI       = "https://cppkg.bio2vec.net"
 ONTOLOGY_IRI      = DATASET_IRI                              # ontology describes the dataset
 ONTOLOGY_VERSION  = DATASET_IRI + "/2026-03-19"
 
@@ -107,11 +107,7 @@ ONTOLOGY_VERSION  = DATASET_IRI + "/2026-03-19"
 # ⚠ Replace the placeholder below with the actual DOI once the dataset is
 #   deposited in Zenodo / figshare: https://zenodo.org → "New upload"
 #   Then the value becomes e.g. "https://identifiers.org/doi:10.5281/zenodo.XXXXXXX"
-DATASET_DOI       = None  # e.g. "https://identifiers.org/doi:10.5281/zenodo.XXXXXXX"
-
-# F1 — CPP namespace for auxiliary individuals (roles, processes)
-# Keeps them out of identifiers.org / OBO namespaces that we do not own
-CPP_INDIVIDUALS_NS = "https://w3id.org/cpp/dataset/individuals/"
+DATASET_DOI       = "https://identifiers.org/doi:10.5281/zenodo.19351483"
 
 # F2 — Dublin Core Terms properties for rich ontology-level metadata
 DC_TERMS   = "http://purl.org/dc/terms/"
@@ -406,7 +402,7 @@ def extend_gene_regulation(gene_to_go_file: str, output_file: str):
         'http://purl.obolibrary.org/obo/GO_2001288': 'positive regulation of caveolin-mediated endocytosis',
         'http://purl.obolibrary.org/obo/GO_1905303': 'positive regulation of macropinocytosis',
         'http://purl.obolibrary.org/obo/GO_0050766': 'positive regulation of phagocytosis',
-        CPP_INDIVIDUALS_NS + 'pos_reg_clathrin_caveolae_independent_endocytosis': 'positive regulation of clathrin- and caveolae-independent endocytosis'
+        CPP_DATASET_NS + 'pos_reg_clathrin_caveolae_independent_endocytosis': 'positive regulation of clathrin- and caveolae-independent endocytosis'
     }
     for go_iri_str, go_label in user_pos_reg_terms.items():
         go_local = go_iri_str.split("/")[-1]
@@ -429,15 +425,15 @@ def extend_gene_regulation(gene_to_go_file: str, output_file: str):
         'http://purl.obolibrary.org/obo/GO_0072584': 'http://purl.obolibrary.org/obo/GO_2001288',  # caveolin-mediated endocytosis
         'http://purl.obolibrary.org/obo/GO_0044351': 'http://purl.obolibrary.org/obo/GO_1905303',  # macropinocytosis
         'http://purl.obolibrary.org/obo/GO_0006909': 'http://purl.obolibrary.org/obo/GO_0050766',  # phagocytosis
-        'http://purl.obolibrary.org/obo/GO_0160294': CPP_INDIVIDUALS_NS + 'pos_reg_clathrin_caveolae_independent_endocytosis',  # clathrin- and caveolae-independent endocytosis
+        'http://purl.obolibrary.org/obo/GO_0160294': CPP_DATASET_NS + 'pos_reg_clathrin_caveolae_independent_endocytosis',  # clathrin- and caveolae-independent endocytosis
 
         # Backward-compatible aliases (if legacy uptake GO IDs appear)
         'http://purl.obolibrary.org/obo/GO_0006903': 'http://purl.obolibrary.org/obo/GO_2000370',
         'http://purl.obolibrary.org/obo/GO_0045334': 'http://purl.obolibrary.org/obo/GO_2001288',
         'http://purl.obolibrary.org/obo/GO_0006905': 'http://purl.obolibrary.org/obo/GO_1905303',
-        'http://purl.obolibrary.org/obo/GO_0006906': CPP_INDIVIDUALS_NS + 'pos_reg_clathrin_caveolae_independent_endocytosis',
-        'http://purl.obolibrary.org/obo/GO_0006907': CPP_INDIVIDUALS_NS + 'pos_reg_clathrin_caveolae_independent_endocytosis',
-        'http://purl.obolibrary.org/obo/GO_0006908': CPP_INDIVIDUALS_NS + 'pos_reg_clathrin_caveolae_independent_endocytosis',
+        'http://purl.obolibrary.org/obo/GO_0006906': CPP_DATASET_NS + 'pos_reg_clathrin_caveolae_independent_endocytosis',
+        'http://purl.obolibrary.org/obo/GO_0006907': CPP_DATASET_NS + 'pos_reg_clathrin_caveolae_independent_endocytosis',
+        'http://purl.obolibrary.org/obo/GO_0006908': CPP_DATASET_NS + 'pos_reg_clathrin_caveolae_independent_endocytosis',
     }
 
     # Work on unique (gene, mechanism) pairs to avoid duplicate role instances
@@ -480,7 +476,7 @@ def extend_gene_regulation(gene_to_go_file: str, output_file: str):
     role_for_mechanism = {}
     for uptake_mech_iri in sorted(df_pairs[1].unique()):
         uptake_local_id = uptake_mech_iri.split("/")[-1]
-        role_iri = CPP_INDIVIDUALS_NS + uptake_local_id + "_activator_role"
+        role_iri = CPP_DATASET_NS + uptake_local_id + "_activator_role"
         role_ind = factory.getOWLNamedIndividual(IRI.create(role_iri))
         upreg_proc_iri = pos_reg_map.get(uptake_mech_iri)
         if upreg_proc_iri:
@@ -601,7 +597,7 @@ def extend_inhibitor_regulation(chebi_to_go_file: str, input_file: str, output_f
         'http://purl.obolibrary.org/obo/GO_2001287': 'negative regulation of caveolin-mediated endocytosis',
         'http://purl.obolibrary.org/obo/GO_1905302': 'negative regulation of macropinocytosis',
         'http://purl.obolibrary.org/obo/GO_0050765': 'negative regulation of phagocytosis',
-        CPP_INDIVIDUALS_NS + 'neg_reg_clathrin_caveolae_independent_endocytosis': 'negative regulation of clathrin- and caveolae-independent endocytosis'
+        CPP_DATASET_NS + 'neg_reg_clathrin_caveolae_independent_endocytosis': 'negative regulation of clathrin- and caveolae-independent endocytosis'
     }
 
     for go_iri_str, go_label in user_go_terms.items():
@@ -625,22 +621,22 @@ def extend_inhibitor_regulation(chebi_to_go_file: str, input_file: str, output_f
         'http://purl.obolibrary.org/obo/GO_0072584': 'http://purl.obolibrary.org/obo/GO_2001287',  # caveolin-mediated endocytosis
         'http://purl.obolibrary.org/obo/GO_0044351': 'http://purl.obolibrary.org/obo/GO_1905302',  # macropinocytosis
         'http://purl.obolibrary.org/obo/GO_0006909': 'http://purl.obolibrary.org/obo/GO_0050765',  # phagocytosis
-        'http://purl.obolibrary.org/obo/GO_0160294': CPP_INDIVIDUALS_NS + 'neg_reg_clathrin_caveolae_independent_endocytosis',  # clathrin- and caveolae-independent endocytosis
+        'http://purl.obolibrary.org/obo/GO_0160294': CPP_DATASET_NS + 'neg_reg_clathrin_caveolae_independent_endocytosis',  # clathrin- and caveolae-independent endocytosis
 
         # Backward-compatible aliases (if legacy uptake GO IDs appear)
         'http://purl.obolibrary.org/obo/GO_0006903': 'http://purl.obolibrary.org/obo/GO_1900186',
         'http://purl.obolibrary.org/obo/GO_0006905': 'http://purl.obolibrary.org/obo/GO_1905302',
         'http://purl.obolibrary.org/obo/GO_0045334': 'http://purl.obolibrary.org/obo/GO_2001287',
-        'http://purl.obolibrary.org/obo/GO_0006906': CPP_INDIVIDUALS_NS + 'neg_reg_clathrin_caveolae_independent_endocytosis',
-        'http://purl.obolibrary.org/obo/GO_0006907': CPP_INDIVIDUALS_NS + 'neg_reg_clathrin_caveolae_independent_endocytosis',
-        'http://purl.obolibrary.org/obo/GO_0006908': CPP_INDIVIDUALS_NS + 'neg_reg_clathrin_caveolae_independent_endocytosis',
+        'http://purl.obolibrary.org/obo/GO_0006906': CPP_DATASET_NS + 'neg_reg_clathrin_caveolae_independent_endocytosis',
+        'http://purl.obolibrary.org/obo/GO_0006907': CPP_DATASET_NS + 'neg_reg_clathrin_caveolae_independent_endocytosis',
+        'http://purl.obolibrary.org/obo/GO_0006908': CPP_DATASET_NS + 'neg_reg_clathrin_caveolae_independent_endocytosis',
     }
 
     # --- Shared inhibitor role instances: one per uptake mechanism ---
     role_for_mechanism = {}
     for uptake_mech_iri in sorted(df_pairs[1].unique()):
         uptake_local_id = uptake_mech_iri.split("/")[-1]
-        role_iri = CPP_INDIVIDUALS_NS + uptake_local_id + "_inhibitor_role"
+        role_iri = CPP_DATASET_NS + uptake_local_id + "_inhibitor_role"
         role_ind = factory.getOWLNamedIndividual(IRI.create(role_iri))
         downreg_proc_iri = neg_reg_map.get(uptake_mech_iri)
         if downreg_proc_iri:
@@ -671,31 +667,6 @@ def extend_inhibitor_regulation(chebi_to_go_file: str, input_file: str, output_f
                 factory.getOWLObjectPropertyAssertionAxiom(has_attribute, chebi_ind, role_ind)))
             manager.applyChange(AddAxiom(ontology,
                 factory.getOWLObjectPropertyAssertionAxiom(is_attribute_of, role_ind, chebi_ind)))
-
-    # --- OLD LINKING LOGIC IS REPLACED BY THE BLOCK ABOVE ---
-    # # --- UptakeMechanism individuals (unique GO terms, idempotent) ---
-    # go_terms = df[1].unique()
-    # print(f"Ensuring {len(go_terms)} UptakeMechanism individuals (GO terms)...")
-    # for go_iri_str in go_terms:
-    #     go_local = go_iri_str.split("/")[-1]
-    #     go_ind   = factory.getOWLNamedIndividual(IRI.create(go_iri_str))
-    #     manager.applyChange(AddAxiom(ontology,
-    #         factory.getOWLDeclarationAxiom(go_ind)))
-    #     manager.applyChange(AddAxiom(ontology,
-    #         factory.getOWLClassAssertionAxiom(uptake_mech_cl, go_ind)))
-    #     _annotate_individual(manager, ontology, factory, go_iri_str, go_local,
-    #         db_source_iri=f"https://amigo.geneontology.org/amigo/term/{go_local.replace('_', ':')}")
-
-    # # --- DownRegulation → UptakeMechanism links (one per TSV row) ---
-    # print(f"Linking {len(df)} downregulation→mechanism pairs via SIO_001402...")
-    # for _, row in df.iterrows():
-    #     local_id    = row[0].split("/")[-1]
-    #     downreg_iri = CPP_INDIVIDUALS_NS + local_id + "_downregulation"
-    #     downreg_ind = factory.getOWLNamedIndividual(IRI.create(downreg_iri))
-    #     go_ind      = factory.getOWLNamedIndividual(IRI.create(row[1]))
-    #     manager.applyChange(AddAxiom(ontology,
-    #         factory.getOWLObjectPropertyAssertionAxiom(neg_regulates, downreg_ind, go_ind)))
-
 
     # Save as OWL/RDF-XML
     out_iri = IRI.create(java.io.File(output_file).getAbsoluteFile().toURI())
@@ -732,7 +703,7 @@ def prepare_annotation_files(cpp_csv_file: str, output_dir: str = "triplets"):
 
     df = pd.read_csv(cpp_csv_file, usecols=[
         "CPP_ID", "Main Uptake Mechanism ID",
-        "CHEBI_ID", "Subcellular Delivery ID", "CLO_ID"
+        "RAG_curie_CheBI", "Subcellular Delivery ID", "RAG_curie_CLO"
     ])
 
     os.makedirs(output_dir, exist_ok=True)
@@ -757,11 +728,11 @@ def prepare_annotation_files(cpp_csv_file: str, output_dir: str = "triplets"):
     mech_file     = _write_tsv(f"{output_dir}/cpp_mechanism.tsv",
                                 "CPP_ID", "Main Uptake Mechanism ID")
     cargo_file    = _write_tsv(f"{output_dir}/cpp_cargo.tsv",
-                                "CPP_ID", "CHEBI_ID", _obo_iri)
+                                "CPP_ID", "RAG_curie_CheBI", _obo_iri)
     location_file = _write_tsv(f"{output_dir}/cpp_location.tsv",
                                 "CPP_ID", "Subcellular Delivery ID")
     cell_file     = _write_tsv(f"{output_dir}/cpp_cell.tsv",
-                                "CPP_ID", "CLO_ID", _obo_iri)
+                                "CPP_ID", "RAG_curie_CLO", _obo_iri)
 
     return mech_file, cargo_file, location_file, cell_file
 
@@ -782,13 +753,13 @@ def extend_ontology_with_annotations(ontology: str,
         cpp:CPP-Complex          subClassOf  sio:SIO_000004  (material entity)
         cpp:CellPenetratingPeptide subClassOf sio:SIO_001425  (peptide)
 
-        For each unique CHEBI_ID in cpp_csv_file:
+        For each unique RAG_curie_CheBI in cpp_csv_file:
             <obo_chebi_iri>      subClassOf  sio:SIO_000004
 
         For each unique CPP_ID in cpp_csv_file:
             <cpp_iri>            subClassOf  cpp:CellPenetratingPeptide
 
-        For each unique (CPP_ID, CHEBI_ID) pair — named CPP-Complex subclass:
+        For each unique (CPP_ID, RAG_curie_CheBI) pair — named CPP-Complex subclass:
             cpp:<CPP_x>_<CHEBI_y>_Complex  subClassOf  cpp:CPP-Complex
             cpp:<CPP_x>_<CHEBI_y>_Complex  subClassOf  (SIO_000369 some <cpp_iri>)
             cpp:<CPP_x>_<CHEBI_y>_Complex  subClassOf  (SIO_000369 some <obo_chebi_iri>)
@@ -798,7 +769,7 @@ def extend_ontology_with_annotations(ontology: str,
 
     Args:
         ontology:          Path to the input OWL file (Phase 2 output)
-        cpp_csv_file:      Path to the CPP CSV (must have CPP_ID, CHEBI_ID columns)
+        cpp_csv_file:      Path to the CPP CSV (must have CPP_ID, RAG_curie_CheBI columns)
         cpp_mech_file:     Path to triplets/cpp_mechanism.tsv
         cpp_cargo_file:    Path to triplets/cpp_cargo.tsv
         cpp_location_file: Path to triplets/cpp_location.tsv
@@ -829,11 +800,11 @@ def extend_ontology_with_annotations(ontology: str,
     is_realized_in   = factory.getOWLObjectProperty(IRI.create(SIO_IS_REALIZED_IN))
     realizes         = factory.getOWLObjectProperty(IRI.create(SIO_REALIZES))
 
-    cpp_complex_cl   = factory.getOWLClass(IRI.create(CPP_DATASET_MECHS_NS + "CPP-Complex"))
-    cpp_peptide_cl   = factory.getOWLClass(IRI.create(CPP_DATASET_MECHS_NS + "CellPenetratingPeptide"))
-    cargo_cl         = factory.getOWLClass(IRI.create(CPP_DATASET_MECHS_NS + "Cargo"))
-    cpp_role_cl      = factory.getOWLClass(IRI.create(CPP_DATASET_MECHS_NS + "CellPenetratingPeptideRole"))
-    cargo_role_cl    = factory.getOWLClass(IRI.create(CPP_DATASET_MECHS_NS + "CargoRole"))
+    cpp_complex_cl   = factory.getOWLClass(IRI.create(CPP_DATASET_NS + "CPP-Complex"))
+    cpp_peptide_cl   = factory.getOWLClass(IRI.create(CPP_DATASET_NS + "CellPenetratingPeptide"))
+    cargo_cl         = factory.getOWLClass(IRI.create(CPP_DATASET_NS + "Cargo"))
+    cpp_role_cl      = factory.getOWLClass(IRI.create(CPP_DATASET_NS + "CellPenetratingPeptideRole"))
+    cargo_role_cl    = factory.getOWLClass(IRI.create(CPP_DATASET_NS + "CargoRole"))
 
     # TBox subclass axioms
     for axiom in [
@@ -847,28 +818,28 @@ def extend_ontology_with_annotations(ontology: str,
 
     # Labels and descriptions for each custom subclass
     _class_meta = [
-        (CPP_DATASET_MECHS_NS + "CPP-Complex",
+        (CPP_DATASET_NS + "CPP-Complex",
          "CPP-Complex",
          "A molecular assembly composed of a cell-penetrating peptide (CPP) and "
          "its associated cargo molecule. Subclass of SIO material entity "
          "(SIO_000004). Each instance represents a specific peptide-cargo pair "
          "used in an uptake experiment."),
-        (CPP_DATASET_MECHS_NS + "CellPenetratingPeptide",
+        (CPP_DATASET_NS + "CellPenetratingPeptide",
          "Cell-Penetrating Peptide",
          "A short peptide capable of translocating across cellular membranes and "
          "facilitating intracellular delivery of cargo. Subclass of SIO peptide "
          "(SIO_001425). Instances are individual CPP sequences from the dataset."),
-        (CPP_DATASET_MECHS_NS + "Cargo",
+        (CPP_DATASET_NS + "Cargo",
          "Cargo",
          "A molecule delivered intracellularly by a cell-penetrating peptide. "
          "Subclass of SIO material entity (SIO_000004). Instances are ChEBI "
          "chemical entities representing the delivered payload."),
-        (CPP_DATASET_MECHS_NS + "CellPenetratingPeptideRole",
+        (CPP_DATASET_NS + "CellPenetratingPeptideRole",
          "Cell-Penetrating Peptide Role",
          "The processual role played by a CPP within a CPP-Complex, realised "
          "during the uptake mechanism. Subclass of SIO processual role "
          "(SIO_000677)."),
-        (CPP_DATASET_MECHS_NS + "CargoRole",
+        (CPP_DATASET_NS + "CargoRole",
          "Cargo Role",
          "The processual role played by a cargo molecule within a CPP-Complex, "
          "realised during the uptake mechanism. Subclass of SIO processual role "
@@ -956,20 +927,20 @@ def extend_ontology_with_annotations(ontology: str,
     EXP_FEAT_COLS  = ["In-vivo Model", "In-vitro model", "Uptake Efficiency"]
 
     df_full = pd.read_csv(cpp_csv_file, usecols=[
-        "CPP_ID", "CHEBI_ID",
+        "CPP_ID", "RAG_curie_CheBI",
         "Main Uptake Mechanism ID", "Main Uptake Mechanism",
         "Subcategory Uptake Mechanism ID", "Subcategory Uptake Mechanism",
-        "CLO_ID", "Cell Line", "Cargo Type",
+        "RAG_curie_CLO", "Cell Line", "Cargo Type",
     ] + CPP_FEAT_COLS + EXP_FEAT_COLS)
-    df = df_full.dropna(subset=["CPP_ID", "CHEBI_ID"])
+    df = df_full.dropna(subset=["CPP_ID", "RAG_curie_CheBI"])
 
     # Pre-build feature lookup dicts (first non-null value per key)
     cpp_features  = (df_full.dropna(subset=["CPP_ID"])
                      .groupby("CPP_ID")[CPP_FEAT_COLS].first().to_dict("index"))
-    chebi_features = (df_full.dropna(subset=["CHEBI_ID"])
-                      .groupby("CHEBI_ID")[["Cargo Type"]].first().to_dict("index"))
-    clo_features   = (df_full.dropna(subset=["CLO_ID"])
-                      .groupby("CLO_ID")[["Cell Line"]].first().to_dict("index"))
+    chebi_features = (df_full.dropna(subset=["RAG_curie_CheBI"])
+                      .groupby("RAG_curie_CheBI")[["Cargo Type"]].first().to_dict("index"))
+    clo_features   = (df_full.dropna(subset=["RAG_curie_CLO"])
+                      .groupby("RAG_curie_CLO")[["Cell Line"]].first().to_dict("index"))
 
     # --- UptakeMechanism individuals from CSV rows ---
     # Rule: use Subcategory Uptake Mechanism ID when available; otherwise Main.
@@ -1017,22 +988,22 @@ def extend_ontology_with_annotations(ontology: str,
         _annotate_individual(manager, onto, factory, mech_iri, mech_label,
             db_source_iri=f"https://amigo.geneontology.org/amigo/term/{go_local.replace('_', ':')}")
 
-    # --- Cell line individuals (SIO_010054) from CLO_ID column ---
+    # --- Cell line individuals (SIO_010054) from RAG_curie_CLO column ---
     cell_line_cl = factory.getOWLClass(IRI.create(SIO_CELL_LINE))
-    df_clo = pd.read_csv(cpp_csv_file, usecols=["CLO_ID", "CLO_Name"]).dropna(subset=["CLO_ID"])
-    df_clo = df_clo[df_clo["CLO_ID"].str.strip() != ""].drop_duplicates(subset=["CLO_ID"])
+    df_clo = pd.read_csv(cpp_csv_file, usecols=["RAG_curie_CLO", "RAG_label_CLO"]).dropna(subset=["RAG_curie_CLO"])
+    df_clo = df_clo[df_clo["RAG_curie_CLO"].str.strip() != ""].drop_duplicates(subset=["RAG_curie_CLO"])
 
-    print(f"  Asserting {len(df_clo)} cell line individuals (SIO_010054) from CLO_ID ...")
+    print(f"  Asserting {len(df_clo)} cell line individuals (SIO_010054) from RAG_curie_CLO ...")
     for _, row in df_clo.iterrows():
-        clo_acc  = str(row["CLO_ID"]).strip()                        # e.g. CLO:0003655
+        clo_acc  = str(row["RAG_curie_CLO"]).strip()                        # e.g. CLO:0003655
         clo_iri  = "http://purl.obolibrary.org/obo/" + clo_acc.replace(":", "_")
-        clo_name = str(row["CLO_Name"]).strip() if pd.notna(row["CLO_Name"]) else clo_acc
+        RAG_label_CLO = str(row["RAG_label_CLO"]).strip() if pd.notna(row["RAG_label_CLO"]) else clo_acc
         clo_ind  = factory.getOWLNamedIndividual(IRI.create(clo_iri))
         manager.applyChange(AddAxiom(onto, factory.getOWLDeclarationAxiom(clo_ind)))
         manager.applyChange(AddAxiom(onto,
             factory.getOWLClassAssertionAxiom(cell_line_cl, clo_ind)))
         clo_local = clo_acc.replace(":", "_")
-        _annotate_individual(manager, onto, factory, clo_iri, clo_name,
+        _annotate_individual(manager, onto, factory, clo_iri, RAG_label_CLO,
             db_source_iri=f"https://www.ebi.ac.uk/ols/ontologies/clo/terms?iri=http://purl.obolibrary.org/obo/{clo_local}")
 
     # --- Subcellular entity individuals (SIO_001400) from Subcellular Delivery ID ---
@@ -1059,9 +1030,9 @@ def extend_ontology_with_annotations(ontology: str,
         _annotate_individual(manager, onto, factory, sub_iri, sub_label,
             db_source_iri=f"https://amigo.geneontology.org/amigo/term/{go_local.replace('_', ':')}")
 
-    # Each unique CHEBI_ID → named individual rdf:type cpp:Cargo
+    # Each unique RAG_curie_CheBI → named individual rdf:type cpp:Cargo
     chebi_ind_map = {}
-    unique_chebis = df["CHEBI_ID"].unique()
+    unique_chebis = df["RAG_curie_CheBI"].unique()
     print(f"  Asserting {len(unique_chebis)} CHEBI individuals as cpp:Cargo instances ...")
     for chebi_acc in unique_chebis:
         obo_iri  = "http://purl.obolibrary.org/obo/" + chebi_acc.replace(":", "_")
@@ -1086,29 +1057,29 @@ def extend_ontology_with_annotations(ontology: str,
             _add_features(manager, onto, factory, cpp_iri,
                           cpp_features[cpp_iri].items())
 
-    # Each unique (CPP_ID, CHEBI_ID) pair → named individual rdf:type cpp:CPP-Complex
+    # Each unique (CPP_ID, RAG_curie_CheBI) pair → named individual rdf:type cpp:CPP-Complex
     # with ABox property assertions:
     #   complex  sio:SIO_000369  cpp_individual
     #   complex  sio:SIO_000369  chebi_individual
-    pairs = df.drop_duplicates(subset=["CPP_ID", "CHEBI_ID"])
+    pairs = df.drop_duplicates(subset=["CPP_ID", "RAG_curie_CheBI"])
     print(f"  Asserting {len(pairs)} CPP-Complex individuals (one per CPP+CHEBI pair) ...")
     for _, row in pairs.iterrows():
         cpp_iri   = row["CPP_ID"]
-        chebi_obo = chebi_ind_map[row["CHEBI_ID"]]
+        chebi_obo = chebi_ind_map[row["RAG_curie_CheBI"]]
 
         cpp_local   = cpp_iri.split("/")[-1]             # e.g. CPP_001104
-        chebi_local = row["CHEBI_ID"].replace(":", "_")  # e.g. CHEBI_38161
+        chebi_local = row["RAG_curie_CheBI"].replace(":", "_")  # e.g. CHEBI_38161
 
         complex_ind = factory.getOWLNamedIndividual(
-            IRI.create(CPP_DATASET_MECHS_NS + f"complex_{cpp_local}_{chebi_local}"))
+            IRI.create(CPP_DATASET_NS + f"complex_{cpp_local}_{chebi_local}"))
         cpp_ind   = factory.getOWLNamedIndividual(IRI.create(cpp_iri))
         chebi_ind = factory.getOWLNamedIndividual(IRI.create(chebi_obo))
 
         # Role individuals — one per (CPP, CHEBI) pair
         cpp_role_ind   = factory.getOWLNamedIndividual(
-            IRI.create(CPP_INDIVIDUALS_NS + f"cpp_role_{cpp_local}_{chebi_local}"))
+            IRI.create(CPP_DATASET_NS + f"cpp_role_{cpp_local}_{chebi_local}"))
         cargo_role_ind = factory.getOWLNamedIndividual(
-            IRI.create(CPP_INDIVIDUALS_NS + f"cargo_role_{cpp_local}_{chebi_local}"))
+            IRI.create(CPP_DATASET_NS + f"cargo_role_{cpp_local}_{chebi_local}"))
 
         # Resolve uptake mechanism IRI(s) for this pair (subcategory-first)
         sub_id  = row["Subcategory Uptake Mechanism ID"]
@@ -1165,9 +1136,9 @@ def extend_ontology_with_annotations(ontology: str,
     is_proper_part  = factory.getOWLObjectProperty(IRI.create(SIO_IS_PROPER_PART))
 
     df_exp = pd.read_csv(cpp_csv_file, usecols=[
-        "id", "CPP_ID", "CHEBI_ID",
+        "id", "CPP_ID", "RAG_curie_CheBI",
         "Main Uptake Mechanism ID", "Subcategory Uptake Mechanism ID",
-        "CLO_ID", "Subcellular Delivery ID",
+        "RAG_curie_CLO", "Subcellular Delivery ID",
         "Pubmed ID", "Patent",
     ] + EXP_FEAT_COLS)
 
@@ -1175,15 +1146,15 @@ def extend_ontology_with_annotations(ontology: str,
     print(f"  Building Experiment individuals (rows without CPP-Complex are skipped) ...")
     for _, row in df_exp.iterrows():
         # Skip rows where CPP-Complex cannot be formed
-        if pd.isna(row["CPP_ID"]) or pd.isna(row["CHEBI_ID"]):
+        if pd.isna(row["CPP_ID"]) or pd.isna(row["RAG_curie_CheBI"]):
             skipped += 1
             continue
 
         cpp_local   = str(row["CPP_ID"]).strip().split("/")[-1]
-        chebi_local = str(row["CHEBI_ID"]).strip().replace(":", "_")
-        complex_iri = CPP_DATASET_MECHS_NS + f"complex_{cpp_local}_{chebi_local}"
+        chebi_local = str(row["RAG_curie_CheBI"]).strip().replace(":", "_")
+        complex_iri = CPP_DATASET_NS + f"complex_{cpp_local}_{chebi_local}"
 
-        exp_iri = CPP_INDIVIDUALS_NS + f"experiment_{int(row['id'])}"
+        exp_iri = CPP_DATASET_NS + f"experiment_{int(row['id'])}"
         exp_ind = factory.getOWLNamedIndividual(IRI.create(exp_iri))
         manager.applyChange(AddAxiom(onto,
             factory.getOWLDeclarationAxiom(exp_ind)))
@@ -1211,13 +1182,13 @@ def extend_ontology_with_annotations(ontology: str,
 
         # 3. CPP-Complex and cell line are participants of the UptakeMechanism
         participant_iris = [complex_iri]
-        if pd.notna(row["CLO_ID"]) and str(row["CLO_ID"]).strip():
-            clo_id  = str(row["CLO_ID"]).strip()
-            clo_iri = "http://purl.obolibrary.org/obo/" + clo_id.replace(":", "_")
+        if pd.notna(row["RAG_curie_CLO"]) and str(row["RAG_curie_CLO"]).strip():
+            RAG_curie_CLO  = str(row["RAG_curie_CLO"]).strip()
+            clo_iri = "http://purl.obolibrary.org/obo/" + RAG_curie_CLO.replace(":", "_")
             participant_iris.append(clo_iri)
-            if clo_id in clo_features:
+            if RAG_curie_CLO in clo_features:
                 _add_features(manager, onto, factory, clo_iri,
-                              clo_features[clo_id].items())
+                              clo_features[RAG_curie_CLO].items())
 
         for p_iri in participant_iris:
             p_ind = factory.getOWLNamedIndividual(IRI.create(p_iri))
@@ -1294,7 +1265,7 @@ def main():
     # Define input file paths
     GENE_TO_GO_FILE  = "triplets/gene_to_go.tsv"
     CHEBI_TO_GO_FILE = "triplets/chebi_to_go.tsv"
-    CPP_CSV_FILE     = "../Natural_CPP3_download_annotated_March.csv"
+    CPP_CSV_FILE     = "/Users/hadmin1/Desktop/POSEIDON_CPPSite/Cell-penetrating-peptides/data/Natural_CPP3_download_annotated_preprocessed_Ontology_Normalization.csv"
 
     genes_ontology    = "Ontology/sio_genes.owl"
     inhibitors_ontology = "Ontology/sio_genes_inhibitors.owl"
