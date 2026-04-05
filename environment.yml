@@ -1,0 +1,25 @@
+name: cpp_kg
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  # data handling
+  - pandas
+  - numpy
+  # deep learning
+  - pytorch::pytorch
+  - tqdm
+  # HTTP / preprocessing
+  - requests
+  - matplotlib
+  # ontology / RDF
+  - rdflib
+  - jpype1
+  # HuggingFace
+  - conda-forge::transformers
+  # pip-only packages
+  - pip:
+    - mowl-python
+    - pyshex

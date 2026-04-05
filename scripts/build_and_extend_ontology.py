@@ -109,6 +109,11 @@ ONTOLOGY_VERSION  = DATASET_IRI + "/2026-03-19"
 #   Then the value becomes e.g. "https://identifiers.org/doi:10.5281/zenodo.XXXXXXX"
 DATASET_DOI       = "https://identifiers.org/doi:10.5281/zenodo.19351483"
 
+# SPARQL / service endpoint for dcat:DataService
+# Matches the Flask route @app.route("/api/sparql", methods=["POST"])
+SPARQL_ENDPOINT     = DATASET_IRI + "/api/sparql"
+SERVICE_DESCRIPTION = DATASET_IRI + "/api/sparql"   # SD doc at same IRI
+
 # F2 — Dublin Core Terms properties for rich ontology-level metadata
 DC_TERMS   = "http://purl.org/dc/terms/"
 RDFS_NS    = "http://www.w3.org/2000/01/rdf-schema#"
@@ -129,6 +134,8 @@ def _apply_ontology_metadata(manager, ontology, factory):
     F4:      Add a void:Dataset and dcat:Dataset type annotation so the
                 ontology can be discovered and indexed by dataset registries
                 (e.g. BioPortal, OLS, LOD Cloud).
+             Add a dcat:DataService node with dcat:endpointURL and
+                dcat:endpointDescription pointing to the SPARQL API endpoint.
     """
     # F1 / F3 — Globally unique + versioned ontology IRI
     onto_iri    = IRI.create(ONTOLOGY_IRI)
@@ -225,6 +232,26 @@ def _apply_ontology_metadata(manager, ontology, factory):
         prop       = factory.getOWLAnnotationProperty(IRI.create(prop_iri_str))
         annotation = factory.getOWLAnnotation(prop, IRI.create(value))
         manager.applyChange(AddOntologyAnnotation(ontology, annotation))
+
+    # ------------------------------------------------------------------ #
+    # dcat:DataService — exposes endpointURL + endpointDescription        #
+    # DCAT2 requires these properties on a DataService node, not directly #
+    # on the Dataset. The service is linked back via dcat:servesDataset.  #
+    # ------------------------------------------------------------------ #
+    RDF_NS      = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    service_iri = IRI.create(DATASET_IRI + "/service")
+    dataset_iri = IRI.create(DATASET_IRI)
+    service_triples = [
+        (RDF_NS  + "type",                    IRI.create(DCAT_NS + "DataService")),
+        (DCAT_NS + "endpointURL",             IRI.create(SPARQL_ENDPOINT)),
+        (DCAT_NS + "endpointDescription",     IRI.create(SERVICE_DESCRIPTION)),
+        (DCAT_NS + "servesDataset",           dataset_iri),
+        (RDFS_NS + "label",                   factory.getOWLLiteral("CPP KG SPARQL Endpoint")),
+    ]
+    for prop_iri_str, value in service_triples:
+        prop = factory.getOWLAnnotationProperty(IRI.create(prop_iri_str))
+        manager.applyChange(AddAxiom(ontology,
+            factory.getOWLAnnotationAssertionAxiom(prop, service_iri, value)))
 
 
 def _annotate_class(manager, ontology, factory, class_iri_str, label, description):
