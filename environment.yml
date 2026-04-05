@@ -23,3 +23,6 @@ dependencies:
   - pip:
     - mowl-python
     - pyshex
+    - pronto
+    - rapidfuzz
+    - faiss-cpu

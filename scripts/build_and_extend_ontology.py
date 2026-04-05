@@ -16,11 +16,19 @@ This script performs three phases:
 Author: Maria Gomez
 Dependencies: mowl, pandas
 """
+import importlib.util
+import sys
+from pathlib import Path
 import jpype
 import jpype.imports
 
 if not jpype.isJVMStarted():
-    jpype.startJVM(classpath=['/Users/hadmin1/miniconda3/envs/fab_2024/lib/python3.10/site-packages/mowl/lib/*'])
+    _mowl_spec = importlib.util.find_spec("mowl")
+    if _mowl_spec and _mowl_spec.submodule_search_locations:
+        _mowl_lib = str(Path(_mowl_spec.submodule_search_locations[0]) / "lib" / "*")
+    else:
+        _mowl_lib = str(Path(sys.prefix) / "lib" / f"python{sys.version_info.major}.{sys.version_info.minor}" / "site-packages" / "mowl" / "lib" / "*")
+    jpype.startJVM(classpath=[_mowl_lib])
 # Now you can import Java packages
 #from org.orekit.data import DirectoryCrawler 
 import pandas as pd

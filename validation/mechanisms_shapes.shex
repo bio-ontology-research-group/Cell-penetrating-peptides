@@ -1,6 +1,6 @@
 PREFIX sio:     <http://semanticscience.org/resource/>
-PREFIX mech:    <https://w3id.org/cpp/dataset/mechanisms/>
-PREFIX cpps:    <https://w3id.org/cpp/schema#>
+PREFIX mech:    <https://cppkg.bio2vec.net/dataset/>
+PREFIX cpps:    <https://cppkg.bio2vec.net/schema#>
 PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs:    <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl:     <http://www.w3.org/2002/07/owl#>

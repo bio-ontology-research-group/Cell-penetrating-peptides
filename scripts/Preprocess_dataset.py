@@ -848,7 +848,7 @@ if __name__ == "__main__":
 
     #df = pd.read_csv('data/Natural_CPP3_download_annotated_cleaned.csv')  # latest starting point
     
-    preprocessor.add_sequence_ids(id_col="CPP_ID", prefix="https://w3id.org/cpp/dataset/mechanisms/CPP_00", width=4)
+    preprocessor.add_sequence_ids(id_col="CPP_ID", prefix="https://cppkg.bio2vec.net/dataset/CPP_00", width=4)
     
     cleaned_df = preprocessor.df
     cleaned_df.to_csv('data/Natural_CPP3_download_annotated_preprocessed.csv', index=False)

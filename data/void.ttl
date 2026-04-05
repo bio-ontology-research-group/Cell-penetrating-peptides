@@ -1,0 +1,25 @@
+@prefix void:    <http://rdfs.org/ns/void#> .
+@prefix dcat:    <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf:    <http://xmlns.com/foaf/0.1/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+<https://cppkg.bio2vec.net/dataset>
+    a                    void:Dataset , dcat:Dataset ;
+    dcterms:title        "CPP Knowledge Graph"@en ;
+    dcterms:description  "A knowledge graph of cell-penetrating peptides (CPPs) integrating experimental uptake-mechanism data with biomedical ontologies (SIO, GO, ChEBI, CLO)."@en ;
+    dcterms:creator      "Bio-Ontology Research Group, KAUST" ;
+    dcterms:license      <https://creativecommons.org/licenses/by/4.0/> ;
+    dcterms:created      "2025"^^xsd:gYear ;
+    foaf:homepage        <https://cppkg.bio2vec.net/> ;
+
+    void:uriSpace        "https://cppkg.bio2vec.net/dataset/" ;
+    void:triples         159810 ;
+    void:dataDump        <https://cppkg.bio2vec.net/data/CPP_KG.ttl> ;
+    void:sparqlEndpoint  <https://cppkg.bio2vec.net/api/sparql> ;
+
+    void:vocabulary      <http://semanticscience.org/resource/> ;
+    void:vocabulary      <http://purl.obolibrary.org/obo/GO_> ;
+    void:vocabulary      <http://purl.obolibrary.org/obo/CHEBI_> ;
+    void:vocabulary      <http://purl.obolibrary.org/obo/CLO_> .

@@ -38,8 +38,8 @@ from pyshex.shex_evaluator import ShExEvaluator
 # ============================================================================
 
 SIO       = Namespace("http://semanticscience.org/resource/")
-MECH      = Namespace("https://w3id.org/cpp/dataset/mechanisms/")
-CPPSCHEMA = Namespace("https://w3id.org/cpp/schema#")
+MECH      = Namespace("https://cppkg.bio2vec.net/dataset/")
+CPPSCHEMA = Namespace("https://cppkg.bio2vec.net/schema#")
 
 # ============================================================================
 # Class URIs → shape mapping  (all ABox individuals for mechanisms.ttl)
