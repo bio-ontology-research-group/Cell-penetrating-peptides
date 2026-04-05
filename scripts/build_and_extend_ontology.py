@@ -107,7 +107,7 @@ ONTOLOGY_VERSION  = DATASET_IRI + "/2026-03-19"
 # ⚠ Replace the placeholder below with the actual DOI once the dataset is
 #   deposited in Zenodo / figshare: https://zenodo.org → "New upload"
 #   Then the value becomes e.g. "https://identifiers.org/doi:10.5281/zenodo.XXXXXXX"
-DATASET_DOI       = "https://identifiers.org/doi:10.5281/zenodo.19351483"
+DATASET_DOI       = "https://identifiers.org/doi:10.5281/zenodo.19427198"
 
 # SPARQL / service endpoint for dcat:DataService
 # Matches the Flask route @app.route("/api/sparql", methods=["POST"])
