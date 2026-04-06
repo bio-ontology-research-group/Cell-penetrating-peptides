@@ -1,0 +1,3716 @@
+
+[    
+    {
+        "GO_identifier": "GO:0006909",
+        "mechanism_name": "Phagocytosis",
+        "definition":"Is a receptor-mediated and actin-based endocytic process that allows specialized cell types, such as macrophages and neutrophils, to internalize and clear large particulate material (>0.5 µm) by engulfing it within a tight-fitting membrane vesicle",
+        "associated_genes": [
+            {
+                "name": "FCGR2A",
+                "Definition": "Mediates phagocytosis and endocytosis through PTK activation and immune complex internalization.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000143226"
+            },
+            {
+                "name": "SYK",
+                "Definition": "SYK kinase is recruited downstream of Fc receptors and is required for actin polymerization during phagocytosis.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000165025"
+            },
+            {
+                "name": "FGR",
+                "Definition": "Src-family tyrosine kinase that phosphorylates ITAMs to initiate SYK docking",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000000938"
+            },
+            {
+                "name": "LYN",
+                "Definition": "Src-family kinase recruited to phosphorylated ITAMs to propagate signaling",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000254087"
+            },
+            {
+                "name": "HCK",
+                "Definition": "Src-family kinase acting downstream of FcgammaR ITAMs",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000101336"
+            },
+            {
+                "name": "FYN",
+                "Definition": "Src-family kinase contributing to early FcgammaR signaling",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000010810"
+            },
+                        {
+                "name": "RAC1",
+                "Definition": "Rho-family GTPase that drives actin assembly for cup formation and extension",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000136238"
+            },
+            {
+                "name": "CDC42",
+                "Definition": "Rho-family GTPase initiating actin polymerization and pseudopod extension",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000070831"
+            },
+            {
+                "name": "FCGR1A",
+                "Definition": "Fc receptor initiates phagocytosis through interaction with the  gamma subunit and activation of downstream kinases.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000150337"
+            },
+            {
+                "name": "YES1",
+                "Definition": "Src-family kinase contributing to FcgammaR signaling",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000176105"
+            },
+            {
+                "name": "VAV1",
+                "Definition": "GEF activating RAC1/CDC42 at cup",
+                "PUBMED_ID": "34033794",
+                "ensembl_id": "ENSG00000141968"
+            },
+            {
+                "name": "VAV2",
+                "Definition": "Rho-GEF activating RAC/CDC42",
+                "PUBMED_ID": "34033794",
+                "ensembl_id": "ENSG00000160293"
+            },
+            {
+                "name": "VAV3",
+                "Definition": "Rho-GEF activating RAC/CDC42",
+                "PUBMED_ID": "34033794",
+                "ensembl_id": "ENSG00000134215"
+            },
+            {
+                "name": "PIK3CG",
+                "Definition": "PI3K gamma catalytic subunit generating PIP3 for cup closure and actin remodeling",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000105851"
+            },
+            {
+                "name": "PIK3C2G",
+                "Definition": "PI3K parent II catalytic subunit contributing to phagocytic signaling lipids",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000139144"
+            },
+            {
+                "name": "PTEN",
+                "Definition": "PIP3 phosphatase counterbalancing PI3K signaling during cup dynamics",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000171862"
+            },
+            {
+                "name": "GAB2",
+                "Definition": "Adaptor amplifying PI3K signal during nascent phagosome closure",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000033327"
+            },
+            {
+                "name": "AKT1",
+                "Definition": "Effector kinase downstream of PI3K that supports cytoskeletal and membrane remodeling",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000142208"
+            },
+            {
+                "name": "AKT2",
+                "Definition": "PI3K-dependent effector contributing to phagocytic responses",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000105221"
+            },
+            {
+                "name": "AKT3",
+                "Definition": "PI3K-dependent effector contributing to phagocytic responses",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000117020"
+            },
+            {
+                "name": "PLA2G6",
+                "Definition": "cPLA2 producing arachidonic acid that promotes phagosome closure/fusion",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000184381"
+            },
+            {
+                "name": "PLD1",
+                "Definition": "Phospholipase D driving membrane remodeling during particle internalization",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000075651"
+            },
+            {
+                "name": "PLD2",
+                "Definition": "Phospholipase D isoform contributing to internalization",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000129219"
+            },
+            {
+                "name": "PRKCB",
+                "Definition": "PKC Beta activated downstream of PLC to promote closure and fusion",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000166501"
+            },
+            {
+                "name": "PRKCA",
+                "Definition": "PKC Alfa isoform supporting phagosome sealing",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000154229"
+            },
+            {
+                "name": "PRKCD",
+                "Definition": "PKC D isoform modulating phagocytic signaling",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000163932"
+            },
+            {
+                "name": "PRKCE",
+                "Definition": "PKC E isoform modulating phagocytic signaling",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000171132"
+            },
+            {
+                "name": "RAC2",
+                "Definition": "Hematopoietic RAC isoform supporting cup actin dynamics",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000128340"
+            },
+            {
+                "name": "RAC3",
+                "Definition": "RAC isoform contributing to actin remodeling",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000169750"
+            },
+            
+            {
+                "name": "PAK1",
+                "Definition": "PAK kinase activated by RAC/CDC42 to coordinate actin assembly",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000149269"
+            },
+            {
+                "name": "DOCK1",
+                "Definition": "RAC GEF cooperating with CRKII to activate RAC and promote actin polymerization",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000150760"
+            },
+            {
+                "name": "NCK1",
+                "Definition": "Adaptor linking phosphorylated receptors/SYK to actin-assembly machinery",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000158092"
+            },
+            {
+                "name": "NCK2",
+                "Definition": "Adaptor linking FcgammaR signaling to actin nucleation modules",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000071051"
+            },
+            {
+                "name": "LCP2",
+                "Definition": "SLP-76 adaptor in the VASP/FYB/SLP-76 complex that promotes actin polymerization",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000043462"
+            },
+            {
+                "name": "FYB1",
+                "Definition": "FYB/SLAP adaptor scaffolding VASP and actin nucleation at the nascent phagosome",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000082074"
+            },
+            {
+                "name": "VASP",
+                "Definition": "Actin elongation factor within the FYB/SLP-76 complex aiding pseudopod extension",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000125753"
+            },
+            {
+                "name": "WAS",
+                "Definition": "WASP family NPF activating the ARP2/3 complex for branched actin",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000015285"
+            },
+            {
+                "name": "ARPC1A",
+                "Definition": "ARP2/3 complex subunit required for branched actin nucleation",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000241685"
+            },
+            {
+                "name": "ARPC1B",
+                "Definition": "ARP2/3 complex subunit required for branched actin nucleation (hematopoietic)",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000130429"
+            },
+            {
+                "name": "ARPC2",
+                "Definition": "ARP2/3 core subunit enabling actin branch formation",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000163466"
+            },
+            {
+                "name": "ARPC3",
+                "Definition": "ARP2/3 core subunit enabling actin branch formation",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000111229"
+            },
+            {
+                "name": "ARPC4",
+                "Definition": "ARP2/3 core subunit enabling actin branch formation",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000241553"
+            },
+            {
+                "name": "ARPC5",
+                "Definition": "ARP2/3 core subunit enabling actin branch formation",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000162704"
+            },
+            {
+                "name": "ARPC5L",
+                "Definition": "ARP2/3 subunit variant supporting branched actin nucleation",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000136950"
+            },
+            {
+                "name": "ARF6",
+                "Definition": "Small GTPase promoting actin assembly and membrane recycling to the cup",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000165527"
+            },
+            {
+                "name": "RAB11A",
+                "Definition": "Recycling endosome GTPase delivering membrane to the phagocytic cup",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000103769"
+            },
+            {
+                "name": "RAB11B",
+                "Definition": "Recycling endosome GTPase delivering membrane to the phagocytic cup",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000185236"
+            },
+            {
+                "name": "VAMP3",
+                "Definition": "v-SNARE mediating membrane addition from recycling endosomes",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000049245"
+            },
+            {
+                "name": "PTK2B",
+                "Definition": "PYK2 tyrosine kinase supporting cytoskeletal reorganization at the cup",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000120899"
+            },
+            {
+                "name": "PXN",
+                "Definition": "Focal adhesion adaptor coordinating actintomembrane linkage",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000089159"
+            },
+            {
+                "name": "TLN2",
+                "Definition": "Talin paralog contributing to actintomembrane linkage",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000171914"
+            },
+            {
+                "name": "EZR",
+                "Definition": "ERM family linker stabilizing membranetoactin connections at the phagosome",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000092820"
+            },
+            {
+                "name": "MAPK1",
+                "Definition": "ERK2 downstream kinase modulating phagocytic responses",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000100030"
+            },
+            {
+                "name": "MAPK3",
+                "Definition": "ERK1 downstream kinase modulating phagocytic responses",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000102882"
+            },
+            {
+                "name": "MAPK14",
+                "Definition": "p38 MAPK supporting inflammatory/structural responses during phagocytosis",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000112062"
+            },
+            {
+                "name": "INPP5D",
+                "Definition": "SHIP1 phosphatase shaping phosphoinositide balance during phagocytosis",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000168918"
+            },
+            {
+                "name": "PIP5K1A",
+                "Definition": "PI(4,5)P2 synthesis at the membrane to support actin dynamics and scission",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000143398"
+            },
+            {
+                "name": "NAPEPLD",
+                "Definition": "Lipid enzyme contributing bioactive lipid signals in phagocytosis",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000161048"
+            },
+            {
+                "name": "CBL",
+                "Definition": "E3 ubiquitin ligase modulating receptor/kinase signaling",
+                "PUBMED_ID": "12488490",
+                "ensembl_id": "ENSG00000110395"
+            },
+            {
+                "name": "ACTA1",
+                "Definition": "actin alpha 1, skeletal muscle",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000143632"
+            },
+            {
+                "name": "ACTA2",
+                "Definition": "actin alpha 2, smoth muscle",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000107796"
+            },
+            {
+                "name": "ACTB",
+                "Definition": "actin beta",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000075624"
+            },
+            {
+                "name": "ACTC1",
+                "Definition": "actin alpha cardiac muscle 1",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000159251"
+            },
+            {
+                "name": "ACTG1",
+                "Definition": "actin alpha gamma 1",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000184009"
+            },
+            {
+                "name": "ACTG2",
+                "Definition": "actin alpha gamma 2, smooth muscle",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000163017"
+            },
+            {
+                "name": "ACTR2",
+                "Definition": "actin related protein 2",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000138071"
+            },
+            {
+                "name": "ACTR3",
+                "Definition": "actin related protein 3",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000115091"
+            },
+            {
+                "name": "CSF2",
+                "Definition": "colony stimulating factor 2",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000164400"
+            },
+            {
+                "name": "DGKB",
+                "Definition": "regulators of the intracellular concentration of the second messenger diacylglycerol (DAG)",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000136267"
+            },
+            {
+                "name": "GPLD1",
+                "Definition": "Glycosylphosphatidylinositol specific phospholipase D1 hydrolyzes the inositol phosphate linkage in proteins anchored by phosphatidylinositol glycans, thereby releasing the attached protein from the plasma membrane.",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000112293"
+            },
+            {
+                "name": "HMOX1",
+                "Definition": "Heme oxygenase 1",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000100292"
+            },
+            {
+                "name": "NCF1",
+                "Definition": "neutrophil cytosolic factor 1",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000158517"
+            },
+            {
+                "name": "PLD3",
+                "Definition": "Phospholipase D isoform contributing to internalization",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000105223"
+            },
+            {
+                "name": "PLD4",
+                "Definition": "Phospholipase D isoform contributing to internalization",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000166428"
+            },
+            {
+                "name": "PLD5",
+                "Definition": "Phospholipase D isoform contributing to internalization",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000180287"
+            },
+            {
+                "name": "PLD6",
+                "Definition": "Phospholipase D isoform contributing to internalization",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000179598"
+            },
+            {
+                "name": "PRKCG",
+                "Definition": "PKC gamma activated downstream of PLC to promote closure and fusion",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000126583"
+            },
+            {
+                "name": "PRKCH",
+                "Definition": "PKC eta activated downstream of PLC to promote closure and fusion",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000027075"
+            },
+            {
+                "name": "PRKCI",
+                "Definition": "PKC iota activated downstream of PLC to promote closure and fusion",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000163558"
+            },
+            {
+                "name": "PRKCQ",
+                "Definition": "PKC theta activated downstream of PLC to promote closure and fusion",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000065675"
+            },
+            {
+                "name": "PRKCZ",
+                "Definition": "PKC zeta activated downstream of PLC to promote closure and fusion",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000067606"
+            },
+            {
+                "name": "PRKD1",
+                "Definition": "PKC D1 activated downstream of PLC to promote closure and fusion",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000184304"
+            },
+            {
+                "name": "PRKD3",
+                "Definition": "PKC D3 activated downstream of PLC to promote closure and fusion",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000115825"
+            },
+            {
+                "name": "RPS6KB1",
+                "Definition": "S6 kinase family of serine/threonine kinases. The encoded protein responds to mTOR (mammalian target of rapamycin) signaling to promote protein synthesis, cell growth, and cell proliferation.",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000108443"
+            },
+            {
+                "name": "RPS6KB2",
+                "Definition": "S6 kinase family of serine/threonine kinases. The encoded protein responds to mTOR (mammalian target of rapamycin) signaling to promote protein synthesis, cell growth, and cell proliferation.",
+                "PUBMED_ID": "4877597",
+                "ensembl_id": "ENSG00000175634"
+            },
+            {
+                "name": "RAB5A",
+                "Definition": "Regulates early phagosome maturation through vesicle fusion and trafficking.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000144566"
+            },
+            {
+                "name": "RAB7A",
+                "Definition": "Involved in late-stage phagosome maturation and lysosomal fusion.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000075785"
+            },
+            {
+                "name": "MYO1A",
+                "Definition": "myosin IA-Motor protein that colocalizes with actin on phagosomes; facilitates mechanical ingestion.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000166866"
+            },
+            {
+                "name": "MYO1B",
+                "Definition": "myosin IB-Motor protein that colocalizes with actin on phagosomes; facilitates mechanical ingestion.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000128641"
+            },
+            {
+                "name": "MYO1C",
+                "Definition": "myosin IC-Motor protein that colocalizes with actin on phagosomes; facilitates mechanical ingestion.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000197879"
+            },
+            {
+                "name": "MYO1D",
+                "Definition": "myosin ID-Motor protein that colocalizes with actin on phagosomes; facilitates mechanical ingestion.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000176658"
+            },
+            {
+                "name": "MYO1E",
+                "Definition": "myosin IE-Motor protein that colocalizes with actin on phagosomes; facilitates mechanical ingestion.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000157483"
+            },
+            {
+                "name": "MYO1F",
+                "Definition": "myosin IF-Motor protein that colocalizes with actin on phagosomes; facilitates mechanical ingestion.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000142347"
+            },
+            {
+                "name": "MYO1G",
+                "Definition": "myosin IG-Motor protein that colocalizes with actin on phagosomes; facilitates mechanical ingestion.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000136286"
+            },
+            {
+                "name": "MYO1H",
+                "Definition": "myosin IH-Motor protein that colocalizes with actin on phagosomes; facilitates mechanical ingestion.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000174527"
+            },
+            {
+                "name": "GNAL",
+                "Definition": "G alfas: G protein subunits alpha, group s-Heterotrimeric G-proteins that regulate vesicle trafficking and fusion during phagosome maturation.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000141404"
+            },
+            {
+                "name": "GNAS",
+                "Definition": "G alfa: G protein subunits alpha, group s-Heterotrimeric G-proteins that regulate vesicle trafficking and fusion during phagosome maturation.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000087460"
+            },
+            {
+                "name": "GNAI1",
+                "Definition": "G protein subunit alpha i1- Heterotrimeric G-proteins that regulate vesicle trafficking and fusion during phagosome maturation.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000127955"
+            },
+            {
+                "name": "GNAI2",
+                "Definition": "G protein subunit alpha i2- Heterotrimeric G-proteins that regulate vesicle trafficking and fusion during phagosome maturation.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000114353"
+            },
+            {
+                "name": "GNAI3",
+                "Definition": "G protein subunit alpha i3- Heterotrimeric G-proteins that regulate vesicle trafficking and fusion during phagosome maturation.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000065135"
+            },
+            {
+                "name": "GNB1",
+                "Definition": "G protein subunit beta 1- Heterotrimeric G-proteins that regulate vesicle trafficking and fusion during phagosome maturation.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000078369"
+            },
+            {
+                "name": "GNB2",
+                "Definition": "G protein subunit beta 2- Heterotrimeric G-proteins that regulate vesicle trafficking and fusion during phagosome maturation.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000172354"
+            },
+            {
+                "name": "GNB3",
+                "Definition": "G protein subunit beta 3- Heterotrimeric G-proteins that regulate vesicle trafficking and fusion during phagosome maturation.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000111664"
+            },
+            {
+                "name": "GNB4",
+                "Definition": "G protein subunit beta 4- Heterotrimeric G-proteins that regulate vesicle trafficking and fusion during phagosome maturation.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000114450"
+            },
+            {
+                "name": "GNB5",
+                "Definition": "G protein subunit beta 5- Heterotrimeric G-proteins that regulate vesicle trafficking and fusion during phagosome maturation.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000069966"
+            },
+            {
+                "name": "GNGT1",
+                "Definition": "G gamma-Heterotrimeric G-proteins that regulate vesicle trafficking and fusion during phagosome maturation.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000127928"
+            },
+            {
+                "name": "GNGT2",
+                "Definition": "G gamma-Heterotrimeric G-proteins that regulate vesicle trafficking and fusion during phagosome maturation.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000167083"
+            },
+            {
+                "name": "GNG2",
+                "Definition": "G gamma-Heterotrimeric G-proteins that regulate vesicle trafficking and fusion during phagosome maturation.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000186469"
+            },
+            {
+                "name": "GNG3",
+                "Definition": "G gamma-Heterotrimeric G-proteins that regulate vesicle trafficking and fusion during phagosome maturation.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000162188"
+            },
+            {
+                "name": "GNG4",
+                "Definition": "G gamma-Heterotrimeric G-proteins that regulate vesicle trafficking and fusion during phagosome maturation.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000168243"
+            },
+            {
+                "name": "GNG5",
+                "Definition": "G gamma-Heterotrimeric G-proteins that regulate vesicle trafficking and fusion during phagosome maturation.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000174021"
+            },
+            {
+                "name": "GNG7",
+                "Definition": "G gamma-Heterotrimeric G-proteins that regulate vesicle trafficking and fusion during phagosome maturation.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000176533"
+            },
+            {
+                "name": "GNG8",
+                "Definition": "G gamma-Heterotrimeric G-proteins that regulate vesicle trafficking and fusion during phagosome maturation.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000167414"
+            },
+            {
+                "name": "GNG10",
+                "Definition": "G gamma-Heterotrimeric G-proteins that regulate vesicle trafficking and fusion during phagosome maturation.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000242616"
+            },
+            {
+                "name": "GNG11",
+                "Definition": "G gamma-Heterotrimeric G-proteins that regulate vesicle trafficking and fusion during phagosome maturation.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000127920"
+            },
+            {
+                "name": "GNG12",
+                "Definition": "G gamma-Heterotrimeric G-proteins that regulate vesicle trafficking and fusion during phagosome maturation.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000172380"
+            },
+            {
+                "name": "GNG13",
+                "Definition": "G gamma-Heterotrimeric G-proteins that regulate vesicle trafficking and fusion during phagosome maturation.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000127588"
+            },
+            {
+                "name": "GNG14",
+                "Definition": "G gamma-Heterotrimeric G-proteins that regulate vesicle trafficking and fusion during phagosome maturation.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000283980"
+            },
+            {
+                "name": "TLR4",
+                "Definition": "Toll-like receptor 4 detects LPS and triggers macrophage activation and pro-inflammatory response, aiding phagocytosis.",
+                "PUBMED_ID": "27423825",
+                "ensembl_id": "ENSG00000136869"
+            },
+            {
+                "name": "MYD88",
+                "Definition": "Adaptor protein downstream of TLR4; activates NF-kB pathway involved in enhancing phagocytic response.",
+                "PUBMED_ID": "27423825",
+                "ensembl_id": "ENSG00000172936"
+            },
+            {
+                "name": "NFKB1",
+                "Definition": "Transcription factor that upregulates phagocytic machinery and inflammatory mediators.",
+                "PUBMED_ID": "27423825",
+                "ensembl_id": "ENSG00000109320"
+            },
+            {
+                "name": "CYBB",
+                "Definition": "Essential for respiratory burst in phagosomes, leading to microbial killing.",
+                "PUBMED_ID": "27423825",
+                "ensembl_id": "ENSG00000165168"
+            },
+            {
+                "name": "MARCKS",
+                "Definition": "Acts as an actin cross-linker; required for efficient phagosome formation and cytoskeletal reorganization.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000277443"
+            },
+            {
+                "name": "ZAP70",
+                "Definition": "Can substitute SYK functionally in engineered systems to initiate phagocytic signaling.",
+                "PUBMED_ID": "8794000",
+                "ensembl_id": "ENSG00000115085"
+            }
+        ],
+        "inhibitors": [
+            {
+                "name": "Amiloride",
+                "Definition": "drug (Na+/H+ exchanger inhibitor), preventing ruffle closure and cup formation required for macropinocytosis. dose:50-500 microM",
+                "PUBMED_ID": "27423825",
+                "CHEBI": "CHEBI:2639"
+            },
+            {
+                "name": "EIPA (5-(N-ethyl-N-isopropyl) amiloride)",
+                "Definition": "Potent derivative of amiloride that specifically inhibits macropinocytosis by disrupting Na+/H+ exchange. drug (amiloride analog), dose:25-50 microM",
+                "PUBMED_ID": "27423825",
+                "CHEBI": "CHEBI:233428"
+            },
+            {
+                "name": "Cytochalasin D",
+                "Definition": "Binds to actin filaments and blocks polymerization, preventing ruffle and cup formation. chemical (fungal metabolite), dose:0.5-10 microM",
+                "PUBMED_ID": "27423825",
+                "CHEBI": "CHEBI:529996"
+            },
+            {
+                "name": "Latrunculin B",
+                "Definition": "Sequesters actin monomers, preventing actin filament assembly required for macropinocytosis. chemical (marine toxin), dose:0.1-5 microM",
+                "PUBMED_ID": "27423825",
+                "CHEBI": "CHEBI:49703"
+            },
+            {
+                "name": "Wortmannin",
+                "Definition": "Blocks PI3K signaling, which is essential for closure of macropinocytic cups. chemical (PI3K inhibitor), dose:10-100 nM",
+                "PUBMED_ID": "27423825",
+                "CHEBI": "CHEBI:52289"
+            },
+            {
+                "name": "LY294002",
+                "Definition": "Another PI3K inhibitor that reduces PIP3 signaling and prevents macropinosome closure. chemical (PI3K inhibitor), dose:10-50 microM",
+                "PUBMED_ID": "27423825",
+                "CHEBI": "CHEBI:65329"
+            },
+            {
+                "name": "Rottlerin",
+                "Definition": "Reported to block macropinocytosis through PKC-dependent actin remodeling. chemical (PKC delta inhibitor, plant-derived), dose:1-10 microM",
+                "PUBMED_ID": "27423825",
+                "CHEBI": "CHEBI:8899"
+            }
+        ]
+    },
+    {
+        "GO_identifier": "GO:0044351",
+        "mechanism_name": "Macropinocytosis",
+        "definition":"Macropinocytosis is a nonselective, bulk fluid-phase uptake mechanism dependent on large, actin-based membrane protrusions that allow cells to engulf large volumes of extracellular fluids and solutes",
+        "associated_genes": [
+            {
+                "name": "PIK3CA",
+                "Definition": "Catalytic subunit of parent I PI3K - PIP3 signaling commonly required for cup formation/closure",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000121879"
+            },
+            {
+                "name": "PIK3CB",
+                "Definition": "Catalytic subunit of parent I PI3K - PIP3 signaling commonly required for cup formation/closure",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000051382"
+            },
+            {
+                "name": "PIK3CD",
+                "Definition": "Catalytic subunit of parent I PI3K - PIP3 signaling commonly required for cup formation/closure",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000171608"
+            },
+            {
+                "name": "PIK3R1",
+                "Definition": "Regulatory subunit of parent I PI3K - PIP3 signaling commonly required for cup formation/closure",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000145675"
+            },
+            {
+                "name": "RAC1",
+                "Definition": "drives membrane ruffles/cup formation; recruited by oncogenic RAS to V ATPase",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000136238"
+            },
+            {
+                "name": "CDC42",
+                "Definition": "GTPase controlling actin polymerization at cup",
+                "PUBMED_ID": "34033794",
+                "ensembl_id": "ENSG00000070831"
+            },
+            {
+                "name": "PAK1",
+                "Definition": "Ser/Thr kinase activated by RAC/CDC42 to coordinate actin assembly and cup closure",
+                "PUBMED_ID": "11029040",
+                "ensembl_id": "ENSG00000149269"
+            },
+            {
+                "name": "PLCG1",
+                "Definition": "PLCgamma1 produces DAG/IP3 to activate PKC and calcium signaling for ruffling/closure",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000124181"
+            },
+            {
+                "name": "MET",
+                "Definition": "HGF receptor RTK that triggers ruffling and fluid-phase uptake",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000105976"
+            },
+            {
+                "name": "EGFR",
+                "Definition": "curvature sensing, membrane tubulation, recycling",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000146648"
+            },
+            {
+                "name": "CSF1R",
+                "Definition": "RTK for CSF1 that activates PI3K to RAC/PAK signaling to induce ruffling",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000182578"
+            },
+            {
+                "name": "MRC1",
+                "Definition": "Mannose receptor that can trigger processive macropinocytosis",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000260314"
+            },
+            {
+                "name": "CD14",
+                "Definition": "Pattern-recognition co-receptor that can trigger processive macropinocytosis",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000170458"
+            },
+            {
+                "name": "CSF1",
+                "Definition": "Ligand that primes macrophages and can stimulate macropinocytosis via RTK signaling",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000184371"
+            },
+            {
+                "name": "HGF",
+                "Definition": "RTK ligand activating MET to stimulate ruffling and fluid uptake",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000019991"
+            },
+            {
+                "name": "EGF",
+                "Definition": "RTK ligand driving growth-factortoinduced (recycling) macropinocytosis",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000138798"
+            },
+            {
+                "name": "NGF",
+                "Definition": "RTK ligand that induces recycling macropinocytosis via Trk signaling",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000134259"
+            },
+            {
+                "name": "ITGA5",
+                "Definition": "Integrin alpha5 subunit that can trigger processive macropinocytosis",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000161638"
+            },
+            {
+                "name": "ITGB1",
+                "Definition": "Integrin beta1 subunit mediating adhesion cues that drive macropinocytic cups",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000150093"
+            },
+            {
+                "name": "ITGB2",
+                "Definition": "Integrin beta2 subunit contributing to processive macropinocytosis",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000160255"
+            },
+            {
+                "name": "ITGB3",
+                "Definition": "Integrin beta3 subunit linked to macropinocytic signaling",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000259207"
+            },
+            {
+                "name": "ITGB4",
+                "Definition": "Integrin beta4 subunit associated with macropinocytosis triggers",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000132470"
+            },
+            {
+                "name": "ITGB5",
+                "Definition": "Integrin beta5 subunit that can promote ruffle formation",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000082781"
+            },
+            {
+                "name": "ITGB6",
+                "Definition": "Integrin beta6 subunit implicated in processive macropinocytosis",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000115221"
+            },
+            {
+                "name": "ITGB7",
+                "Definition": "Integrin beta7 subunit contributing to macropinocytosis signaling",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000139626"
+            },
+            {
+                "name": "ITGB8",
+                "Definition": "Integrin beta8 subunit contributing to macropinocytic responses",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000105855"
+            },
+            {
+                "name": "PIK3R2",
+                "Definition": "Regulatory subunit of parent I PI3K - PIP3 signaling commonly required for cup formation/closure",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000105647"
+            },
+            {
+                "name": "PIK3R3",
+                "Definition": "Regulatory subunit of parent I PI3K - PIP3 signaling commonly required for cup formation/closure",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000117461"
+            },
+            {
+                "name": "RAB5A",
+                "Definition": "vital for regulating the early stages of endocytosis and endosome fusion in eukaryotic cells",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000144566"
+            },
+            {
+                "name": "PRKCZ",
+                "Definition": "aPKC/Par polarity axis facilitating dynein dependent macropinocytosis",
+                "PUBMED_ID": "39627191",
+                "ensembl_id": "ENSG00000067606"
+            },
+            {
+                "name": "PRKCI",
+                "Definition": "aPKC/Par polarity axis facilitating dynein dependent macropinocytosis",
+                "PUBMED_ID": "39627191",
+                "ensembl_id": "ENSG00000163558"
+            },
+            {
+                "name": "ARF6",
+                "Definition": "PSD4 (EFA6B) and SDC1 axis in KRAS models",
+                "PUBMED_ID": "30969891",
+                "ensembl_id": "ENSG00000165527"
+            },
+            {
+                "name": "VASP",
+                "Definition": "is an actin polymerase, which interacts with Scar/WAVE, also localizes to the cup edges",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000125753"
+            },
+            {
+                "name": "ABI1",
+                "Definition": "Abl/Scar/WAVE complex adaptor coordinating actin remodeling during ruffle formation",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000136754"
+            },
+            {
+                "name": "ACTN4",
+                "Definition": "Actin crosslinker stabilizing cortical actin in ruffles and cups",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000130402"
+            },
+            {
+                "name": "ANKFY1",
+                "Definition": "FYVE-domain protein linking endosomal PI3P membranes to trafficking of macropinosomes",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000185722"
+            },
+            {
+                "name": "ERAS",
+                "Definition": "RAS-family GTPase promoting PI3K signaling linked to macropinocytosis",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000187682"
+            },
+            {
+                "name": "HRAS",
+                "Definition": "RAS GTPase that activates PI3K and actin effectors to form ruffles",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000174775"
+            },
+            {
+                "name": "KRAS",
+                "Definition": "RAS GTPase strongly linked to PI3K-driven macropinocytosis",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000133703"
+            },
+            {
+                "name": "MRAS",
+                "Definition": "RAS-family GTPase contributing to RTK to PI3K signaling",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000158186"
+            },
+            {
+                "name": "NRAS",
+                "Definition": "RAS-family GTPase activating PI3K and actin modulators",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000213281"
+            },
+            
+            {
+                "name": "PIK3C2A",
+                "Definition": "parent II PI3K producing phosphoinositides for membrane remodeling",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000011405"
+            },
+            {
+                "name": "PIK3C2B",
+                "Definition": "parent II PI3K supporting ruffle/cup membrane dynamics",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000133056"
+            },
+            {
+                "name": "PIK3C2G",
+                "Definition": "parent II PI3K isoform shaping phosphoinositide pools in macropinosomes",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000139144"
+            },
+            {
+                "name": "PIK3C3",
+                "Definition": "parent III PI3K (Vps34) generating PI3P on macropinosomes",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000078142"
+            },
+            {
+                "name": "PIK3CG",
+                "Definition": "parent I PI3K catalytic gamma subunit contributing to ruffle formation",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000105851"
+            },
+            {
+                "name": "PIK3R4",
+                "Definition": "Regulatory subunit for parent III PI3K complex",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000196455"
+            },
+            {
+                "name": "PIK3R5",
+                "Definition": "Regulatory subunit (p101) for PI3Kgamma complex",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000141506"
+            },
+            {
+                "name": "PIK3R6",
+                "Definition": "Regulatory subunit (p87) for PI3Kgamma complex",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000276231"
+            },
+            {
+                "name": "PLCG2",
+                "Definition": "Hematopoietic PLCgamma isoform contributing to macropinocytic signaling",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000197943"
+            },
+            {
+                "name": "PRKCA",
+                "Definition": "PKCalpha isoform regulating membrane and actin dynamics",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000154229"
+            },
+            {
+                "name": "PRKCB",
+                "Definition": "PKCbeta isoform promoting closure and membrane remodeling",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000166501"
+            },
+            {
+                "name": "PRKCD",
+                "Definition": "PKCdelta isoform modulating macropinocytic signaling",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000163932"
+            },
+            {
+                "name": "PRKCE",
+                "Definition": "PKCepsilon isoform supporting ruffle dynamics",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000171132"
+            },
+            {
+                "name": "PRKCG",
+                "Definition": "PKCgamma isoform with supportive roles in signaling",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000126583"
+            },
+            {
+                "name": "PRKCH",
+                "Definition": "PKCeta isoform modulating ruffle/cup formation",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000027075"
+            },
+            {
+                "name": "PRKCQ",
+                "Definition": "PKCtheta isoform regulating cytoskeletal responses",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000065675"
+            },
+            {
+                "name": "PRKD1",
+                "Definition": "PKD1 acting downstream of DAG/PKC in membrane trafficking",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000184304"
+            },
+            {
+                "name": "PRKD3",
+                "Definition": "PKD3 supporting macropinosome maturation/traffic",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000115825"
+            },
+            {
+                "name": "RAB34",
+                "Definition": "Rab GTPase implicated in ruffle dynamics and macropinosome movement",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000109113"
+            },
+            {
+                "name": "RALA",
+                "Definition": "Ral GTPase regulating membrane trafficking of macropinosomes",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000006451"
+            },
+            {
+                "name": "RALB",
+                "Definition": "Ral GTPase with roles in macropinosome formation/traffic",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000144118"
+            },
+            {
+                "name": "RAP1A",
+                "Definition": "Rap GTPase modulating integrin/actin signaling in ruffles",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000116473"
+            },
+            {
+                "name": "RAP1B",
+                "Definition": "Rap GTPase paralog with overlapping functions",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000127314"
+            },
+            {
+                "name": "RAP2A",
+                "Definition": "Rap2 GTPase regulating membrane remodeling",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000125249"
+            },
+            {
+                "name": "RAP2B",
+                "Definition": "Rap2 GTPase paralog contributing to ruffle dynamics",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000181467"
+            },
+            {
+                "name": "RASD1",
+                "Definition": "RAS-related GTPase linked to macropinocytic signaling",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000108551"
+            },
+            {
+                "name": "RASD2",
+                "Definition": "RASD-family GTPase with supportive signaling roles",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000100302"
+            },
+            {
+                "name": "RHOA",
+                "Definition": "Rho GTPase regulating actomyosin contractility for cup closure",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000067560"
+            },
+            {
+                "name": "RRAS",
+                "Definition": "RAS-family GTPase supporting integrin/PI3K signaling",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000126458"
+            },
+            {
+                "name": "RRAS2",
+                "Definition": "RRAS paralog participating in macropinocytosis signaling",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000133818"
+            },
+            {
+                "name": "SRC",
+                "Definition": "Src-family kinase activity that licenses macropinocytic ruffling",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000197122"
+            },
+            {
+                "name": "USP6NL",
+                "Definition": "TBC/RabGAP-like protein regulating endocytic membrane dynamics",
+                "PUBMED_ID": "19192253",
+                "ensembl_id": "ENSG00000148429"
+            },
+            {
+                "name": "TPCN1",
+                "Definition": "macropinosome shrinkage",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000186815"
+            },
+            {
+                "name": "TPCN2",
+                "Definition": "macropinosome shrinkage",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000162341"
+            },
+            {
+                "name": "PACC1",
+                "Definition": "macropinosome shrinkage",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000065600"
+            },
+            {
+                "name": "SNX1",
+                "Definition": "curvature sensing, membrane tubulation, recycling",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000028528"
+            },
+            {
+                "name": "SNX2",
+                "Definition": "curvature sensing, membrane tubulation, recycling",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000205302"
+            },
+            {
+                "name": "SNX4",
+                "Definition": "curvature sensing, membrane tubulation, recycling",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000114520"
+            },
+            {
+                "name": "AMPH",
+                "Definition": "curvature sensing, membrane tubulation, recycling",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000078053"
+            },
+            {
+                "name": "ARHGAP17",
+                "Definition": "curvature sensing, membrane tubulation, recycling",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000140750"
+            },
+            {
+                "name": "ARHGAP44",
+                "Definition": "curvature sensing, membrane tubulation, recycling",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000006740"
+            },
+            {
+                "name": "BIN1",
+                "Definition": "curvature sensing, membrane tubulation, recycling",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000136717"
+            },
+            {
+                "name": "BIN2",
+                "Definition": "curvature sensing, membrane tubulation, recycling",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000110934"
+            },
+            {
+                "name": "BIN3",
+                "Definition": "curvature sensing, membrane tubulation, recycling",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000147439"
+            },
+            {
+                "name": "SH3BP1",
+                "Definition": "curvature sensing, membrane tubulation, recycling",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000100092"
+            },
+            {
+                "name": "SH3GL1",
+                "Definition": "curvature sensing, membrane tubulation, recycling",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000141985"
+            },
+            {
+                "name": "SH3GL2",
+                "Definition": "curvature sensing, membrane tubulation, recycling",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000107295"
+            },
+            {
+                "name": "SH3GL3",
+                "Definition": "curvature sensing, membrane tubulation, recycling",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000140600"
+            },
+            {
+                "name": "SH3GLB1",
+                "Definition": "curvature sensing, membrane tubulation, recycling",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000097033"
+            },
+            {
+                "name": "SH3GLB2",
+                "Definition": "curvature sensing, membrane tubulation, recycling",
+                "PUBMED_ID": "40532442",
+                "ensembl_id": "ENSG00000148341"
+            }
+        ],
+        "inhibitors": [
+            {
+                "name": "Imipramine",
+                "Definition": "Drug (tricyclic antidepressant), dose:IC50 almost equal to 131 nM",
+                "PUBMED_ID": "29981238",
+                "CHEBI": "CHEBI:47499"
+            },
+            {
+                "name": "Phenoxybenzamine",
+                "Definition": "Drug (alpha-adrenergic antagonist), dose:IC50 almost equal to 44 nM",
+                "PUBMED_ID": "29981238",
+                "CHEBI": "CHEBI:8077"
+            },
+            {
+                "name": "Vinblastine",
+                "Definition": "Drug (microtubule formation inhibitor; anticancer agent), dose:IC50 almost equal to 2.2 pM",
+                "PUBMED_ID": "29981238",
+                "CHEBI": "CHEBI:27375"
+            },
+            {
+                "name": "Auranofin",
+                "Definition": "Drug (anti-rheumatoid arthritis agent), dose:IC50 almost equal to 733 nM",
+                "PUBMED_ID": "29981238",
+                "CHEBI": "CHEBI:2922"
+            },
+            {
+                "name": "Itraconazole",
+                "Definition": "Drug (antifungal medicine), dose:IC50 almost equal to 106 nM",
+                "PUBMED_ID": "29981238",
+                "CHEBI": "CHEBI:6076"
+            },
+            {
+                "name": "Flubendazole",
+                "Definition": "Drug (anthelmintic), dose:IC50 almost equal to 240 nM",
+                "PUBMED_ID": "29981238",
+                "CHEBI": "CHEBI:77095"
+            },
+            {
+                "name": "Terfenadine",
+                "Definition": "Drug (antihistamine), dose:IC50 almost equal to 301 nM",
+                "PUBMED_ID": "29981238",
+                "CHEBI": "CHEBI:9453"
+            },
+            {
+                "name": "Cytochalasin D",
+                "Definition": "Chemical (fungal metabolite, actin polymerization inhibitor), dose:Typically 0.1–10 µM in cell-based assays",
+                "PUBMED_ID": "23791479",
+                "CHEBI": "CHEBI:529996"
+            }
+        ]
+    },
+    {
+        "GO_identifier": "GO:0072583",
+        "mechanism_name": "Clathrin-dependent endocytosis (CME)",
+        "definition":"Is a highly coordinated cellular uptake pathway that involves the assembly of clathrin triskelia at the plasma membrane to form coated pits, which subsequently internalize nutrients, receptor-ligand complexes, and other molecules into the cell as clathrin-coated vesicles",
+        "associated_genes": [
+            {
+                "name": "FCHO1",
+                "Definition": "pit initiation/curvature priming",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000130475"
+            },
+            {
+                "name": "FCHO2",
+                "Definition": "pit initiation/curvature priming",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000157107"
+            },
+            {
+                "name": "EPS15",
+                "Definition": "Scaffold protein involved in early endocytic site formation and cargo recognition.",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000085832"
+            },
+            {
+                "name": "ITSN1",
+                "Definition": "Multidomain scaffolding protein regulating actin and vesicle trafficking proteins.",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000205726"
+            },
+                        {
+                "name": "PIP5K1C",
+                "Definition": "phosphatidylinositol-4-phosphate 5-kinase type 1 gamma",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000186111"
+            },
+            {
+                "name": "AP2A1",
+                "Definition": "adaptor complex required for cargo engagement",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000196961"
+            },
+            {
+                "name": "AP2A2",
+                "Definition": "adaptor complex subunit",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000183020"
+            },
+            {
+                "name": "AP2B1",
+                "Definition": "adaptor complex subunit",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000006125"
+            },
+            {
+                "name": "CLTA",
+                "Definition": "Forms the coat around endocytic vesicles and is essential for membrane curvature and cargo encapsulation.",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000122705"
+            },
+            {
+                "name": "CLTB",
+                "Definition": "Forms the coat around endocytic vesicles and is essential for membrane curvature and cargo encapsulation.",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000175416"
+            },
+            {
+                "name": "CLTC",
+                "Definition": "coat that shapes pits/vesicles; essential for curvature and coat",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000141367"
+            },
+            {
+                "name": "DNM2",
+                "Definition": "GTPase required for vesicle fission",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000079805"
+            },
+            {
+                "name": "TFRC",
+                "Definition": "Transferrin canonical receptor CME ligand/cargo",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000072274"
+            },
+            {
+                "name": "F2R",
+                "Definition": "PAR1 GPCR cargo internalized through CME",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000181104"
+            },
+            {
+                "name": "PIP",
+                "Definition": "Prolactin-induced protein cargo/context in CME lists",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000159763"
+            },
+            {
+                "name": "IGF1",
+                "Definition": "Ligand for IGF1R drives receptor internalization",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000017427"
+            },
+            {
+                "name": "EGF",
+                "Definition": "Ligand stimulates RTK internalization via CME",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000138798"
+            },
+            {
+                "name": "ARRB1",
+                "Definition": "beta-arrestin 1 adaptor for GPCR cargo and CCP maturation",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000137486"
+            },
+            {
+                "name": "ARRB2",
+                "Definition": "beta-arrestin 2 paralog; GPCR cargo adaptor",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000141480"
+            },
+            
+            {
+                "name": "CLTCL1",
+                "Definition": "Clathrin heavy chain-like 1 (CHC22) associated with endocytic trafficking",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000070371"
+            },
+            {
+                "name": "AP2M1",
+                "Definition": "adaptor complex subunit",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000161203"
+            },
+            {
+                "name": "AP2S1",
+                "Definition": "adaptor complex subunit",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000042753"
+            },
+            {
+                "name": "AP3B1",
+                "Definition": "AP-3 beta1 subunit endosome/lysosome trafficking for CME cargo",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000132842"
+            },
+            {
+                "name": "SNX9",
+                "Definition": "sorting nexin 9",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000130340"
+            },
+            {
+                "name": "PICALM",
+                "Definition": "CALM: Adaptor protein that interacts with AP2 and is involved in cargo sorting and linked to Alzheimer's disease risk.",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000073921"
+            },
+            {
+                "name": "SNAP91",
+                "Definition": "synaptosome associated protein 91 ",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000065609"
+            },
+            {
+                "name": "AMPH",
+                "Definition": "amphiphysin: BAR domain protein that cooperates with dynamin in vesicle scission.",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000078053"
+            },
+            {
+                "name": "MET",
+                "Definition": "MET proto-oncogene, receptor tyrosine kinase",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000105976"
+            },
+            {
+                "name": "ITGA5",
+                "Definition": "integrin subunit alpha 5",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000161638"
+            },
+            {
+                "name": "HIP1",
+                "Definition": "huntingtin interacting protein 1",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000127946"
+            },
+            {
+                "name": "HIP1R",
+                "Definition": "Links clathrin to the actin cytoskeleton, facilitating endocytic site stability.",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000130787"
+            },
+            {
+                "name": "EPHB2",
+                "Definition": "Receptor tyrosine kinase internalized via CME",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000133216"
+            },
+            {
+                "name": "DNM1",
+                "Definition": "GTPase responsible for vesicle neck constriction and scission; the xA splice variant is crucial for ultrafast endocytosis.",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000106976"
+            },
+            {
+                "name": "AAK1",
+                "Definition": "AP2 associated kinase 1",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000115977"
+            },
+            {
+                "name": "ACTB",
+                "Definition": "Actin Beta",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000075624"
+            },
+            {
+                "name": "ACTA1",
+                "Definition": "Skeletal actin contributing to CME-associated actin networks",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000143632"
+            },
+            {
+                "name": "ACTA2",
+                "Definition": "Smooth-muscle actin variant incorporated in cortical networks",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000107796"
+            },
+            {
+                "name": "ACTC1",
+                "Definition": "Cardiac actin isoform listed for actin network composition",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000159251"
+            },
+            {
+                "name": "ACTG2",
+                "Definition": "Smooth-muscle gamma-actin variant present in CME actin structures",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000163017"
+            },
+            {
+                "name": "ALB",
+                "Definition": "Albumin cargo/context protein internalized via receptor pathways linked to CME",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000163631"
+            },
+            {
+                "name": "AP1G2",
+                "Definition": "AP-1 gamma2 subunit post-endocytic/sorting adaptor complex component",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000213983"
+            },
+            {
+                "name": "ACTR2",
+                "Definition": "ARP2: branched actin for pit maturation",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000138071"
+            },
+            {
+                "name": "ACTR3",
+                "Definition": "ARP3: branched actin for pit maturation",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000115091"
+            },
+            {
+                "name": "AP1B1",
+                "Definition": "AP-1 micro1 subunit for endosomal/TGN sorting after CME",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000100280"
+            },
+            {
+                "name": "AP1G1",
+                "Definition": "AP-1 micro1 subunit for endosomal/TGN sorting after CME",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000166747"
+            },
+            {
+                "name": "AP1M1",
+                "Definition": "AP-1 micro1 subunit for endosomal/TGN sorting after CME",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000072958"
+            },
+            {
+                "name": "AP1M2",
+                "Definition": "AP-1 micro2 subunit in post-endocytic sorting",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000129354"
+            },
+            {
+                "name": "AP1S1",
+                "Definition": "AP-1 sigma1 subunit in endosomal sorting",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000106367"
+            },
+            {
+                "name": "AP1S2",
+                "Definition": "AP-1 sigma2 subunit in endosomal sorting",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000182287"
+            },
+            {
+                "name": "AP1S3",
+                "Definition": "AP-1 sigma3 subunit in endosomal sorting",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000152056"
+            },
+            {
+                "name": "AP3B2",
+                "Definition": "AP-3 beta2 subunit endosome/lysosome trafficking for CME cargo",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000103723"
+            },
+            {
+                "name": "AP3D1",
+                "Definition": "AP-3 delta subunit sorting to late endosome/lysosome compartments",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000065000"
+            },
+            {
+                "name": "AP3M1",
+                "Definition": "AP-3 micro1 subunit endosomal sorting",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000185009"
+            },
+            {
+                "name": "AP3M2",
+                "Definition": "AP-3 micro2 subunit endosomal sorting",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000070718"
+            },
+            {
+                "name": "AP3S1",
+                "Definition": "AP-3 sigma1 subunit endosomal sorting",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000177879"
+            },
+            {
+                "name": "AP3S2",
+                "Definition": "AP-3 sigma2 subunit endosomal sorting",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000157823"
+            },
+            {
+                "name": "AP4B1",
+                "Definition": "AP-4 beta subunit post-Golgi/endosomal routes for CME cargo",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000134262"
+            },
+            {
+                "name": "AP4E1",
+                "Definition": "AP-4 E subunit post-Golgi/endosomal routes for CME cargo",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000081014"
+            },
+            {
+                "name": "AP4M1",
+                "Definition": "AP-4 micro subunit cargo sorting beyond early endosomes",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000221838"
+            },
+            {
+                "name": "AP4S1",
+                "Definition": "AP-4 sigma subunit post-endocytic sorting",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000100478"
+            },
+            {
+                "name": "AP5B1",
+                "Definition": "AP-5 beta subunit late endosome/lysosome sorting network",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000254470"
+            },
+            {
+                "name": "AP5M1",
+                "Definition": "AP-5 micro subunit late endosomal trafficking",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000053770"
+            },
+            {
+                "name": "AP5S1",
+                "Definition": "AP-5 sigma subunit late endosomal trafficking",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000125843"
+            },
+            {
+                "name": "AP5Z1",
+                "Definition": "AP-5 zeta subunit late endosomal trafficking",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000242802"
+            },
+            {
+                "name": "APOA1",
+                "Definition": "Apolipoprotein ligand/cargo A1 context for receptor-mediated CME",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000118137"
+            },
+            {
+                "name": "APOA2",
+                "Definition": "Apolipoprotein ligand/cargo context for receptor-mediated CME",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000158874"
+            },
+            {
+                "name": "APOA4",
+                "Definition": "Apolipoprotein A-IV cargo context for lipoprotein receptor uptake",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000110244"
+            },
+            {
+                "name": "APOB",
+                "Definition": "Apolipoprotein B cargo context",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000084674"
+            },
+            {
+                "name": "APOE",
+                "Definition": "Apolipoprotein E cargo context",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000130203"
+            },
+            {
+                "name": "APOC1",
+                "Definition": "Apolipoprotein cargo context in lipoprotein internalization",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000130208"
+            },
+            {
+                "name": "APOC2",
+                "Definition": "Apolipoprotein cargo context in CME of lipoproteins",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000234906"
+            },
+            {
+                "name": "APOC3",
+                "Definition": "Apolipoprotein cargo context",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000110245"
+            },
+            {
+                "name": "APOC4",
+                "Definition": "Apolipoprotein cargo context",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000267467"
+            },
+            {
+                "name": "APOD",
+                "Definition": "Apolipoprotein D cargo context",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000189058"
+            },
+            {
+                "name": "APOF",
+                "Definition": "Apolipoprotein F cargo context",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000175336"
+            },
+            {
+                "name": "APOL1",
+                "Definition": "Apolipoprotein L1 cargo context",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000100342"
+            },
+            {
+                "name": "APOM",
+                "Definition": "Apolipoprotein M cargo context",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000204444"
+            },
+            {
+                "name": "ARF6",
+                "Definition": "ADP ribosylation factor 6",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000165527"
+            },
+            {
+                "name": "ARPC1A",
+                "Definition": "actin related protein 2/3 complex subunit 1A ",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000241685"
+            },
+            {
+                "name": "ARPC1B",
+                "Definition": "actin related protein 2/3 complex subunit 1B",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000130429"
+            },
+            {
+                "name": "ARPC2",
+                "Definition": "actin related protein 2/3 complex subunit 2",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000163466"
+            },
+            {
+                "name": "ARPC3",
+                "Definition": "actin related protein 2/3 complex subunit 3",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000111229"
+            },
+            {
+                "name": "ARPC4",
+                "Definition": "actin related protein 2/3 complex subunit 4",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000241553"
+            },
+            {
+                "name": "ARPC5",
+                "Definition": "actin related protein 2/3 complex subunit 5",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000162704"
+            },
+            {
+                "name": "ARPC5L",
+                "Definition": "ARPC5-like subunit supporting ARP2/3 branching at CCPs",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000136950"
+            },
+            {
+                "name": "CBL",
+                "Definition": "E3 ligase tuning receptor/kinase signaling thresholds in CME",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000110395"
+            },
+            {
+                "name": "CD2AP",
+                "Definition": "Adaptor linking membrane/cargo to actin at CCPs",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000198087"
+            },
+            {
+                "name": "CDC42",
+                "Definition": "Rho GTPase coordinating actin assembly at late CCPs",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000070831"
+            },
+            {
+                "name": "CHP1",
+                "Definition": "EF-hand protein modulating calcineurin/ion signaling during endocytosis",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000187446"
+            },
+            {
+                "name": "CLU",
+                "Definition": "Clusterin cargo/context protein associated with receptor uptake",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000120885"
+            },
+            {
+                "name": "CSNK2A1",
+                "Definition": "Casein kinase 2 catalytic alpha1 subunit phosphoregulation of endocytic proteins",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000101266"
+            },
+            {
+                "name": "CSNK2A2",
+                "Definition": "CK2 catalytic alpha2 phosphorylation control in CME network",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000070770"
+            },
+            {
+                "name": "CSNK2A3",
+                "Definition": "CK2 alpha3 listed kinase impacting CME protein phosphorylation",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000254598"
+            },
+            {
+                "name": "CSNK2B",
+                "Definition": "CK2 regulatory beta subunit modulates CK2 activity in CME",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000263020"
+            },
+            {
+                "name": "CTTN",
+                "Definition": "Cortactin",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000085733"
+            },
+            {
+                "name": "DAB2",
+                "Definition": "Dynamin-related protein 1 mitochondrial/vesicular dynamics; listed in CME context",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000153071"
+            },
+            {
+                "name": "DNM1L",
+                "Definition": "Dynamin-related protein 1 mitochondrial/vesicular dynamics; listed in CME context",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000087470"
+            },
+            {
+                "name": "DNM3",
+                "Definition": "GTPase required for vesicle fission",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000197959"
+            },
+            {
+                "name": "EPN1",
+                "Definition": "epsin: adaptor; curvature",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000063245"
+            },
+            {
+                "name": "F2",
+                "Definition": "Thrombin ligand context for receptor internalization",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000180210"
+            },
+            {
+                "name": "GAK",
+                "Definition": "cyclin G associated kinase",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000178950"
+            },
+            {
+                "name": "GRB2",
+                "Definition": "Adaptor linking RTKs to endocytic scaffolds",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000177885"
+            },
+            {
+                "name": "HGS",
+                "Definition": "ESCRT-0 component sorting ubiquitinated cargo post-CME",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000185359"
+            },
+            {
+                "name": "HSPA8",
+                "Definition": "heat shock protein family A (Hsp70) member 8",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000109971"
+            },
+            {
+                "name": "LDLR",
+                "Definition": "low density lipoprotein receptor ",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000130164"
+            },
+            {
+                "name": "LDLRAP1",
+                "Definition": "low density lipoprotein receptor adaptor protein 1",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000157978"
+            },
+            {
+                "name": "LPA",
+                "Definition": "Lipoprotein(a) cargo context for receptor-mediated uptake",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000198670"
+            },
+            {
+                "name": "LYZ",
+                "Definition": "Lysozyme secreted cargo context in CME lists",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000090382"
+            },
+            {
+                "name": "MDM2",
+                "Definition": "E3 ligase intersecting with receptor signaling/trafficking",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000135679"
+            },
+            {
+                "name": "MYO1E",
+                "Definition": "Myosin-I motor assisting membrane/actin coupling at CCPs",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000157483"
+            },
+            {
+                "name": "MYO6",
+                "Definition": "Myosin-VI motor assisting membrane/actin coupling at CCPs",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000196586"
+            },
+            {
+                "name": "NUMB",
+                "Definition": "NUMB endocytic adaptor protein",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000133961"
+            },
+            {
+                "name": "ORM1",
+                "Definition": "Orosomucoid 1 cargo/context protein",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000229314"
+            },
+            {
+                "name": "ORM2",
+                "Definition": "Orosomucoid 2 cargo/context protein",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000228278"
+            },
+            {
+                "name": "PCYOX1",
+                "Definition": "Prenylcysteine oxidase lipid/cargo context listed for CME",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000116005"
+            },
+            {
+                "name": "PIK3C2A",
+                "Definition": "phosphatidylinositol-4-phosphate 3-kinase catalytic subunit type 2 alpha",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000011405"
+            },
+            {
+                "name": "PIK3C2B",
+                "Definition": "phosphatidylinositol-4-phosphate 3-kinase catalytic subunit type 2 beta",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000133056"
+            },
+            {
+                "name": "PIK3C2G",
+                "Definition": "phosphatidylinositol-4-phosphate 3-kinase catalytic subunit type 2 gamma",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000139144"
+            },
+            {
+                "name": "PIK3C3",
+                "Definition": "phosphatidylinositol-4-phosphate 3-kinase catalytic subunit type 3",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000078142"
+            },
+            {
+                "name": "PIK3CA",
+                "Definition": "phosphatidylinositol-4,5-bisphosphate 3-kinase catalytic subunit alpha",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000121879"
+            },
+            {
+                "name": "PIK3CB",
+                "Definition": "phosphatidylinositol-4,5-bisphosphate 3-kinase catalytic subunit beta",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000051382"
+            },
+            {
+                "name": "PIK3CD",
+                "Definition": "phosphatidylinositol-4,5-bisphosphate 3-kinase catalytic subunit delta",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000171608"
+            },
+            {
+                "name": "PIK3CG",
+                "Definition": "phosphatidylinositol-4,5-bisphosphate 3-kinase catalytic subunit gamma",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000105851"
+            },
+            {
+                "name": "PIK3R1",
+                "Definition": "phosphoinositide-3-kinase regulatory subunit 1",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000145675"
+            },
+            {
+                "name": "PIK3R2",
+                "Definition": "phosphoinositide-3-kinase regulatory subunit 2",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000105647"
+            },
+            {
+                "name": "PIK3R3",
+                "Definition": "phosphoinositide-3-kinase regulatory subunit 3",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000117461"
+            },
+            {
+                "name": "PIK3R4",
+                "Definition": "phosphoinositide-3-kinase regulatory subunit 4",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000196455"
+            },
+            {
+                "name": "PIK3R5",
+                "Definition": "phosphoinositide-3-kinase regulatory subunit 5",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000141506"
+            },
+            {
+                "name": "PIK3R6",
+                "Definition": "phosphoinositide-3-kinase regulatory subunit 6",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000276231"
+            },
+            {
+                "name": "PON1",
+                "Definition": "Paraoxonase lipoprotein-associated cargo context",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000005421"
+            },
+            {
+                "name": "PPP3CA",
+                "Definition": "Calcineurin catalytic alpha Ca2+/calcineurin signaling affecting endocytosis",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000138814"
+            },
+            {
+                "name": "PPP3CB",
+                "Definition": "Calcineurin catalytic beta regulates dephosphorylation of endocytic targets",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000107758"
+            },
+            {
+                "name": "PPP3CC",
+                "Definition": "Calcineurin catalytic gamma listed regulator of CME",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000120910"
+            },
+            {
+                "name": "PPP3R1",
+                "Definition": "Calcineurin B (regulatory) alpha modulates calcineurin complex",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000221823"
+            },
+            {
+                "name": "PPP3R2",
+                "Definition": "Calcineurin B (regulatory) beta modulates calcineurin complex",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000188386"
+            },
+            {
+                "name": "RAB7A",
+                "Definition": "Rab GTPase controlling late endocytic traffic after CME",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000075785"
+            },
+            {
+                "name": "RAC1",
+                "Definition": "Rac family small GTPase 1",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000136238"
+            },
+            {
+                "name": "RBP4",
+                "Definition": "Retinol-binding protein cargo/context for receptor uptake",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000138207"
+            },
+            {
+                "name": "RPS27A",
+                "Definition": "Ubiquitintoribosomal fusion protein; ubiquitin supply for sorting",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000143947"
+            },
+            {
+                "name": "S100A8",
+                "Definition": "S100 protein listed inflammatory/cargo context in CME",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000143546"
+            },
+            {
+                "name": "SAA4",
+                "Definition": "Serum amyloid A4 cargo/context protein in the list",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000148965"
+            },
+            {
+                "name": "SERPINA1",
+                "Definition": "serpin family A member 1",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000197249"
+            },
+            {
+                "name": "SH3BP4",
+                "Definition": "SH3 domain binding protein 4",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000130147"
+            },
+            {
+                "name": "SH3GL1",
+                "Definition": "SH3 domain containing GRB2 like 1, endophilin A2",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000141985"
+            },
+            {
+                "name": "SH3GL2",
+                "Definition": "SH3 domain containing GRB2 like 2, endophilin A2",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000107295"
+            },
+            {
+                "name": "SH3GL3",
+                "Definition": "SH3 domain containing GRB2 like 3, endophilin A2",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000140600"
+            },
+            {
+                "name": "SH3GLB1",
+                "Definition": "Endophilin-B1 BAR protein impacting endosomal trafficking post-CME",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000097033"
+            },
+            {
+                "name": "SH3GLB2",
+                "Definition": "Endophilin-B2 paralog in endocytic trafficking",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000148341"
+            },
+            {
+                "name": "SH3KBP1",
+                "Definition": "SH3 domain containing kinase binding protein 1",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000147010"
+            },
+            {
+                "name": "SRC",
+                "Definition": "Stonin 2 cargo adaptor (e.g., synaptotagmin) in CME",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000197122"
+            },
+            {
+                "name": "STAM",
+                "Definition": "ESCRT-0 adaptor in ubiquitinated cargo sorting after CME",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000136738"
+            },
+            {
+                "name": "STON2",
+                "Definition": "Stonin 2 cargo adaptor (e.g., synaptotagmin) in CME",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000140022"
+            },
+            {
+                "name": "SYNJ1",
+                "Definition": "This gene encodes a phosphoinositide phosphatase that regulates levels of membrane phosphatidylinositol-4,5-bisphosphate.",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000159082"
+            },
+            {
+                "name": "TF",
+                "Definition": "Transferrin canonical CME ligand/cargo",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000091513"
+            },
+            {
+                "name": "TSG101",
+                "Definition": "ESCRT-I component for post-CME sorting",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000074319"
+            },
+            {
+                "name": "UBA52",
+                "Definition": "Ubiquitintoribosomal fusion protein; ubiquitin source for endocytic sorting",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000221983"
+            },
+            {
+                "name": "UBB",
+                "Definition": "Polyubiquitin B ubiquitin pool for trafficking/sorting",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000170315"
+            },
+            {
+                "name": "UBC",
+                "Definition": "Polyubiquitin C ubiquitin pool for trafficking/sorting",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000150991"
+            },
+            {
+                "name": "UBD",
+                "Definition": "Ubiquitin D ubiquitin-like modifier in sorting pathways",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000213886"
+            },
+            {
+                "name": "USP9X",
+                "Definition": "Deubiquitinase regulating endocytic cargo fate",
+                "PUBMED_ID": "29410531",
+                "ensembl_id": "ENSG00000124486"
+            },
+            {
+                "name": "WASL",
+                "Definition": "N-WASP: actin nucleation with ARP2/3",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000106299"
+            },
+            
+            {
+                "name": "PACSIN1",
+                "Definition": "Syndapin I: F-BAR domain protein that helps stabilize membrane curvature and recruits dynamin.",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000124507"
+            },
+            {
+                "name": "PACSIN2",
+                "Definition": "Syndapin II:BAR-domain scaffold",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000100266"
+            },
+            {
+                "name": "BIN1",
+                "Definition": "(Amphiphysin 2) Although not essential for ultrafast CME, it's involved in endosomal budding and APP trafficking, and linked to Alzheimer's.",
+                "PUBMED_ID": "40062769",
+                "ensembl_id": "ENSG00000136717"
+            }
+        ],
+        "inhibitors": [
+        {
+            "name": "Ikarugamycin",
+            "Definition": "Natural product (antibiotic from Streptomyces phaeochromogenes), dose: IC50 almost equal to 2.7 µM (in H1299 cells)",
+            "PUBMED_ID": "22411311",
+            "CHEBI": "CHEBI:75276"
+        },
+        {
+            "name": "Dynasore",
+            "Definition": "Small molecule inhibitor of dynamin GTPase, dose: IC50 almost equal to 15 µM for dynamin 1",
+            "PUBMED_ID": "22411311",
+            "CHEBI": "CHEBI:132754"
+        },
+        {
+            "name": "Dyngo 4a",
+            "Definition": "Improved dynamin inhibitor (derivative of Dynasore), dose: Sub-micromolar to micromolar (varies by cell type)",
+            "PUBMED_ID": "22411311",
+            "CHEBI": "CHEBI:194550"
+        },
+        {
+            "name": "Chlorpromazine",
+            "Definition": "Antipsychotic (phenothiazine parent); inhibits clathrin coat assembly, dose: Varies; typically used at 10-20 µM",
+            "PUBMED_ID": "22411311",
+            "CHEBI": "CHEBI:3647"
+        },
+        {
+            "name": "Monodansylcadaverine (MDC)",
+            "Definition": "Small molecule; inhibits transglutaminase-dependent steps of CME, dose: Typically 100 µM",
+            "PUBMED_ID": "22411311",
+            "CHEBI": "CHEBI:52007"
+        },
+        {
+            "name": "Phenylarsine oxide (PAO)",
+            "Definition": "Arsenical compound; disrupts receptor clustering, dose: Low micromolar (varies by cell type)",
+            "PUBMED_ID": "22411311",
+            "CHEBI": "CHEBI:75253"
+        }
+    ]
+    },
+    {
+        "GO_identifier": "GO:0072584",
+        "mechanism_name": "Caveolin-mediated endocytosis",
+        "definition":"Caveolae-mediated endocytosis is an ATP-dependent cellular internalization process where 60–70 nm plasma membrane invaginations called caveolae facilitate the transport of exogenous molecules into cells",
+        "associated_genes": [
+            {
+                "name": "CAV1",
+                "Definition": "Core structural protein required for the formation of caveolae; its knockdown or inhibition disrupts internalization of pathogens like Listeria monocytogenes and Brucella spp.",
+                "PUBMED_ID": "39791703",
+                "ensembl_id": "ENSG00000105974"
+            },
+            {
+                "name": "CAV3",
+                "Definition": "Muscle-specific isoform involved in caveolae formation in muscle cells; included as a core structural protein though context-specific.",
+                "PUBMED_ID": "39791703",
+                "ensembl_id": "ENSG00000182533"
+            },
+            {
+                "name": "CAVIN1",
+                "Definition": "Essential for caveolae stability through binding to phospholipids like PtdIns(4,5)P2 and PtdSer; loss leads to disruption of caveolar structure.",
+                "PUBMED_ID": "39791703",
+                "ensembl_id": "ENSG00000177469"
+            },
+            {
+                "name": "DNM2",
+                "Definition": "A GTPase required for the scission of caveolae from the membrane; essential for vesicle formation in caveolin-mediated endocytosis.",
+                "PUBMED_ID": "39791703",
+                "ensembl_id": "ENSG00000079805"
+            },
+            {
+                "name": "ABL1",
+                "Definition": "protein tyrosine kinase. The ubiquitously expressed protein has DNA-binding activity that is regulated by CDC2-mediated phosphorylation, suggesting a cell cycle function.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000097007"
+            },
+            {
+                "name": "ALB",
+                "Definition": "This protein acts as a carrier protein for a wide range of fatty acids.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000163631"
+            },
+            {
+                "name": "CAVIN2",
+                "Definition": "SDPR: stabilizes/curvature of caveolae",
+                "PUBMED_ID": "11967125",
+                "ensembl_id": "ENSG00000168497"
+            },
+            {
+                "name": "CD48",
+                "Definition": "Is held at the cell surface by a GPI anchor via a C-terminal domain which maybe cleaved to yield a soluble form of the receptor.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000117091"
+            },
+            {
+                "name": "EHD2",
+                "Definition": "Stabilizes caveolae neck region and supports membrane curvature; involved in Listeria cell-to-cell spread.",
+                "PUBMED_ID": "39791703",
+                "ensembl_id": "ENSG00000024422"
+            },
+            {
+                "name": "ITGAD",
+                "Definition": "alpha D subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000156886"
+            },
+            {
+                "name": "ITGAE",
+                "Definition": "alpha E subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000083457"
+            },
+            {
+                "name": "ITGAL",
+                "Definition": "alpha L subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000005844"
+            },
+            {
+                "name": "ITGAM",
+                "Definition": "alpha M subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000169896"
+            },
+            {
+                "name": "ITGAV",
+                "Definition": "alpha V subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000138448"
+            },
+            {
+                "name": "ITGAX",
+                "Definition": "alpha X subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000140678"
+            },
+            {
+                "name": "ITGA1",
+                "Definition": "alpha 1 subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000213949"
+            },
+            {
+                "name": "ITGA2",
+                "Definition": "alpha 2 subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000164171"
+            },
+            {
+                "name": "ITGA2B",
+                "Definition": "Integrin alphaIIb platelet integrin included among caveolae-associated integrins",
+                "PUBMED_ID": "22411311",
+                "ensembl_id": "ENSG00000005961"
+            },
+            {
+                "name": "ITGA3",
+                "Definition": "alpha 3 subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000005884"
+            },
+            {
+                "name": "ITGA4",
+                "Definition": "alpha 4 subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000115232"
+            },
+            {
+                "name": "ITGA5",
+                "Definition": "alpha 5 subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000161638"
+            },
+            {
+                "name": "ITGA6",
+                "Definition": "alpha 6 subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000091409"
+            },
+            {
+                "name": "ITGA7",
+                "Definition": "alpha 7 subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000135424"
+            },
+            {
+                "name": "ITGA8",
+                "Definition": "alpha 8 subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000077943"
+            },
+            {
+                "name": "ITGA9",
+                "Definition": "alpha 9 subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000144668"
+            },
+            {
+                "name": "ITGA10",
+                "Definition": "alpha 10 subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000143127"
+            },
+            {
+                "name": "ITGA11",
+                "Definition": "alpha 11 subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000137809"
+            },
+            {
+                "name": "ITGB1",
+                "Definition": "Beta 1 subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000150093"
+            },
+            {
+                "name": "ITGB2",
+                "Definition": "beta 2 subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000160255"
+            },
+            {
+                "name": "ITGB3",
+                "Definition": "beta 3 subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000259207"
+            },
+            {
+                "name": "ITGB4",
+                "Definition": "beta 4 subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000132470"
+            },
+            {
+                "name": "ITGB5",
+                "Definition": "beta 5 subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000082781"
+            },
+            {
+                "name": "ITGB6",
+                "Definition": "beta 6 subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000115221"
+            },
+            {
+                "name": "ITGB7",
+                "Definition": "beta 7 subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000139626"
+            },
+            {
+                "name": "ITGB8",
+                "Definition": "beta 8 subunit of integrin receptors. This protein heterodimerizes with the beta 1 subunit to form a cell-surface receptor for collagen and laminin.",
+                "PUBMED_ID": "20835266",
+                "ensembl_id": "ENSG00000105855"
+            },
+            {
+                "name": "PACSIN1",
+                "Definition": "Syndapin I-Critical for the membrane deformation and caveolae generation; also recruits Dynamin-2 and interacts with EHD proteins.",
+                "PUBMED_ID": "39791703",
+                "ensembl_id": "ENSG00000124507"
+            },
+            {
+                "name": "PACSIN2",
+                "Definition": "Helps stabilize caveolae neck region; overlaps functionally with PACSIN1.",
+                "PUBMED_ID": "39791703",
+                "ensembl_id": "ENSG00000100266"
+            },
+            {
+                "name": "FLNA",
+                "Definition": "Filamin A-Actin cross-linking protein required for recruitment of CAV1 to membrane invaginations during bacterial protrusion engulfment.",
+                "PUBMED_ID": "39791703",
+                "ensembl_id": "ENSG00000196924"
+            },
+            {
+                "name": "DIAPH1",
+                "Definition": "mDia1-Required to recruit Filamin A and facilitate actin polymerization during membrane deformation in caveolin-mediated endocytosis.",
+                "PUBMED_ID": "39791703",
+                "ensembl_id": "ENSG00000131504"
+            },
+            {
+                "name": "EPN1",
+                "Definition": "Epsin-1:Assists in membrane bending and invagination during caveolae formation; contributes to engulfment of bacterial protrusions.",
+                "PUBMED_ID": "39791703",
+                "ensembl_id": "ENSG00000063245"
+            },
+            {
+                "name": "MYLK",
+                "Definition": "MLCK: Myosin light chain kinase involved in junctional protein endocytosis via caveolin-dependent mechanism, important in Listeria entry.",
+                "PUBMED_ID": "39791703",
+                "ensembl_id": "ENSG00000065534"
+            },
+            {
+                "name": "SRC",
+                "Definition": "SRC-family kinases: phosphorylate CAV1 to trigger fission",
+                "PUBMED_ID": "11967125",
+                "ensembl_id": "ENSG00000197122"
+            },
+            {
+                "name": "FYN",
+                "Definition": "SRC-family kinases: phosphorylate CAV1 to trigger fission",
+                "PUBMED_ID": "11967125",
+                "ensembl_id": "ENSG00000010810"
+            },
+            {
+                "name": "ACTA1",
+                "Definition": "Actin alpha isoform contributing to cortical actin anchoring of caveolae",
+                "PUBMED_ID": "22411311",
+                "ensembl_id": "ENSG00000143632"
+            },
+            {
+                "name": "ACTA2",
+                "Definition": "Smooth-muscle actin supporting caveolaetoactin linkage and contractility",
+                "PUBMED_ID": "22411311",
+                "ensembl_id": "ENSG00000107796"
+            },
+            {
+                "name": "ACTB",
+                "Definition": "beta-actin forming cortical networks that anchor and remodel caveolae",
+                "PUBMED_ID": "22411311",
+                "ensembl_id": "ENSG00000075624"
+            },
+            {
+                "name": "ACTC1",
+                "Definition": "Cardiac actin isoform listed for actin network composition at caveolae",
+                "PUBMED_ID": "22411311",
+                "ensembl_id": "ENSG00000159251"
+            },
+            {
+                "name": "ACTG1",
+                "Definition": "gamma-actin supporting cortical actin used by caveolae",
+                "PUBMED_ID": "22411311",
+                "ensembl_id": "ENSG00000184009"
+            },
+            {
+                "name": "ACTG2",
+                "Definition": "Smooth-muscle gamma-actin variant contributing to caveolar actin structures",
+                "PUBMED_ID": "22411311",
+                "ensembl_id": "ENSG00000163017"
+            },
+            {
+                "name": "DYRK3",
+                "Definition": "Ser/Thr kinase implicated in microtubule-mediated long-range trafficking of caveolae/caveosomes",
+                "PUBMED_ID": "22411311",
+                "ensembl_id": "ENSG00000143479"
+            },
+            {
+                "name": "EGF",
+                "Definition": "Ligand whose stimulation can trigger caveolae internalization",
+                "PUBMED_ID": "22411311",
+                "ensembl_id": "ENSG00000138798"
+            },
+            {
+                "name": "EGFR",
+                "Definition": "EGF receptor caveola-associated receptor whose signaling can induce caveolar uptake",
+                "PUBMED_ID": "22411311",
+                "ensembl_id": "ENSG00000146648"
+            },
+            {
+                "name": "FLNB",
+                "Definition": "Filamin B actin cross-linker anchoring/stabilizing caveolae",
+                "PUBMED_ID": "22411311",
+                "ensembl_id": "ENSG00000136068"
+            },
+            {
+                "name": "FLNC",
+                "Definition": "Filamin C paralog supporting caveolae anchoring to the cytoskeleton",
+                "PUBMED_ID": "22411311",
+                "ensembl_id": "ENSG00000128591"
+            },
+            {
+                "name": "INSR",
+                "Definition": "Insulin receptor receptor whose activation can induce caveolar endocytosis",
+                "PUBMED_ID": "22411311",
+                "ensembl_id": "ENSG00000171105"
+            },
+            {
+                "name": "ITSN1",
+                "Definition": "Intersectin-1 scaffold for endocytic signaling complexes linked to caveolae",
+                "PUBMED_ID": "22411311",
+                "ensembl_id": "ENSG00000205726"
+            },
+            {
+                "name": "MAP3K2",
+                "Definition": "MAP3K2 kinase downstream of caveolar signaling stimuli",
+                "PUBMED_ID": "22411311",
+                "ensembl_id": "ENSG00000169967"
+            },
+            {
+                "name": "PRKCA",
+                "Definition": "PKCalpha modulates signaling and caveolar trafficking/internalization",
+                "PUBMED_ID": "22411311",
+                "ensembl_id": "ENSG00000154229"
+            },
+            {
+                "name": "PTPN1",
+                "Definition": "PTP1B protein tyrosine phosphatase regulating receptor/caveolin-1 phosphorylation states",
+                "PUBMED_ID": "22411311",
+                "ensembl_id": "ENSG00000196396"
+            },
+            {
+                "name": "CAV2",
+                "Definition": "Co-localizes with CAV1 and contributes to the stabilization of caveolae; necessary for cell-to-cell spread in Listeria monocytogenes infection.",
+                "PUBMED_ID": "39791703",
+                "ensembl_id": "ENSG00000105971"
+            },
+            {
+                "name": "CAVIN3",
+                "Definition": "SRBC: adapter/modulator",
+                "PUBMED_ID": "11967125",
+                "ensembl_id": "ENSG00000170955"
+            },
+            {
+                "name": "CAVIN4",
+                "Definition": "MURC: tissue-specific cavin",
+                "PUBMED_ID": "11967125",
+                "ensembl_id": "ENSG00000170681"
+            }
+        ],
+        "inhibitors": [
+        {
+            "name": "Ikarugamycin",
+            "Definition": "Natural product (antibiotic from Streptomyces phaeochromogenes) dose: IC50 almost equal to 2.7 µM (in H1299 cells)",
+            "PUBMED_ID": "22411311",
+            "CHEBI": "CHEBI:75276"
+        },
+        {
+            "name": "Methyl-beta-cyclodextrin (MβCD)",
+            "Definition": "Cholesterol-depleting agent, dose: Commonly used at 1-10 mM for 30-60 minutes",
+            "PUBMED_ID": "21857502",
+            "CHEBI": "CHEBI:495055"
+        },
+        {
+            "name": "Nystatin",
+            "Definition": "Polyene antifungal agent that binds cholesterol, dose: Typically 25-50 µg/mL for 30-60 minutes",
+            "PUBMED_ID": "21857502",
+            "CHEBI": "CHEBI:473992"
+        },
+        {
+            "name": "Filipin",
+            "Definition": "Polyene macrolide antibiotic, dose: Used at 1-5 µg/mL; binds membrane cholesterol",
+            "PUBMED_ID": "21857502",
+            "CHEBI": "CHEBI:83267"
+        },
+        {
+            "name": "Genistein",
+            "Definition": "Tyrosine kinase inhibitor (plant-derived isoflavone), dose: 50-200 µM; inhibits Src-family kinases and internalization",
+            "PUBMED_ID": "21857502",
+            "CHEBI": "CHEBI:28088"
+        }
+    ]
+    },
+    {
+        "GO_identifier": "GO:0160294",
+        "mechanism_name":"Clathrin- and Caveolae-Independent Endocytosis (CIE)",
+        "definition": "involves multiple distinct pathways that do not utilize clathrin or caveolin for membrane invagination, often acting on a larger scale than clathrin-mediated endocytosis.",
+        "pathways": [
+        {
+            "GO_identifier": "GO:0160294",
+            "mechanism_name": "CLIC/GEEC (GPI-AP enriched compartments)",
+            "definition":"This high-capacity, constitutive, and dynamin-independent pathway involves the formation of uncoated tubulovesicular primary carriers (CLICs) that mature into specialized early endocytic compartments (GEECs) rich in glycosylphosphatidylinositol-anchored proteins.",
+            "associated_genes": [
+                {
+                    "name": "CDC42",
+                    "Definition": "A small Rho GTPase that regulates actin polymerization and is essential for CLIC/GEEC vesicle formation, trafficking, and maturation.",
+                    "PUBMED_ID": "33712737",
+                    "ensembl_id": "ENSG00000070831"
+                },
+                {
+                    "name": "GBF1",
+                    "Definition": "activates ARF1 to tune CDC42 cycling at PM",
+                    "PUBMED_ID": "33712737",
+                    "ensembl_id": "ENSG00000107862"
+                },
+                {
+                    "name": "ARF1",
+                    "Definition": "A small GTPase that initiates CLIC formation by recruiting necessary components at the plasma membrane.",
+                    "PUBMED_ID": "33712737",
+                    "ensembl_id": "ENSG00000143761"
+                },
+                {
+                    "name": "ARHGAP10",
+                    "Definition": "returns CDC42 to cycling state for carrier formation",
+                    "PUBMED_ID": "33712737",
+                    "ensembl_id": "ENSG00000071205"
+                },
+                {
+                    "name": "ARHGAP26",
+                    "Definition": "RhoGAP/BAR/SH3 protein central to CLIC/GEEC tubules",
+                    "PUBMED_ID": "33712737",
+                    "ensembl_id": "ENSG00000145819"
+                },
+                {
+                    "name": "ACTR2",
+                    "Definition": "ARP2: branched actin for curvature and vesicle formation",
+                    "PUBMED_ID": "33712737",
+                    "ensembl_id": "ENSG00000138071"
+                },
+                {
+                    "name": "ACTR3",
+                    "Definition": "ARP3: branched actin for curvature and vesicle formation",
+                    "PUBMED_ID": "33712737",
+                    "ensembl_id": "ENSG00000115091"
+                },
+                {
+                    "name": "BAIAP2",
+                    "alias": "",
+                    "Definition": "IRSp53: membrane/actin coupling in CIE families incl. CLIC/GEEC",
+                    "PUBMED_ID": "33712737",
+                    "ensembl_id": "ENSG00000175866"
+                },
+                {
+                    "name": "GBF1",
+                    "Definition": "A guanine nucleotide exchange factor (GEF) that activates Arf1, thus initiating the cascade that maintains Cdc42 cycling.",
+                    "PUBMED_ID": "33712737",
+                    "ensembl_id": "ENSG00000107862"
+                },
+                {
+                    "name": "ARHGAP10",
+                    "Definition": "A RhoGAP protein that inactivates Cdc42, returning it to a cycling state and balancing actin dynamics.",
+                    "PUBMED_ID": "33712737",
+                    "ensembl_id": "ENSG00000071205"
+                },
+                {
+                    "name": "ARHGAP26",
+                    "Definition": "Multidomain protein with a BAR, SH3, and RhoGAP domain; colocalizes with CLIC/GEEC carriers and regulates Cdc42 activity and membrane curvature.",
+                    "PUBMED_ID": "33712737",
+                    "ensembl_id": "ENSG00000145819"
+                },
+                {
+                    "name": "LGALS3",
+                    "Definition": "Galectin-3: An extracellular lectin that clusters glycosylated cargo and lipids, initiating membrane curvature required for CLIC formation.",
+                    "PUBMED_ID": "33712737",
+                    "ensembl_id": "ENSG00000131981"
+                },
+                {
+                    "name": "PICK1",
+                    "Definition": "Protein Interacting with C Kinase 1, involved in Arp2/3 regulation and thereby affects actin dynamics required for CLIC/GEEC vesicle formation.",
+                    "PUBMED_ID": "33712737",
+                    "ensembl_id": "ENSG00000100151"
+                },
+                {
+                    "name": "RAB5A",
+                    "Definition": "Small GTPase that regulates the fusion of GEECs with early sorting endosomes, affecting downstream trafficking but not initial internalization.",
+                    "PUBMED_ID": "33712737",
+                    "ensembl_id": "ENSG00000144566"
+                },
+                {
+                    "name": "PI3KCA",
+                    "Definition": "Phosphoinositide 3-kinase facilitates membrane trafficking and maturation of endosomes; important for fusion of GEECs but not for carrier formation.",
+                    "PUBMED_ID": "33712737",
+                    "ensembl_id": "ENSG00000121879"
+                },
+                {
+                    "name": "DNM1",
+                    "Definition": "Although not required for CLIC formation (which is dynamin-independent), it is involved in **membrane recycling from GEECs** in certain cell types.",
+                    "PUBMED_ID": "33712737",
+                    "ensembl_id": "ENSG00000106976"
+                },
+                {
+                    "name": "VCL",
+                    "Definition": "Mechanotransducer protein that regulates membrane tension; modulates CLIC/GEEC activity under mechanical stress but is not a core component.",
+                    "PUBMED_ID": "33712737",
+                    "ensembl_id": "ENSG00000035403"
+                },
+                {
+                    "name": "CD44",
+                    "Definition": "A glycosylated transmembrane protein and cargo of the pathway; it clusters via galectin-3 but its presence is not required to activate the pathway.",
+                    "PUBMED_ID": "33712737",
+                    "ensembl_id": "ENSG00000026508"
+                },
+                {
+                    "name": "ITGA5",
+                    "Definition": "These receptors are cargo for CLIC/GEEC and may influence clustering and curvature, but are not required for pathway formation or vesicle scission.",
+                    "PUBMED_ID": "33712737",
+                    "ensembl_id": "ENSG00000161638"
+                },
+                {
+                    "name": "ITGB1",
+                    "Definition": "These receptors are cargo for CLIC/GEEC and may influence clustering and curvature, but are not required for pathway formation or vesicle scission.",
+                    "PUBMED_ID": "33712737",
+                    "ensembl_id": "ENSG00000150093"
+                },
+                {
+                    "name": "LGALS1",
+                    "Definition": "Galectin-1: Like galectin-3, it can assist in clustering glycosylated cargo, but its role is context-dependent and not essential in all cell types.",
+                    "PUBMED_ID": "33712737",
+                    "ensembl_id": "ENSG00000100097"
+                },
+                {
+                    "name": "CTBP1",
+                    "Definition": "Modulates fission of macropinosomes but also affects some aspects of membrane remodeling; not essential but may crosstalk with CLIC/GEEC.",
+                    "PUBMED_ID": "33712737",
+                    "ensembl_id": "ENSG00000159692"
+                }
+            ],
+            "inhibitors": [
+            {
+                "name": "7-ketocholesterol",
+                "Definition": "Sterol derivative (membrane lipid packing disruptor), dose:Effective at 10-20 µM",
+                "PUBMED_ID": "33712737",
+                "CHEBI": "CHEBI:64294"
+            },
+            {
+                "name": "Methyl-beta-cyclodextrin",
+                "Definition": "Cholesterol-depleting agent, dose:Typically 1-10 mM for 30 min",
+                "PUBMED_ID": "33712737",
+                "CHEBI": "CHEBI:133151"
+            },
+            {
+                "name": "Nystatin",
+                "Definition": "Polyene antifungal (binds membrane cholesterol), dose:Typically 25-50 µg/mL",
+                "PUBMED_ID": "33712737",
+                "CHEBI": "CHEBI:7660"
+            }
+            ]
+        },
+        {
+            "GO_identifier": "GO:0160294",
+            "mechanism_name": "CLIC/FEME (Fast Endophilin Mediated Endocytosis)",
+            "definition":"This rapid, dynamin-dependent route is non-constitutive and specifically triggered by ligand binding to cargo receptors, such as G-protein-coupled receptors and receptor tyrosine kinases, using endophilin clusters to drive vesicle formation within ten seconds",
+            "associated_genes": [
+                {
+                    "name": "SH3GL1",
+                    "Definition": "Endophilin A1: Essential for membrane curvature generation, cargo selection, and membrane scission during FEME; no FEME occurs without their combined presence.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000141985"
+                },
+                {
+                    "name": "SH3GL2",
+                    "Definition": "Endophilin A2: Essential for membrane curvature generation, cargo selection, and membrane scission during FEME; no FEME occurs without their combined presence.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000107295"
+                },
+                {
+                    "name": "SH3GL3",
+                    "Definition": "Endophilin A3: Essential for membrane curvature generation, cargo selection, and membrane scission during FEME; no FEME occurs without their combined presence.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000140600"
+                },
+                {
+                    "name": "DNM1",
+                    "Definition": "Dynamin 1: GTPase required for membrane scission; recruited by Endophilin to bud FEME carriers.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000106976"
+                },
+                {
+                    "name": "DNM2",
+                    "Definition": "Dynamin 2: GTPase required for membrane scission; recruited by Endophilin to bud FEME carriers.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000079805"
+                },
+                {
+                    "name": "WASL",
+                    "Definition": "N WASP: Supports membrane curvature and scission; required for FEME carrier formation and transport.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000106299"
+                },
+                {
+                    "name": "WASF1",
+                    "Definition": "WAVE regulatory complex (WRC):Supports membrane curvature and scission; required for FEME carrier formation and transport.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000112290"
+                },
+                {
+                    "name": "WASF2",
+                    "Definition": "WAVE regulatory complex (WRC): Supports membrane curvature and scission; required for FEME carrier formation and transport.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000158195"
+                },
+                {
+                    "name": "WASF3",
+                    "Definition": "WAVE regulatory complex (WRC):Supports membrane curvature and scission; required for FEME carrier formation and transport.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000132970"
+                },
+                {
+                    "name": "CYFIP1",
+                    "Definition": "CYFIP family: Supports membrane curvature and scission; required for FEME carrier formation and transport.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000273749"
+                },
+                {
+                    "name": "CYFIP2",
+                    "Definition": "CYFIP family: Supports membrane curvature and scission; required for FEME carrier formation and transport.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000055163"
+                },
+                {
+                    "name": "NCKAP1",
+                    "Definition": "NCKAP family: Supports membrane curvature and scission; required for FEME carrier formation and transport.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000061676"
+                },
+                {
+                    "name": "NCKAP1L",
+                    "Definition": "NCKAP family: Supports membrane curvature and scission; required for FEME carrier formation and transport.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000123338"
+                },
+                {
+                    "name": "ABI1",
+                    "Definition": "ABI family: Supports membrane curvature and scission; required for FEME carrier formation and transport.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000136754"
+                },
+                {
+                    "name": "ABI2",
+                    "Definition": "ABI family: Supports membrane curvature and scission; required for FEME carrier formation and transport.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000138443"
+                },
+                {
+                    "name": "ABI3",
+                    "Definition": "ABI family: Supports membrane curvature and scission; required for FEME carrier formation and transport.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000108798"
+                },
+                {
+                    "name": "BRK1",
+                    "Definition": "BRK1: Supports membrane curvature and scission; required for FEME carrier formation and transport.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000254999"
+                },
+                {
+                    "name": "PIK3CA",
+                    "Definition": "Catalytic subunit of parent I PI3K - required to phosphorylate PIP2 into PIP3, triggering FEME activatio",
+                    "PUBMED_ID": "40532442",
+                    "ensembl_id": "ENSG00000121879"
+                },
+                {
+                    "name": "PIK3CB",
+                    "Definition": "Catalytic subunit of parent I PI3K - required to phosphorylate PIP2 into PIP3, triggering FEME activatio",
+                    "PUBMED_ID": "40532442",
+                    "ensembl_id": "ENSG00000051382"
+                },
+                {
+                    "name": "PIK3CD",
+                    "Definition": "Catalytic subunit of parent I PI3K - required to phosphorylate PIP2 into PIP3, triggering FEME activatio",
+                    "PUBMED_ID": "40532442",
+                    "ensembl_id": "ENSG00000171608"
+                },
+                {
+                    "name": "PIK3R1",
+                    "Definition": "Regulatory subunit of parent I PI3K - required to phosphorylate PIP2 into PIP3, triggering FEME activatio",
+                    "PUBMED_ID": "40532442",
+                    "ensembl_id": "ENSG00000145675"
+                },
+                {
+                    "name": "PIK3R2",
+                    "Definition": "Regulatory subunit of parent I PI3K - required to phosphorylate PIP2 into PIP3, triggering FEME activatio",
+                    "PUBMED_ID": "40532442",
+                    "ensembl_id": "ENSG00000105647"
+                },
+                {
+                    "name": "PIK3R3",
+                    "Definition": "Regulatory subunit of parent I PI3K - required to phosphorylate PIP2 into PIP3, triggering FEME activatio",
+                    "PUBMED_ID": "40532442",
+                    "ensembl_id": "ENSG00000117461"
+                },
+                {
+                    "name": "INPP5D",
+                    "Definition": "SHIP1: Required for the priming cycle by converting Pi(3,4,5)P3 to Pi(3,4)P2 to recruit Lamellipodin and Endophilin.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000168918"
+                },
+                {
+                    "name": "INPPL1",
+                    "Definition": "SHIP2: Required for the priming cycle by converting Pi(3,4,5)P3 to Pi(3,4)P2 to recruit Lamellipodin and Endophilin.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000165458"
+                },
+                {
+                    "name": "CDC42",
+                    "Definition": "Initiates the priming cycle of FEME by recruiting FBP17/CIP4 to plasma membrane.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000070831"
+                },
+                {
+                    "name": "LRRK2",
+                    "Definition": "phosphoregulation of endophilin N BAR; modulates membrane binding",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000188906"
+                },
+                {
+                    "name": "FNBP1L",
+                    "Definition": "FBP17: FEME priming protein",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000137942"
+                },
+                {
+                    "name": "TRIP10",
+                    "Definition": "CIP4: FEME priming protein",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000125733"
+                },
+                {
+                    "name": "RAPH1",
+                    "Definition": "Lamellipodin: FEME priming protein",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000173166"
+                },
+                {
+                    "name": "SH3BP1",
+                    "Definition": "FEME priming protein",
+                    "PUBMED_ID": ":32589750",
+                    "ensembl_id": "ENSG00000100092"
+                },
+                {
+                    "name": "ARHGAP17",
+                    "Definition": "Cdc42 GAP that terminates FEME priming specifically; its overexpression suppresses FEME without major effects on CME.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000140750"
+                },
+                {
+                    "name": "BIN1",
+                    "Definition": "Amphiphysin II: FEME component/assistant",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000136717"
+                },
+                {
+                    "name": "CDK5",
+                    "Definition": "Phosphorylates Dynamin-1 at Ser778 to inhibit its recruitment to Endophilin and block FEME.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000164885"
+                },
+                {
+                    "name": "GSK3B",
+                    "Definition": "Phosphorylates Dynamin-1 at Ser774 and is inactivated by AKT/ERK upon receptor stimulation to allow FEME activation.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000082701"
+                },
+                {
+                    "name": "SRC",
+                    "Definition": "Phosphorylates Endophilin and influences FEME initiation; involved in relieving Endophilin auto-inhibition.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000197122"
+                },
+                {
+                    "name": "LRRK2",
+                    "Definition": "Phosphorylates Endophilin at sites that impair its membrane-binding ability, thus inhibiting FEME.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000188906"
+                },
+                {
+                    "name": "BIN1",
+                    "Definition": "N-BAR protein recruited to FEME carriers to assist in scission and dynein recruitment.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000136717"
+                },
+                {
+                    "name": "DYNC1H1",
+                    "Definition": "Motor protein regulating FEME carrier transport, but not essential for vesicle scission or internalization itself",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000197102"
+                },
+                {
+                    "name": "OPHN1",
+                    "Definition": "(Oligophrenin-1): Acts as a GAP terminating Cdc42 activity in FEME priming; specifically impacts FEME, not CME.",
+                    "PUBMED_ID": "32589750",
+                    "ensembl_id": "ENSG00000079482"
+                }
+            ],
+            "inhibitors": [
+            {
+                "name": "Imipramine",
+                "Definition": "Drug (tricyclic antidepressant), dose:IC50 almost equal to 131 nM",
+                "PUBMED_ID": "29981238",
+                "CHEBI": "CHEBI:47499"
+            },
+            {
+                "name": "Dynasore",
+                "Definition": "Small molecule (Dynamin inhibitor), dose:80 µM",
+                "PUBMED_ID": "22509034",
+                "CHEBI": "CHEBI:132754"
+            },
+            {
+                "name": "CHIR-99021",
+                "Definition": "GSK3β inhibitor, dose:IC50 almost equal to 6.7 nM",
+                "PUBMED_ID": "16880289",
+                "CHEBI": "CHEBI:91091"
+            },
+            {
+                "name": "Roscovitine (Seliciclib)",
+                "Definition": "CDK5 inhibitor, dose:IC50 almost equal to 0.65 µM (CDK5)",
+                "PUBMED_ID": "26207228",
+                "CHEBI": "CHEBI:86007"
+            },
+            {
+                "name": "Mdivi-1",
+                "Definition": "Dynamin-related GTPase inhibitor (Drp1 selective, off-targets dynamin), dose:50 µM",
+                "PUBMED_ID": "28350990",
+                "CHEBI": "CHEBI:232380"
+            },
+            {
+                "name": "PP2",
+                "Definition": "Src-family kinase inhibitor, dose:IC50 almost equal to 4-5 µM",
+                "PUBMED_ID": "11553639",
+                "CHEBI": "CHEBI:78331"
+            }
+            ]
+        },
+        {
+            "GO_identifier": "GO:0160294",
+            "mechanism_name": "CLIC/RhoA mediated Endocytosis",
+            "definition": "This dynamin-dependent CIE pathway is specifically regulated by the small GTPase RhoA to internalize the beta-chain of the interleukin-2 receptor and other proteins that partition into detergent-resistant membrane domains",
+            "associated_genes": [
+                {
+                    "name": "RHOA",
+                    "Definition": "RhoA regulates actomyosin contractility and has been shown to inhibit clathrin-mediated endocytosis; activated RhoA delays EGF receptor trafficking to lysosomes.",
+                    "PUBMED_ID": "11350626",
+                    "ensembl_id": "ENSG00000067560"
+                },
+                {
+                    "name": "CDC42",
+                    "Definition": "Cdc42 is essential for actin comet tail formation and vesicle propulsion in both endocytic and exocytic pathways, and regulates apical/basolateral trafficking in polarized epithelial cells.",
+                    "PUBMED_ID": "11350626",
+                    "ensembl_id": "ENSG00000070831"
+                },
+                {
+                    "name": "RAC1",
+                    "Definition": "Rac1 promotes macropinocytosis and phagocytosis by driving actin polymerization through the Arp2/3 complex, but also inhibits clathrin-mediated endocytosis.",
+                    "PUBMED_ID": "11350626",
+                    "ensembl_id": "ENSG00000136238"
+                },
+                {
+                    "name": "ROCK1",
+                    "Definition": "A downstream effector of RhoA, ROCK1 mediates actomyosin contractility which may influence vesicle scission or cortical tension during endocytosis.",
+                    "PUBMED_ID": "11350626",
+                    "ensembl_id": "ENSG00000067900"
+                },
+                {
+                    "name": "DIAPH1",
+                    "Definition": " DIA1 (mDia1): A RhoA effector coordinating actin and microtubule networks, possibly impacting vesicle transport and membrane tension.",
+                    "PUBMED_ID": "11350626",
+                    "ensembl_id": "ENSG00000131504"
+                },
+                {
+                    "name": "PKN1",
+                    "Definition": "Activated by RhoB, PRK1 is involved in trafficking of internalized EGF receptor by slowing its movement toward lysosomes.",
+                    "PUBMED_ID": "11350626",
+                    "ensembl_id": "ENSG00000123143"
+                },
+                {
+                    "name": "PAK1",
+                    "Definition": "A Rac/Cdc42 target required for macropinocytosis; activated PAK1 stimulates actin remodeling linked to vesicle uptake.",
+                    "PUBMED_ID": "11350626",
+                    "ensembl_id": "ENSG00000149269"
+                },
+                {
+                    "name": "SYNJ2",
+                    "Definition": "(Synaptojanin 2) Effector of Rac1 that regulates clathrin-mediated endocytosis by modifying phosphoinositides and potentially uncoating vesicles.",
+                    "PUBMED_ID": "11350626",
+                    "ensembl_id": "ENSG00000078269"
+                },
+                {
+                    "name": "DNM2",
+                    "Definition": "(Dynamin 2) Interacts with cortactin and syndapin to promote membrane scission and is linked to actin-driven vesicle propulsion via Arp2/3 complex.",
+                    "PUBMED_ID": "11350626",
+                    "ensembl_id": "ENSG00000079805"
+                },
+                {
+                    "name": "CTTN",
+                    "Definition": "CORTACTIN: Binds Arp2/3 and actin, mediating actin polymerization at endocytic sites; interacts with dynamin.",
+                    "PUBMED_ID": "11350626",
+                    "ensembl_id": "ENSG00000085733"
+                },
+                {
+                    "name": "ARHGEF2",
+                    "Definition": "GEF-H1: A RhoGEF localized to microtubules; may activate RhoA upon microtubule depolymerization and regulate spatial activation of Rho signaling.",
+                    "PUBMED_ID": "11350626",
+                    "ensembl_id": "ENSG00000116584"
+                },
+                {
+                    "name": "WASL",
+                    "Definition": "N-WASP: Activated by Cdc42 and dynamin, N-WASP drives Arp2/3-mediated actin polymerization to form vesicle-propelling actin tails.",
+                    "PUBMED_ID": "11350626",
+                    "ensembl_id": "ENSG00000106299"
+                },
+                {
+                    "name": "ARPC2",
+                    "Definition": "(part of Arp2/3 complex) Effector of Rac and Cdc42 via WASP/WAVE, it nucleates branched actin networks crucial for vesicle formation and movement.",
+                    "PUBMED_ID": "11350626",
+                    "ensembl_id": "ENSG00000163466"
+                },
+                {
+                    "name": "IQGAP1",
+                    "Definition": "Cdc42-interacting scaffold protein localized at Golgi; may help organize actin, but dispensable for vesicle internalization.",
+                    "PUBMED_ID": "11350626",
+                    "ensembl_id": "ENSG00000140575"
+                }
+            ],
+            "inhibitors": [
+            {
+                "name": "C3 Transferase",
+                "Definition": "Bacterial toxin, dose:1-to-10 µg/mL commonly used in vitro",
+                "PUBMED_ID": "11350626",
+                "CHEBI": "CHEBI:137692"
+            },
+            {
+                "name": "Y-27632",
+                "Definition": "Small molecule ROCK inhibitor, dose:IC50 almost equal to 140 nM for ROCK1",
+                "PUBMED_ID": "40356532",
+                "CHEBI": "CHEBI:75393"
+            },
+            {
+                "name": "Fasudil (HA-1077)",
+                "Definition": "Drug (ROCK inhibitor used clinically), dose:IC50 almost equal to 330 nM for ROCK2",
+                "PUBMED_ID": "39915220",
+                "CHEBI": "CHEBI:43871"
+            },
+            {
+                "name": "Rhosin",
+                "Definition": "Small molecule RhoA-GEF interaction inhibitor, dose:IC50 almost equal to 5.2 µM for RhoA activation",
+                "PUBMED_ID": "30955841",
+                "CHEBI": "CHEBI:137693"
+            },
+            {
+                "name": "NSC23766",
+                "Definition": "Small molecule Rac1 inhibitor (indirectly affects RhoA via cross-regulation), dose:IC50 almost equal to 50 µM for Rac1-GEF binding",
+                "PUBMED_ID": "15128949",
+                "CHEBI": "CHEBI:144984"
+            }
+            ]
+        },
+        {
+            "GO_identifier": "GO:0160294",
+            "mechanism_name": "CLIC/CDC42 mediated Endocytosis",
+            "definition":"This dynamin-independent route is regulated by CDC42 and its interaction with the actin-polymerization machinery to internalize fluid-phase markers and GPI-anchored proteins through large surface invaginations",
+            "associated_genes": [
+                {
+                    "name": "CDC42",
+                    "Definition": "Central small GTPase that directly regulates actin polymerization via WASptoArp2/3 to drive clathrin-independent endocytosis and vesicle scission.",
+                    "PUBMED_ID": "20633244",
+                    "ensembl_id": "ENSG00000070831"
+                },
+                {
+                    "name": "WAS",
+                    "Definition": "WASp: Effector of Cdc42; relieves autoinhibition and activates the Arp2/3 complex, enabling branched actin formation required for vesicle scission.",
+                    "PUBMED_ID": "20633244",
+                    "ensembl_id": "ENSG00000015285"
+                },
+                {
+                    "name": "ACTR2",
+                    "Definition": "Arp2: Actin nucleator downstream of Cdc42toWASp; required to generate branched actin filaments that deform membranes and support vesicle budding and fission.",
+                    "PUBMED_ID": "20633244",
+                    "ensembl_id": "ENSG00000138071"
+                },
+                {
+                    "name": "ACTR3",
+                    "Definition": "Arp3: Actin nucleator downstream of Cdc42toWASp; required to generate branched actin filaments that deform membranes and support vesicle budding and fission.",
+                    "PUBMED_ID": "20633244",
+                    "ensembl_id": "ENSG00000115091"
+                },
+                {
+                    "name": "DNM1",
+                    "Definition": "Required for vesicle scission at adherens junctions and other sites where Cdc42 regulates endocytosis.",
+                    "PUBMED_ID": "20633244",
+                    "ensembl_id": "ENSG00000106976"
+                },
+                {
+                    "name": "TRIP10",
+                    "Definition": "Cip4: Cdc42-interacting F-BAR protein that activates WASp and promotes Arp2/3-mediated actin assembly, facilitating vesicle scission.",
+                    "PUBMED_ID": "20633244",
+                    "ensembl_id": "ENSG00000125733"
+                },
+                {
+                    "name": "PARD6A",
+                    "Definition": "Forms a complex with Cdc42 and aPKC to regulate endocytosis and recycling of clathrin-dependent and independent cargo, especially in epithelial polarity contexts.",
+                    "PUBMED_ID": "20633244",
+                    "ensembl_id": "ENSG00000102981"
+                },
+                {
+                    "name": "PRKCI",
+                    "Definition": "aPKC: Kinase activated by Cdc42toPar6; regulates apical endocytosis and recycling, influencing trafficking of Crumbs and adherens junction components.",
+                    "PUBMED_ID": "20633244",
+                    "ensembl_id": "ENSG00000163558"
+                },
+                {
+                    "name": "PARD3",
+                    "Definition": "Par3: In some contexts (C. elegans, Drosophila embryo) cooperates with Cdc42toPar6toaPKC to regulate apical endocytosis and recycling of clathrin-independent cargo.",
+                    "PUBMED_ID": "20633244",
+                    "ensembl_id": "ENSG00000148498"
+                },
+                {
+                    "name": "CRB1",
+                    "Definition": "Crumbs: An apical determinant regulated by Cdc42; its trafficking defects destabilize adherens junctions in Drosophila neuroectoderm, but Cdc42 endocytosis can still occur without it.",
+                    "PUBMED_ID": "20633244",
+                    "ensembl_id": "ENSG00000134376"
+                },
+                {
+                    "name": "CDHR1",
+                    "Definition": "DE-cadherin: Core adhesion molecule that accumulates abnormally when Cdc42/Par complex is disrupted; influences junctional stability but is not required to initiate Cdc42-mediated uptake.",
+                    "PUBMED_ID": "20633244",
+                    "ensembl_id": "ENSG00000148600"
+                },
+                {
+                    "name": "CDHR2",
+                    "Definition": "DE-cadherin: Core adhesion molecule that accumulates abnormally when Cdc42/Par complex is disrupted; influences junctional stability but is not required to initiate Cdc42-mediated uptake.",
+                    "PUBMED_ID": "20633244",
+                    "ensembl_id": "ENSG00000074276"
+                },
+                {
+                    "name": "CDHR3",
+                    "Definition": "DE-cadherin: Core adhesion molecule that accumulates abnormally when Cdc42/Par complex is disrupted; influences junctional stability but is not required to initiate Cdc42-mediated uptake.",
+                    "PUBMED_ID": "20633244",
+                    "ensembl_id": "ENSG00000128536"
+                },
+                {
+                    "name": "CDHR4",
+                    "Definition": "DE-cadherin: Core adhesion molecule that accumulates abnormally when Cdc42/Par complex is disrupted; influences junctional stability but is not required to initiate Cdc42-mediated uptake.",
+                    "PUBMED_ID": "20633244",
+                    "ensembl_id": "ENSG00000187492"
+                },
+                {
+                    "name": "CDHR5",
+                    "Definition": "DE-cadherin: Core adhesion molecule that accumulates abnormally when Cdc42/Par complex is disrupted; influences junctional stability but is not required to initiate Cdc42-mediated uptake.",
+                    "PUBMED_ID": "20633244",
+                    "ensembl_id": "ENSG00000099834"
+                },
+                {
+                    "name": "CDH23",
+                    "Definition": "DE-cadherin: Core adhesion molecule that accumulates abnormally when Cdc42/Par complex is disrupted; influences junctional stability but is not required to initiate Cdc42-mediated uptake.",
+                    "PUBMED_ID": "20633244",
+                    "ensembl_id": "ENSG00000107736"
+                },
+                {
+                    "name": "LLGL1",
+                    "Definition": "Lgl (Lethal giant larvae): Can interact with Par6toaPKC to exclude Par3; modulates polarity and trafficking in certain contexts but is not universally required for Cdc42-driven endocytosis.",
+                    "PUBMED_ID": "20633244",
+                    "ensembl_id": "ENSG00000131899"
+                },
+                {
+                    "name": "LLGL2",
+                    "Definition": "Lgl (Lethal giant larvae): Can interact with Par6toaPKC to exclude Par3; modulates polarity and trafficking in certain contexts but is not universally required for Cdc42-driven endocytosis.",
+                    "PUBMED_ID": "20633244",
+                    "ensembl_id": "ENSG00000073350"
+                },
+                {
+                    "name": "ANXA2",
+                    "Definition": "Annexin 2: Recruits Cdc42 to PIP2-rich apical membranes in MDCK cysts, helping lumen formation; enhances spatial targeting but is not essential for the mechanism itself.",
+                    "PUBMED_ID": "20633244",
+                    "ensembl_id": "ENSG00000182718"
+                },
+                {
+                    "name": "WASF1",
+                    "Definition": "SCAR/WAVE: Alternative actin nucleation regulator that works with Cip4; contributes to endosome dynamics in Drosophila but is not indispensable for Cdc42-mediated endocytosis.",
+                    "PUBMED_ID": "20633244",
+                    "ensembl_id": "ENSG00000112290"
+                },
+                {
+                    "name": "WASF2",
+                    "Definition": "SCAR/WAVE: Alternative actin nucleation regulator that works with Cip4; contributes to endosome dynamics in Drosophila but is not indispensable for Cdc42-mediated endocytosis.",
+                    "PUBMED_ID": "20633244",
+                    "ensembl_id": "ENSG00000158195"
+                },
+                {
+                    "name": "WASF3",
+                    "Definition": "SCAR/WAVE: Alternative actin nucleation regulator that works with Cip4; contributes to endosome dynamics in Drosophila but is not indispensable for Cdc42-mediated endocytosis.",
+                    "PUBMED_ID": "20633244",
+                    "ensembl_id": "ENSG00000132970"
+                }
+            ],
+            "inhibitors": [
+            {
+                "name": "ARHGAP1",
+                "Definition": "Acts as a negative regulator of Cdc42→Par6→aPKC at adherens junctions; its loss increases endocytosis and disrupts apical tension, while Cdc42 depletion rescues Rho1 mutant phenotypes.",
+                "PUBMED_ID": "20633244",
+                "ensembl_id": "ENSG00000175220"
+            },
+            {
+                "name": "QRICH1",
+                "Definition": "A GAP that inactivates Cdc42 at tight junctions; its knockdown leads to Cdc42 hyperactivation and junctional defects, indicating it restrains excessive Cdc42-driven endocytosis.",
+                "PUBMED_ID": "20633244",
+                "ensembl_id": "ENSG00000198218"
+            },
+            {
+                "name": "Imipramine",
+                "Definition": "Drug (tricyclic antidepressant), dose:IC50 ≈ 131 nM (for macropinocytosis inhibition)",
+                "PUBMED_ID": "29981238",
+                "CHEBI": "CHEBI:47499"
+            },
+            {
+                "name": "Phenoxybenzamine",
+                "Definition": "Drug (irreversible alpha-adrenergic antagonist), dose:Not specified (identified in screen as inhibitor of macropinocytosis)",
+                "PUBMED_ID": "29981238",
+                "CHEBI": "CHEBI:8077"
+            },
+            {
+                "name": "Amiloride",
+                "Definition": "Ion transport inhibitor / Na⁺/H⁺ exchanger blocker, dose:Commonly used ~50 µM in cell assays",
+                "PUBMED_ID": "20156964",
+                "CHEBI": "CHEBI:2639"
+            },
+            {
+                "name": "EIPA (ethylisopropylamiloride)",
+                "Definition": "Ion transport inhibitor / Na⁺/H⁺ exchanger blocker, dose:Commonly used ~50 µM in cell assays",
+                "PUBMED_ID": "20156964",
+                "CHEBI": "CHEBI:136538"
+            }
+            ]
+        },
+        {
+            "GO_identifier": "GO:0160294",
+            "mechanism_name": "CLIC/ARF6 mediated Endocytosis",
+            "definition": "This clathrin-independent pathway uses the small GTPase ARF6 to regulate the internalization and recycling of membrane proteins involved in cell adhesion and immune response, such as integrins and MHC-I, through the modulation of actin cytoskeleton reorganization",
+            "associated_genes": [
+                {
+                    "name": "ARF6",
+                    "Definition": "Master small GTPase required for clathrin-dependent and clathrin-independent endocytosis, regulating receptor and ligand uptake.",
+                    "PUBMED_ID": "16633337",
+                    "ensembl_id": "ENSG00000165527"
+                },
+                {
+                    "name": "PIP5K1B",
+                    "Definition": "Generates PI(4,5)P2 at the plasma membrane after activation by ARF6, essential for coated pit assembly and scission.",
+                    "PUBMED_ID": "16633337",
+                    "ensembl_id": "ENSG00000107242"
+                },
+                {
+                    "name": "PLD1",
+                    "Definition": "Produces phosphatidic acid, which cooperates with PIP5K to promote vesicle budding and fission.",
+                    "PUBMED_ID": "16633337",
+                    "ensembl_id": "ENSG00000075651"
+                },
+                {
+                    "name": "PLD2",
+                    "Definition": "Produces phosphatidic acid, which cooperates with PIP5K to promote vesicle budding and fission.",
+                    "PUBMED_ID": "16633337",
+                    "ensembl_id": "ENSG00000129219"
+                },
+                {
+                    "name": "PSD",
+                    "Definition": "EFA6 family: Specific GEFs that directly activate ARF6 by promoting GDPtoGTP exchange, initiating endocytosis and recycling.",
+                    "PUBMED_ID": "16633337",
+                    "ensembl_id": "ENSG00000059915"
+                },
+                {
+                    "name": "PSD2",
+                    "Definition": "EFA6 family: Specific GEFs that directly activate ARF6 by promoting GDPtoGTP exchange, initiating endocytosis and recycling.",
+                    "PUBMED_ID": "16633337",
+                    "ensembl_id": "ENSG00000146005"
+                },
+                {
+                    "name": "PSD3",
+                    "Definition": "EFA6 family: Specific GEFs that directly activate ARF6 by promoting GDPtoGTP exchange, initiating endocytosis and recycling.",
+                    "PUBMED_ID": "16633337",
+                    "ensembl_id": "ENSG00000156011"
+                },
+                {
+                    "name": "PSD4",
+                    "Definition": "EFA6 family: Specific GEFs that directly activate ARF6 by promoting GDPtoGTP exchange, initiating endocytosis and recycling.",
+                    "PUBMED_ID": "16633337",
+                    "ensembl_id": "ENSG00000125637"
+                },
+                {
+                    "name": "CYTH2",
+                    "Definition": "ARNO (Cytohesin-2, PSCD2): Plasma membrane GEF that activates ARF6 in response to signals, triggering downstream Rac1 activation and endocytosis.",
+                    "PUBMED_ID": "16633337",
+                    "ensembl_id": "ENSG00000105443"
+                },
+                {
+                    "name": "IQSEC1",
+                    "Definition": "BRAG2 (ARF GEP100): ARF6-specific GEF required for integrin endocytosis and recycling, crucial for pathway activation in adhesion contexts.",
+                    "PUBMED_ID": "16633337",
+                    "ensembl_id": "ENSG00000144711"
+                },
+                {
+                    "name": "NME1",
+                    "Definition": "NM23-H1: Supplies local GTP for dynamin during vesicle fission, enhances clathrin-mediated uptake but pathway can still occur without it.",
+                    "PUBMED_ID": "16633337",
+                    "ensembl_id": "ENSG00000239672"
+                },
+                {
+                    "name": "SMAP1",
+                    "Definition": "ARF6 GAP that interacts with clathrin heavy chain to regulate vesicle uncoating; modulates efficiency but not initiation.",
+                    "PUBMED_ID": "16633337",
+                    "ensembl_id": "ENSG00000112305"
+                },
+                {
+                    "name": "ACAP1",
+                    "Definition": "ARF6 GAP that regulates transferrin and beta1 integrin recycling; affects recycling but not initial uptake.",
+                    "PUBMED_ID": "16633337",
+                    "ensembl_id": "ENSG00000072818"
+                },
+                {
+                    "name": "EXOC4",
+                    "Definition": "Exocyst complex (Sec10, Arfophilin-1/2): Tethers ARF6-derived recycling vesicles to plasma membrane and cleavage furrow; important for trafficking but not required for endocytosis initiation.",
+                    "PUBMED_ID": "16633337",
+                    "ensembl_id": "ENSG00000131558"
+                },
+                {
+                    "name": "EXOC5",
+                    "Definition": "Exocyst complex (Sec10, Arfophilin-1/2): Tethers ARF6-derived recycling vesicles to plasma membrane and cleavage furrow; important for trafficking but not required for endocytosis initiation.",
+                    "PUBMED_ID": "16633337",
+                    "ensembl_id": "ENSG00000070367"
+                },
+                {
+                    "name": "EXOC8",
+                    "Definition": "Exocyst complex (Sec10, Arfophilin-1/2): Tethers ARF6-derived recycling vesicles to plasma membrane and cleavage furrow; important for trafficking but not required for endocytosis initiation.",
+                    "PUBMED_ID": "16633337",
+                    "ensembl_id": "ENSG00000116903"
+                },
+                {
+                    "name": "RAC1",
+                    "Definition": "Small GTPase activated downstream of ARF6 to remodel actin; influences endocytosis efficiency and cell migration but not strictly required for uptake.",
+                    "PUBMED_ID": "16633337",
+                    "ensembl_id": "ENSG00000136238"
+                }
+            ],
+            "inhibitors": [
+            {
+                "name": "NAV-2729",
+                "Definition": "Small molecule (ARF regulatory protein inhibitor), dose:Inhibition in µM range (complex target profile including ARF regulators)",
+                "PUBMED_ID": "36758799",
+                "CHEBI": "CHEBI:132811"
+            }
+            ]
+        }]     
+    }
+    
+]
+
+

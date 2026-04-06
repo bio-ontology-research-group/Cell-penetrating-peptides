@@ -14,15 +14,20 @@ dependencies:
   # HTTP / preprocessing
   - requests
   - matplotlib
+  # web app
+  - conda-forge::flask
   # ontology / RDF
   - rdflib
   - jpype1
+  # Java runtime for JPype / OWLAPI
+  - conda-forge::openjdk
   # HuggingFace
   - conda-forge::transformers
   # pip-only packages
   - pip:
-    - mowl-python
+    - mowl-borg
     - pyshex
     - pronto
     - rapidfuzz
     - faiss-cpu
+    - pyld

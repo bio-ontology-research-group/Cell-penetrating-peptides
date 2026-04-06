@@ -16,25 +16,18 @@ This script performs three phases:
 Author: Maria Gomez
 Dependencies: mowl, pandas
 """
-import importlib.util
-import sys
-from pathlib import Path
 import jpype
-import jpype.imports
-
-if not jpype.isJVMStarted():
-    _mowl_spec = importlib.util.find_spec("mowl")
-    if _mowl_spec and _mowl_spec.submodule_search_locations:
-        _mowl_lib = str(Path(_mowl_spec.submodule_search_locations[0]) / "lib" / "*")
-    else:
-        _mowl_lib = str(Path(sys.prefix) / "lib" / f"python{sys.version_info.major}.{sys.version_info.minor}" / "site-packages" / "mowl" / "lib" / "*")
-    jpype.startJVM(classpath=[_mowl_lib])
-# Now you can import Java packages
-#from org.orekit.data import DirectoryCrawler 
-import pandas as pd
+import importlib.util
 import os
+if not jpype.isJVMStarted():
+    import glob
+    _mowl_jars = glob.glob(os.path.expanduser('~/miniconda3/envs/cpp_kg/lib/python3.10/site-packages/mowl/lib/*.jar'))
+    jpype.startJVM(classpath=_mowl_jars)
+import jpype.imports
+import pandas as pd
+
+import json
 from typing import List, Tuple
-from mowl.ontology.extend import insert_annotations
 
 from org.semanticweb.owlapi.apibinding import OWLManager
 from org.semanticweb.owlapi.model import (
@@ -90,6 +83,7 @@ SIO_IS_DESCRIBED_BY  = "http://semanticscience.org/resource/SIO_000557"  # is de
 SIO_DESCRIBES        = "http://semanticscience.org/resource/SIO_000563"  # describes (inverse)
 SIO_HAS_PROPER_PART  = "http://semanticscience.org/resource/SIO_000053"  # has proper part
 SIO_IS_PROPER_PART   = "http://semanticscience.org/resource/SIO_000093"  # is proper part of
+SIO_HAS_EVIDENCE     = "http://semanticscience.org/resource/SIO_000772"  # has evidence (link to document)
 
 # CPP namespaces
 CPP_SCHEMA_NS          = "https://cppkg.bio2vec.net/schema#"
@@ -99,34 +93,48 @@ CPP_DATASET_NS   = "https://cppkg.bio2vec.net/dataset/"
 UPTAKE_MECHANISM_CLASS = CPP_SCHEMA_NS + "UptakeMechanism"
 
 SIO_OWL = "Ontology/sio.owl"
+# Intermediate files directory (triplets, downloaded SIO, metadata)
+INTERMEDIATE_DIR = "data/intermediate"
+
+# Default online SIO ontology URL (purl). The script will download the
+# latest copy into INTERMEDIATE_DIR/sio.owl before ontology-building phases.
+SIO_ONLINE_URL = "http://semanticscience.org/ontology/sio.owl"
+
+def _fetch_sio(sio_url: str = SIO_ONLINE_URL, dest_dir: str = INTERMEDIATE_DIR) -> str:
+    """Download latest SIO ontology to the intermediate folder and return local path.
+
+    This uses urllib to avoid adding extra dependencies.
+    """
+    os.makedirs(dest_dir, exist_ok=True)
+    dest_path = os.path.join(dest_dir, "sio.owl")
+    try:
+        import urllib.request
+        print(f"Downloading SIO ontology from {sio_url} to {dest_path} ...")
+        urllib.request.urlretrieve(sio_url, dest_path)
+        print("Downloaded SIO ontology")
+    except Exception as e:
+        print(f"Warning: failed to download SIO from {sio_url}: {e}")
+        if not os.path.exists(dest_path):
+            raise
+    return dest_path
 
 # ============================================================================
 # FAIR METADATA CONFIGURATION
 # ============================================================================
 
-# F1 / F3 — Dataset IRI (globally unique, persistent) + versioned ontology IRI
 DATASET_IRI       = "https://cppkg.bio2vec.net"
 ONTOLOGY_IRI      = DATASET_IRI                              # ontology describes the dataset
 ONTOLOGY_VERSION  = DATASET_IRI + "/2026-03-19"
+DATASET_DOI       = "https://identifiers.org/doi:10.5281/zenodo.19351483"
 
-# F1B — Identifiers.org-registered persistent identifier for the dataset.
-# FAIR-Checker F1B strong check requires dct:identifier / schema:identifier
-# whose value is traceable to an identifiers.org-registered namespace (e.g. DOI).
-# ⚠ Replace the placeholder below with the actual DOI once the dataset is
-#   deposited in Zenodo / figshare: https://zenodo.org → "New upload"
-#   Then the value becomes e.g. "https://identifiers.org/doi:10.5281/zenodo.XXXXXXX"
-DATASET_DOI       = "https://identifiers.org/doi:10.5281/zenodo.19427198"
-
-# SPARQL / service endpoint for dcat:DataService
-# Matches the Flask route @app.route("/api/sparql", methods=["POST"])
 SPARQL_ENDPOINT     = DATASET_IRI + "/api/sparql"
 SERVICE_DESCRIPTION = DATASET_IRI + "/api/sparql"   # SD doc at same IRI
 
-# F2 — Dublin Core Terms properties for rich ontology-level metadata
+# Dublin Core Terms properties for rich ontology-level metadata
 DC_TERMS   = "http://purl.org/dc/terms/"
 RDFS_NS    = "http://www.w3.org/2000/01/rdf-schema#"
 
-# F4 — VOID / DCAT for dataset discoverability
+# VOID / DCAT for dataset discoverability
 VOID_NS      = "http://rdfs.org/ns/void#"
 DCAT_NS      = "http://www.w3.org/ns/dcat#"
 SCHEMA_NS    = "http://schema.org/"
@@ -151,19 +159,10 @@ def _apply_ontology_metadata(manager, ontology, factory):
     manager.applyChange(SetOntologyID(ontology,
         OWLOntologyID(onto_iri, version_iri)))
 
-    # ------------------------------------------------------------------ #
-    # Strip all existing ontology-level annotations from the loaded SIO  #
-    # ontology so that only our authorship and description are retained.  #
-    # ------------------------------------------------------------------ #
     for ann in list(ontology.getAnnotations()):
         manager.applyChange(RemoveOntologyAnnotation(ontology, ann))
 
-    # ------------------------------------------------------------------ #
-    # Literal-valued annotations                                         #
-    # ------------------------------------------------------------------ #
     # F1B (strong): dct:identifier / schema:identifier in ontology header.
-    # Prefer the DOI (identifiers.org-registered) when available; fall back
-    # to the w3id.org IRI so the property is always present.
     # F2A (strong): dct:title + dct:description present in metadata
     # A1.2: dct:accessRights describes who can access the data
     persistent_id = DATASET_DOI if DATASET_DOI else DATASET_IRI
@@ -207,29 +206,16 @@ def _apply_ontology_metadata(manager, ontology, factory):
         annotation = factory.getOWLAnnotation(prop, factory.getOWLLiteral(value))
         manager.applyChange(AddOntologyAnnotation(ontology, annotation))
 
-    # ------------------------------------------------------------------ #
-    # IRI-valued annotations                                              #
-    # ------------------------------------------------------------------ #
-    # A1.2: dct:license and schema:license MUST be IRI-typed (not literals)
-    #       so FAIR-Checker can resolve and validate the access policy.
-    #       Using both ensures strong + weak A1.2 checks pass.
     # F2A strong: dcat:accessURL / dcat:downloadURL must be IRI-typed.
     # I3:  Each IRI-typed annotation adds a domain to the authority count.
-    #       Domains covered:
-    #         - creativecommons.org  (license)
-    #         - semanticscience.org  (void:vocabulary → SIO)
-    #         - purl.obolibrary.org  (void:vocabulary → GO/ChEBI)
-    #         - w3id.org             (ontology + dataset IRIs)
-    #       → 4 distinct domains, satisfying the ≥3 threshold.
     iri_meta = [
         # A1.2 — license as IRI (required by FAIR-Checker for access policy check)
         (DC_TERMS  + "license",       "https://creativecommons.org/licenses/by/4.0/"),
         (SCHEMA_NS + "license",       "https://creativecommons.org/licenses/by/4.0/"),
         # F2A — access/download endpoints as IRIs
-        (DCAT_NS   + "accessURL",     ONTOLOGY_VERSION),
-        (DCAT_NS   + "downloadURL",   ONTOLOGY_VERSION),
+        (DCAT_NS   + "accessURL",     DATASET_IRI),
+        (DCAT_NS   + "downloadURL",   DATASET_IRI + "/download"),
         # I3 — void:vocabulary links to shared vocabularies in different domains,
-        #      adding semanticscience.org and purl.obolibrary.org to authority count
         (VOID_NS   + "vocabulary",    "http://semanticscience.org/resource/"),
         (VOID_NS   + "vocabulary",    "http://purl.obolibrary.org/obo/"),
         # F4 — VOID / DCAT dataset type as IRI
@@ -241,11 +227,6 @@ def _apply_ontology_metadata(manager, ontology, factory):
         annotation = factory.getOWLAnnotation(prop, IRI.create(value))
         manager.applyChange(AddOntologyAnnotation(ontology, annotation))
 
-    # ------------------------------------------------------------------ #
-    # dcat:DataService — exposes endpointURL + endpointDescription        #
-    # DCAT2 requires these properties on a DataService node, not directly #
-    # on the Dataset. The service is linked back via dcat:servesDataset.  #
-    # ------------------------------------------------------------------ #
     RDF_NS      = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     service_iri = IRI.create(DATASET_IRI + "/service")
     dataset_iri = IRI.create(DATASET_IRI)
@@ -430,6 +411,17 @@ def extend_gene_regulation(gene_to_go_file: str, output_file: str):
     # Read all rows (drop any trailing empty lines)
     df = pd.read_csv(gene_to_go_file, sep='\t', header=None).dropna()
 
+    # Load generated metadata (if present) to enrich gene/inhibitor individuals
+    meta_path = os.path.join(os.path.dirname(gene_to_go_file), "mech_metadata.json")
+    metadata = {}
+    if os.path.exists(meta_path):
+        try:
+            with open(meta_path, "r", encoding="utf-8") as mf:
+                metadata = json.load(mf)
+            print(f"Loaded metadata from {meta_path}")
+        except Exception as e:
+            print(f"Warning: failed to load metadata {meta_path}: {e}")
+
     # --- User-specified positive-regulation GO terms as up-regulation processes ---
     print("Adding user-specified positive regulation GO terms as up-regulation processes...")
     user_pos_reg_terms = {
@@ -489,9 +481,39 @@ def extend_gene_regulation(gene_to_go_file: str, output_file: str):
         ]:
             manager.applyChange(AddAxiom(ontology, axiom))
 
+        # Additional metadata: gene symbol, definition, and PubMed evidence
+        gene_meta = metadata.get("genes", {}).get(gene_iri_str, {}) if metadata else {}
+
         # F2 / F3: labels + dc:identifier + rdfs:seeAlso → Ensembl page
-        _annotate_individual(manager, ontology, factory, gene_iri_str, local_id,
+        gene_label = gene_meta.get("symbol") or local_id
+        _annotate_individual(manager, ontology, factory, gene_iri_str, gene_label,
             db_source_iri=f"https://www.ensembl.org/id/{local_id}")
+        if gene_meta:
+            # definition as rdfs:comment
+            definition = gene_meta.get("definition")
+            if definition:
+                cprop = factory.getOWLAnnotationProperty(IRI.create(RDFS_NS + "comment"))
+                manager.applyChange(AddAxiom(ontology,
+                    factory.getOWLAnnotationAssertionAxiom(cprop, IRI.create(gene_iri_str), factory.getOWLLiteral(str(definition)))))
+
+            # PubMed evidence: create PubMed document individuals and link via SIO_HAS_EVIDENCE
+            pubmeds = gene_meta.get("pubmeds", [])
+            if pubmeds:
+                doc_cl = factory.getOWLClass(IRI.create(SIO_DOCUMENT))
+                has_evidence = factory.getOWLObjectProperty(IRI.create(SIO_HAS_EVIDENCE))
+                for pm in pubmeds:
+                    try:
+                        pm_int = int(float(str(pm)))
+                    except Exception:
+                        continue
+                    pub_iri = f"https://identifiers.org/pubmed:{pm_int}"
+                    pub_ind = factory.getOWLNamedIndividual(IRI.create(pub_iri))
+                    manager.applyChange(AddAxiom(ontology, factory.getOWLDeclarationAxiom(pub_ind)))
+                    manager.applyChange(AddAxiom(ontology, factory.getOWLClassAssertionAxiom(doc_cl, pub_ind)))
+                    _annotate_individual(manager, ontology, factory, pub_iri, f"pubmed:{pm_int}")
+                    # Link gene -> pubmed via has evidence
+                    manager.applyChange(AddAxiom(ontology,
+                        factory.getOWLObjectPropertyAssertionAxiom(has_evidence, gene_ind, pub_ind)))
 
     # --- UptakeMechanism individuals (unique GO terms) ---
     go_terms = df[1].unique()
@@ -504,7 +526,8 @@ def extend_gene_regulation(gene_to_go_file: str, output_file: str):
         manager.applyChange(AddAxiom(ontology,
             factory.getOWLClassAssertionAxiom(uptake_mech_cl, go_ind)))
         # F2 / F3: label + identifier + seeAlso → AmiGO
-        _annotate_individual(manager, ontology, factory, go_iri_str, go_local,
+        go_label = metadata.get("go_labels", {}).get(go_iri_str, go_local) if metadata else go_local
+        _annotate_individual(manager, ontology, factory, go_iri_str, go_label,
             db_source_iri=f"https://amigo.geneontology.org/amigo/term/{go_local.replace('_', ':')}")
 
     # --- Shared activator role instances: one per uptake mechanism ---
@@ -605,6 +628,17 @@ def extend_inhibitor_regulation(chebi_to_go_file: str, input_file: str, output_f
     # Work on unique (inhibitor, mechanism) pairs to avoid duplicate role instances
     df_pairs = df.drop_duplicates()
 
+    # Load metadata if available
+    meta_path = os.path.join(os.path.dirname(chebi_to_go_file), "mech_metadata.json")
+    metadata = {}
+    if os.path.exists(meta_path):
+        try:
+            with open(meta_path, "r", encoding="utf-8") as mf:
+                metadata = json.load(mf)
+            print(f"Loaded metadata from {meta_path}")
+        except Exception as e:
+            print(f"Warning: failed to load metadata {meta_path}: {e}")
+
     # --- ChEBI inhibitor individuals ---
     chebis = df[0].unique()
     print(f"Adding {len(chebis)} inhibitor individuals (ChEBI)...")
@@ -620,10 +654,36 @@ def extend_inhibitor_regulation(chebi_to_go_file: str, input_file: str, output_f
         ]:
             manager.applyChange(AddAxiom(ontology, axiom))
 
+        # Add definition and PubMed evidence for inhibitors if metadata present
+        chebi_meta = metadata.get("chebi", {}).get(chebi_iri_str, {}) if metadata else {}
         # F2 / F3: labels + dc:identifier + rdfs:seeAlso → EBI ChEBI page
         chebi_accession = local_id.replace("_", ":")       # CHEBI:2639
-        _annotate_individual(manager, ontology, factory, chebi_iri_str, chebi_accession,
+        chebi_label = chebi_meta.get("name") or chebi_accession
+        _annotate_individual(manager, ontology, factory, chebi_iri_str, chebi_label,
             db_source_iri=f"https://www.ebi.ac.uk/chebi/searchId.do?chebiId={chebi_accession}")
+        if chebi_meta:
+            definition = chebi_meta.get("definition")
+            if definition:
+                cprop = factory.getOWLAnnotationProperty(IRI.create(RDFS_NS + "comment"))
+                manager.applyChange(AddAxiom(ontology,
+                    factory.getOWLAnnotationAssertionAxiom(cprop, IRI.create(chebi_iri_str), factory.getOWLLiteral(str(definition)))))
+
+            pubmeds = chebi_meta.get("pubmeds", [])
+            if pubmeds:
+                doc_cl = factory.getOWLClass(IRI.create(SIO_DOCUMENT))
+                has_evidence = factory.getOWLObjectProperty(IRI.create(SIO_HAS_EVIDENCE))
+                for pm in pubmeds:
+                    try:
+                        pm_int = int(float(str(pm)))
+                    except Exception:
+                        continue
+                    pub_iri = f"https://identifiers.org/pubmed:{pm_int}"
+                    pub_ind = factory.getOWLNamedIndividual(IRI.create(pub_iri))
+                    manager.applyChange(AddAxiom(ontology, factory.getOWLDeclarationAxiom(pub_ind)))
+                    manager.applyChange(AddAxiom(ontology, factory.getOWLClassAssertionAxiom(doc_cl, pub_ind)))
+                    _annotate_individual(manager, ontology, factory, pub_iri, f"pubmed:{pm_int}")
+                    manager.applyChange(AddAxiom(ontology,
+                        factory.getOWLObjectPropertyAssertionAxiom(has_evidence, chebi_ind, pub_ind)))
 
     # --- User-specified negative regulation GO terms as down-regulation processes ---
     print("Adding user-specified negative regulation GO terms as down-regulation processes...")
@@ -708,13 +768,6 @@ def extend_inhibitor_regulation(chebi_to_go_file: str, input_file: str, output_f
     manager.saveOntology(ontology, out_iri)
     print(f"Inhibitor ontology saved to {output_file}")
 
-    # Save as Turtle (.ttl) in the same folder
-    ttl_file = output_file.replace(".owl", ".ttl")
-    TurtleDocumentFormat = jpype.JClass("org.semanticweb.owlapi.formats.TurtleDocumentFormat")
-    ttl_iri = IRI.create(java.io.File(ttl_file).getAbsoluteFile().toURI())
-    manager.saveOntology(ontology, TurtleDocumentFormat(), ttl_iri)
-    print(f"Turtle serialisation saved to {ttl_file}")
-
 # ============================================================================
 # PHASE 3 HELPER: GENERATE TRIPLET TSV FILES FROM CPP CSV
 # ============================================================================
@@ -782,7 +835,7 @@ def extend_ontology_with_annotations(ontology: str,
                                     cpp_cargo_file: str,
                                     cpp_location_file: str,
                                     cpp_cell_file: str,
-                                    output_file: str = "extended_cpp_ontology.owl"):
+                                    output_file: str = "Ontology/CPP_KG.owl"):
     """
     Phase 3a — TBox enrichment (OWLAPI):
         cpp:CPP-Complex          subClassOf  sio:SIO_000004  (material entity)
@@ -1088,6 +1141,7 @@ def extend_ontology_with_annotations(ontology: str,
         manager.applyChange(AddAxiom(onto, factory.getOWLDeclarationAxiom(cpp_ind)))
         manager.applyChange(AddAxiom(onto,
             factory.getOWLClassAssertionAxiom(cpp_peptide_cl, cpp_ind)))
+        _annotate_individual(manager, onto, factory, cpp_iri, "CPP")
         if cpp_iri in cpp_features:
             _add_features(manager, onto, factory, cpp_iri,
                           cpp_features[cpp_iri].items())
@@ -1097,8 +1151,13 @@ def extend_ontology_with_annotations(ontology: str,
     #   complex  sio:SIO_000369  cpp_individual
     #   complex  sio:SIO_000369  chebi_individual
     pairs = df.drop_duplicates(subset=["CPP_ID", "RAG_curie_CheBI"])
+    # Build lookup: (CPP_ID, RAG_curie_CheBI) → sequential index for IRI naming
+    pair_to_idx = {
+        (r["CPP_ID"], r["RAG_curie_CheBI"]): idx
+        for idx, (_, r) in enumerate(pairs.iterrows(), start=1)
+    }
     print(f"  Asserting {len(pairs)} CPP-Complex individuals (one per CPP+CHEBI pair) ...")
-    for _, row in pairs.iterrows():
+    for role_idx, (_, row) in enumerate(pairs.iterrows(), start=1):
         cpp_iri   = row["CPP_ID"]
         chebi_obo = chebi_ind_map[row["RAG_curie_CheBI"]]
 
@@ -1106,15 +1165,15 @@ def extend_ontology_with_annotations(ontology: str,
         chebi_local = row["RAG_curie_CheBI"].replace(":", "_")  # e.g. CHEBI_38161
 
         complex_ind = factory.getOWLNamedIndividual(
-            IRI.create(CPP_DATASET_NS + f"complex_{cpp_local}_{chebi_local}"))
+            IRI.create(CPP_DATASET_NS + f"cpp_complex_{role_idx:04d}"))
         cpp_ind   = factory.getOWLNamedIndividual(IRI.create(cpp_iri))
         chebi_ind = factory.getOWLNamedIndividual(IRI.create(chebi_obo))
 
-        # Role individuals — one per (CPP, CHEBI) pair
+        # Role individuals — one per (CPP, CHEBI) pair, named by sequential index
         cpp_role_ind   = factory.getOWLNamedIndividual(
-            IRI.create(CPP_DATASET_NS + f"cpp_role_{cpp_local}_{chebi_local}"))
+            IRI.create(CPP_DATASET_NS + f"cpp_role_{role_idx:04d}"))
         cargo_role_ind = factory.getOWLNamedIndividual(
-            IRI.create(CPP_DATASET_NS + f"cargo_role_{cpp_local}_{chebi_local}"))
+            IRI.create(CPP_DATASET_NS + f"cargo_role_{role_idx:04d}"))
 
         # Resolve uptake mechanism IRI(s) for this pair (subcategory-first)
         sub_id  = row["Subcategory Uptake Mechanism ID"]
@@ -1147,6 +1206,21 @@ def extend_ontology_with_annotations(ontology: str,
             factory.getOWLObjectPropertyAssertionAxiom(is_attribute_of, cargo_role_ind, chebi_ind),
         ]:
             manager.applyChange(AddAxiom(onto, axiom))
+
+        # rdfs:label annotations
+        rdfs_label = factory.getRDFSLabel()
+        cargo_type = str(row.get("Cargo Type", "")).strip()
+        for ind, label in [
+            (complex_ind,    "CPP-Complex"),
+            (cpp_role_ind,   "CPP_role"),
+            (cargo_role_ind, "Cargo_role"),
+            (chebi_ind,      cargo_type if cargo_type else None),
+        ]:
+            if label:
+                manager.applyChange(AddAxiom(onto,
+                    factory.getOWLAnnotationAssertionAxiom(
+                        rdfs_label, ind.getIRI(),
+                        factory.getOWLLiteral(label))))
 
         # Roles are realized in the uptake mechanism instance(s) for this pair
         for mech_ind in mech_inds_for_role:
@@ -1185,9 +1259,8 @@ def extend_ontology_with_annotations(ontology: str,
             skipped += 1
             continue
 
-        cpp_local   = str(row["CPP_ID"]).strip().split("/")[-1]
-        chebi_local = str(row["RAG_curie_CheBI"]).strip().replace(":", "_")
-        complex_iri = CPP_DATASET_NS + f"complex_{cpp_local}_{chebi_local}"
+        pair_idx    = pair_to_idx[(row["CPP_ID"], row["RAG_curie_CheBI"])]
+        complex_iri = CPP_DATASET_NS + f"cpp_complex_{pair_idx:04d}"
 
         exp_iri = CPP_DATASET_NS + f"experiment_{int(row['id'])}"
         exp_ind = factory.getOWLNamedIndividual(IRI.create(exp_iri))
@@ -1195,8 +1268,7 @@ def extend_ontology_with_annotations(ontology: str,
             factory.getOWLDeclarationAxiom(exp_ind)))
         manager.applyChange(AddAxiom(onto,
             factory.getOWLClassAssertionAxiom(experiment_cl, exp_ind)))
-        _annotate_individual(manager, onto, factory, exp_iri,
-                             f"experiment_{int(row['id'])}")
+        _annotate_individual(manager, onto, factory, exp_iri, "experiment")
         _add_features(manager, onto, factory, exp_iri,
                       ((col, row[col]) for col in EXP_FEAT_COLS))
 
@@ -1260,6 +1332,7 @@ def extend_ontology_with_annotations(ontology: str,
                 factory.getOWLDeclarationAxiom(pub_ind)))
             manager.applyChange(AddAxiom(onto,
                 factory.getOWLClassAssertionAxiom(document_cl, pub_ind)))
+            _annotate_individual(manager, onto, factory, pub_iri, "Document")
             manager.applyChange(AddAxiom(onto,
                 factory.getOWLObjectPropertyAssertionAxiom(is_described_by, exp_ind, pub_ind)))
             manager.applyChange(AddAxiom(onto,
@@ -1268,7 +1341,7 @@ def extend_ontology_with_annotations(ontology: str,
     print(f"  Skipped {skipped} rows (no CPP-Complex available).")
 
     # Save TBox-enriched ontology; this becomes the seed for the annotation chain
-    tbox_onto = ontology.replace(".owl", "_cpp_complex.owl")
+    tbox_onto = os.path.join(os.path.dirname(ontology), "CPP_KG.owl")
     tbox_iri  = IRI.create(java.io.File(tbox_onto).getAbsoluteFile().toURI())
     manager.saveOntology(onto, tbox_iri)
     print(f"  TBox-enriched ontology saved to {tbox_onto}")
@@ -1289,6 +1362,116 @@ def extend_ontology_with_annotations(ontology: str,
 # MAIN EXECUTION
 # ============================================================================
 
+def generate_triplets_from_json(json_path: str,
+                                gene_out: str = None,
+                                chebi_out: str = None) -> Tuple[str, str]:
+    """
+    Generate gene->GO and chebi->GO triplet TSVs from the provided JSON.
+
+    Expects JSON structure to be a list of mechanism objects with keys:
+      - "GO_identifier": e.g. "GO:0006909"
+      - "associated_genes": list of objects with "ensembl_id"
+      - "inhibitors": list of objects containing a CHEBI accession (e.g. "CHEBI:2639")
+
+    Writes two files under `triplets/` and returns their paths.
+    """
+    with open(json_path, "r", encoding="utf-8") as fh:
+        data = json.load(fh)
+
+    # default outputs inside INTERMEDIATE_DIR
+    if gene_out is None:
+        gene_out = os.path.join(INTERMEDIATE_DIR, "gene_to_go.tsv")
+    if chebi_out is None:
+        chebi_out = os.path.join(INTERMEDIATE_DIR, "chebi_to_go.tsv")
+    os.makedirs(os.path.dirname(gene_out), exist_ok=True)
+
+    gene_pairs = set()
+    chebi_pairs = set()
+    metadata = {"genes": {}, "chebi": {}, "go_labels": {}}
+
+    def _process_mech_item(item, target_go_iri):
+        """Extract genes/inhibitors from a mechanism-like dict and add to sets/metadata."""
+        # Genes
+        for g in item.get("associated_genes", []) or []:
+            ensembl = None
+            if isinstance(g, dict):
+                ensembl = g.get("ensembl_id") or g.get("ensembl")
+            elif isinstance(g, str):
+                ensembl = g
+            if ensembl:
+                gene_iri = "http://identifiers.org/ensembl/" + str(ensembl).strip()
+                gene_pairs.add((gene_iri, target_go_iri))
+
+                # metadata
+                if isinstance(g, dict):
+                    pub = g.get("PUBMED_ID") or g.get("Pubmed") or g.get("pubmed")
+                    gene_meta = metadata.setdefault("genes", {}).setdefault(gene_iri, {"symbol": None, "definition": None, "pubmeds": []})
+                    gene_meta["symbol"] = gene_meta.get("symbol") or g.get("name") or g.get("gene") or g.get("symbol")
+                    gene_meta["definition"] = gene_meta.get("definition") or g.get("Definition") or g.get("definition")
+                    if pub and str(pub).strip():
+                        gene_meta["pubmeds"].append(str(pub).strip())
+
+        # Inhibitors / CHEBI
+        for inh in item.get("inhibitors", []) or []:
+            chebi_acc = None
+            pub = None
+            if isinstance(inh, dict):
+                chebi_acc = inh.get("CHEBI") or inh.get("chebi") or inh.get("CheBI")
+                pub = inh.get("PUBMED_ID") or inh.get("Pubmed") or inh.get("pubmed")
+            elif isinstance(inh, str) and inh.strip().upper().startswith("CHEBI:"):
+                chebi_acc = inh.strip()
+            if chebi_acc:
+                chebi_iri = "http://purl.obolibrary.org/obo/" + chebi_acc.replace(":", "_")
+                chebi_pairs.add((chebi_iri, target_go_iri))
+                chebi_meta = metadata.setdefault("chebi", {}).setdefault(chebi_iri, {"name": None, "definition": None, "pubmeds": []})
+                if isinstance(inh, dict):
+                    chebi_meta["name"] = chebi_meta.get("name") or inh.get("name")
+                    chebi_meta["definition"] = chebi_meta.get("definition") or inh.get("Description") or inh.get("Definition") or inh.get("definition")
+                    if pub and str(pub).strip():
+                        chebi_meta["pubmeds"].append(str(pub).strip())
+
+    for entry in data:
+        go_id = entry.get("GO_identifier") or entry.get("GO")
+        if not go_id:
+            continue
+        go_iri = "http://purl.obolibrary.org/obo/" + go_id.replace(":", "_")
+
+        # Record GO label from mechanism_name (if present)
+        mech_name = entry.get("mechanism_name") or entry.get("mechanism") or entry.get("name")
+        if mech_name:
+            metadata.setdefault("go_labels", {})[go_iri] = mech_name
+
+        # Process top-level associated_genes/inhibitors
+        _process_mech_item(entry, go_iri)
+
+        # If the entry contains nested pathways, iterate them and map their
+        # genes/inhibitors to the parent GO (e.g. GO:0160294 -> parent go_iri)
+        for sub in entry.get("pathways", []) or []:
+            # sub may have its own mechanism_name; but we map its genes/inhibitors
+            # to the parent GO IRI as requested
+            # if sub defines a mechanism_name, prefer parent mapping for GO label
+            _process_mech_item(sub, go_iri)
+
+    # Write files
+    with open(gene_out, "w", encoding="utf-8") as gf:
+        for subj, obj in sorted(gene_pairs):
+            gf.write(f"{subj}\t{obj}\n")
+
+    with open(chebi_out, "w", encoding="utf-8") as cf:
+        for subj, obj in sorted(chebi_pairs):
+            cf.write(f"{subj}\t{obj}\n")
+
+    # Write metadata if present
+    if 'metadata' in locals():
+        meta_file = os.path.join(os.path.dirname(gene_out), "mech_metadata.json")
+        with open(meta_file, "w", encoding="utf-8") as mf:
+            json.dump(metadata, mf, indent=2)
+        print(f"Wrote metadata to {meta_file}")
+
+    print(f"Wrote {len(gene_pairs)} gene->GO pairs to {gene_out}")
+    print(f"Wrote {len(chebi_pairs)} chebi->GO pairs to {chebi_out}")
+    return gene_out, chebi_out
+
 def main():
     """
     Main execution function that orchestrates all three phases.
@@ -1298,9 +1481,23 @@ def main():
     print("="*70)
     
     # Define input file paths
-    GENE_TO_GO_FILE  = "triplets/gene_to_go.tsv"
-    CHEBI_TO_GO_FILE = "triplets/chebi_to_go.tsv"
-    CPP_CSV_FILE     = "/Users/hadmin1/Desktop/POSEIDON_CPPSite/Cell-penetrating-peptides/data/Natural_CPP3_download_annotated_preprocessed_Ontology_Normalization.csv"
+    JSON_MECH_FILE   = "data/CPP_mechanism_genes_inhibitors.json"
+    # triplet files live inside the intermediate folder
+    GENE_TO_GO_FILE  = os.path.join(INTERMEDIATE_DIR, "gene_to_go.tsv")
+    CHEBI_TO_GO_FILE = os.path.join(INTERMEDIATE_DIR, "chebi_to_go.tsv")
+    CPP_CSV_FILE     = "data/Natural_CPP3_download_annotated_preprocessed_Ontology_Normalization.csv"
+
+    # If the JSON mechanisms file exists, generate the triplet TSVs from it
+    if os.path.exists(JSON_MECH_FILE):
+        print(f"Generating triplets from {JSON_MECH_FILE} ...")
+        # ensure intermediate folder exists and download latest SIO copy there
+        sio_local = _fetch_sio()
+        # set global SIO_OWL path to the downloaded copy
+        global SIO_OWL
+        SIO_OWL = sio_local
+        generate_triplets_from_json(JSON_MECH_FILE,
+                                    gene_out=GENE_TO_GO_FILE,
+                                    chebi_out=CHEBI_TO_GO_FILE)
 
     genes_ontology    = "Ontology/sio_genes.owl"
     inhibitors_ontology = "Ontology/sio_genes_inhibitors.owl"
@@ -1330,7 +1527,7 @@ def main():
             cpp_cargo_file=cpp_cargo_file,
             cpp_location_file=cpp_location_file,
             cpp_cell_file=cpp_cell_file,
-            output_file="Ontology/extended_cpp_ontology.owl"
+            output_file="Ontology/CPP_KG.owl"
         )
 
 
