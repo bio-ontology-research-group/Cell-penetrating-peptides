@@ -13,7 +13,7 @@
     "@type": "Dataset",
     "name": "CPP Mechanisms Knowledge Graph",
     "description": "A structured RDF Knowledge Graph encoding endocytic and non-endocytic uptake mechanisms for Cell-Penetrating Peptides.",
-    "url": "https://w3id.org/cpp/dataset/mechanisms/",
+    "url": "https://cppkg.bio2vec.net/dataset/",
     "license": "https://creativecommons.org/licenses/by/4.0/",
     "keywords": ["cell-penetrating peptide","CPP","endocytosis","knowledge graph","RDF","mechanisms"],
     "distribution": [
@@ -265,7 +265,7 @@
         <div class="col-md-3"><strong>Gene Ontology</strong><br/><small class="text-muted">Biological process &amp; cellular component terms. <a href="https://geneontology.org/" target="_blank" rel="noopener">geneontology.org &nearr;</a></small></div>
         <div class="col-md-3"><strong>CLO — Cell Line Ontology</strong><br/><small class="text-muted">Standardised cell line identifiers. <a href="https://obofoundry.org/ontology/clo.html" target="_blank" rel="noopener">obofoundry.org &nearr;</a></small></div>
         <div class="col-md-6"><strong>SIO — Semanticscience Integrated Ontology</strong><br/><small class="text-muted">Core entity types and semantic relations. <a href="http://semanticscience.org/" target="_blank" rel="noopener">semanticscience.org &nearr;</a></small></div>
-        <div class="col-md-6"><strong>CPP Mechanisms Ontology (custom)</strong><br/><small class="text-muted">Domain-specific schema: CPP-Complex, CellPenetratingPeptide, CargoRole, UptakeMechanism. <a href="https://w3id.org/cpp/schema#" target="_blank" rel="noopener">w3id.org/cpp &nearr;</a></small></div>
+        <div class="col-md-6"><strong>CPP Mechanisms Ontology (custom)</strong><br/><small class="text-muted">Domain-specific schema: CPP-Complex, CellPenetratingPeptide, CargoRole, UptakeMechanism. <a href="https://cppkg.bio2vec.net/schema#" target="_blank" rel="noopener">w3id.org/cpp &nearr;</a></small></div>
       </div>
     </div>
   </div>
@@ -536,8 +536,8 @@
       <table class="table table-sm mb-0">
         <thead class="table-light"><tr><th>Prefix</th><th>URI</th><th>Description</th></tr></thead>
         <tbody>
-          <tr><td class="prefix-td">cpp:</td><td><code>https://w3id.org/cpp/dataset/mechanisms/</code></td><td>CPP dataset instances</td></tr>
-          <tr><td class="prefix-td">cppS:</td><td><code>https://w3id.org/cpp/schema#</code></td><td>CPP custom schema / ontology</td></tr>
+          <tr><td class="prefix-td">cpp:</td><td><code>https://cppkg.bio2vec.net/dataset/</code></td><td>CPP dataset instances</td></tr>
+          <tr><td class="prefix-td">cppS:</td><td><code>https://cppkg.bio2vec.net/schema#</code></td><td>CPP custom schema / ontology</td></tr>
           <tr><td class="prefix-td">sio:</td><td><code>http://semanticscience.org/resource/</code></td><td>Semanticscience Integrated Ontology</td></tr>
           <tr><td class="prefix-td">obo:</td><td><code>http://purl.obolibrary.org/obo/</code></td><td>OBO Foundry (GO, CLO terms)</td></tr>
           <tr><td class="prefix-td">rdf:</td><td><code>http://www.w3.org/1999/02/22-rdf-syntax-ns#</code></td><td>RDF vocabulary</td></tr>
@@ -557,9 +557,9 @@
       <h5>How to Cite</h5>
       <div class="bibtex-block">@dataset{castillo_cpp_mechanisms_kg,
   title   = {CPP Mechanisms Knowledge Graph},
-  author  = {Castillo, Maria},
-  year    = {2024},
-  url     = {https://github.com/mariacastillo982/cpp-mechanisms},
+  author  = {Castillo, Maria and Renn, Dominik and Rueping, Magnus and Hoehndorf, Robert},
+  year    = {2026},
+  url     = {https://github.com/bio-ontology-research-group/Cell-penetrating-peptides.git},
   license = {CC-BY 4.0}
 }</div>
     </div>
@@ -1275,7 +1275,7 @@ var EXAMPLE_QUERIES = {
   'Object properties': 'PREFIX owl: <http://www.w3.org/2002/07/owl#>\nSELECT DISTINCT ?property WHERE {\n  ?property a owl:ObjectProperty .\n}\nORDER BY ?property',
 };
 
-var EVAL_PFX = 'PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX owl:   <http://www.w3.org/2002/07/owl#>\nPREFIX sio:   <http://semanticscience.org/resource/>\nPREFIX obo:   <http://purl.obolibrary.org/obo/>\nPREFIX cppm:  <https://w3id.org/cpp/dataset/mechanisms/>\nPREFIX cppi:  <https://w3id.org/cpp/dataset/individuals/>\nPREFIX cpps:  <https://w3id.org/cpp/schema#>\n';
+var EVAL_PFX = 'PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX owl:   <http://www.w3.org/2002/07/owl#>\nPREFIX sio:   <http://semanticscience.org/resource/>\nPREFIX obo:   <http://purl.obolibrary.org/obo/>\nPREFIX cppm:  <https://cppkg.bio2vec.net/dataset/>\nPREFIX cppi:  <https://cppkg.bio2vec.net/dataset/individuals/>\nPREFIX cpps:  <https://cppkg.bio2vec.net/schema#>\n';
 
 var COMPETENCY_QUERIES = {
   'CPP-Complex \u2229 Endocytosis': EVAL_PFX + 'SELECT DISTINCT ?peptide ?mechanism\nWHERE {\n  ?peptide a cppm:CPP-Complex ; sio:SIO_000062 ?mechanism .\n  ?mechanism rdfs:subClassOf* obo:GO_0006897 .\n}\nORDER BY ?peptide LIMIT 30',

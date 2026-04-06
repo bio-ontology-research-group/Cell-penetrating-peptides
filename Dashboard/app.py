@@ -4,10 +4,13 @@ CPP Mechanisms Knowledge Graph Dashboard - Flask Version
 Run: python3 app.py
 """
 
+import logging
 import threading
 from pathlib import Path
 from typing import Optional
 from urllib.parse import unquote
+
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s [%(levelname)s] %(message)s")
 
 import pandas as pd
 import requests
@@ -24,13 +27,12 @@ app = Flask(__name__)
 
 TTL_URL = "https://mariacastillo982.github.io/cpp-mechanisms/data/mechanisms.ttl"
 LOCAL_TTL_CANDIDATES = [
-    Path("Ontology/mechanisms.ttl"),
+    Path("../data/CPP_KG.ttl"),
     Path("mechanisms.ttl"),
 ]
 
 ENTITY_URI_PREFIXES = [
-    "https://w3id.org/cpp/dataset/mechanisms/",
-    "https://w3id.org/cpp/dataset/individuals/",
+    "https://cppkg.bio2vec.net/dataset/",
 ]
 
 # ---------------------------------------------------------------------------
@@ -158,17 +160,17 @@ ASSOCIATION_CATALOG = [
     {
         "name": "Cargo Role: Is Realized In",
         "description": "Functional role of the Cargo realized in the Uptake Mechanism.",
-        "query": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX sio: <http://semanticscience.org/resource/> PREFIX cpp: <https://w3id.org/cpp/dataset/mechanisms/> SELECT (COUNT(*) AS ?count) WHERE { ?s rdf:type cpp:CargoRole . ?s sio:SIO_000356 ?o . }",
+        "query": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX sio: <http://semanticscience.org/resource/> PREFIX cpp: <https://cppkg.bio2vec.net/dataset/> SELECT (COUNT(*) AS ?count) WHERE { ?s rdf:type cpp:CargoRole . ?s sio:SIO_000356 ?o . }",
     },
     {
         "name": "CPP Role: Is Realized In",
         "description": "Functional role of the Cell-penetrating peptide realized in the Uptake Mechanism.",
-        "query": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX sio: <http://semanticscience.org/resource/> PREFIX cpp: <https://w3id.org/cpp/dataset/mechanisms/> SELECT (COUNT(*) AS ?count) WHERE { ?s rdf:type cpp:CellPenetratingPeptideRole . ?s sio:SIO_000356 ?o . }",
+        "query": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX sio: <http://semanticscience.org/resource/> PREFIX cpp: <https://cppkg.bio2vec.net/dataset/> SELECT (COUNT(*) AS ?count) WHERE { ?s rdf:type cpp:CellPenetratingPeptideRole . ?s sio:SIO_000356 ?o . }",
     },
     {
         "name": "CPP-Complex: Is Participant In",
         "description": "CPP-Complex interaction with a specific the uptake mechanism.",
-        "query": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX sio: <http://semanticscience.org/resource/> PREFIX cpp: <https://w3id.org/cpp/dataset/mechanisms/> SELECT (COUNT(*) AS ?count) WHERE { ?s rdf:type cpp:CPP-Complex . ?s sio:SIO_000062 ?o . }",
+        "query": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX sio: <http://semanticscience.org/resource/> PREFIX cpp: <https://cppkg.bio2vec.net/dataset/> SELECT (COUNT(*) AS ?count) WHERE { ?s rdf:type cpp:CPP-Complex . ?s sio:SIO_000062 ?o . }",
     },
     {
         "name": "Cell Line: Is Participant In",
@@ -178,7 +180,7 @@ ASSOCIATION_CATALOG = [
     {
         "name": "Subcellular Delivery Localization",
         "description": "CPP-Complex interaction with Subcellular Entity.",
-        "query": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX sio: <http://semanticscience.org/resource/> PREFIX cpp: <https://w3id.org/cpp/dataset/mechanisms/> SELECT (COUNT(*) AS ?count) WHERE { ?s rdf:type cpp:CPP-Complex . ?s sio:SIO_000061 ?o . }",
+        "query": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX sio: <http://semanticscience.org/resource/> PREFIX cpp: <https://cppkg.bio2vec.net/dataset/> SELECT (COUNT(*) AS ?count) WHERE { ?s rdf:type cpp:CPP-Complex . ?s sio:SIO_000061 ?o . }",
     },
 ]
 
@@ -191,19 +193,19 @@ CLASS_CATALOG = {
         "name": "Inhibitor",
         "description": "A chemical compound used experimentally to selectively block an endocytic uptake mechanism.",
     },
-    "https://w3id.org/cpp/schema#UptakeMechanism": {
+    "https://cppkg.bio2vec.net/schema#UptakeMechanism": {
         "name": "Uptake Mechanism",
         "description": "A cellular route or process - endocytic or non-endocytic - through which the CPP-complex crosses the cell membrane.",
     },
-    "https://w3id.org/cpp/dataset/mechanisms/CPP-Complex": {
+    "https://cppkg.bio2vec.net/dataset/CPP-Complex": {
         "name": "CPP-Complex",
         "description": "A molecular assembly formed between a cell-penetrating peptide and its associated cargo molecule.",
     },
-    "https://w3id.org/cpp/dataset/mechanisms/CellPenetratingPeptide": {
+    "https://cppkg.bio2vec.net/dataset/CellPenetratingPeptide": {
         "name": "Cell-Penetrating Peptide",
         "description": "A short amino acid sequence with intrinsic ability to traverse biological membranes.",
     },
-    "https://w3id.org/cpp/dataset/mechanisms/Cargo": {
+    "https://cppkg.bio2vec.net/dataset/Cargo": {
         "name": "Cargo",
         "description": "A therapeutic or reporter molecule transported into cells through its association with a CPP.",
     },
@@ -247,31 +249,30 @@ CANDIDATE_PATTERNS = {
         '    FILTER(CONTAINS(LCASE(STR(?subcellLabel)), LCASE("{term}")))\n'
     ),
     "cell_line": (
-        "    ?peptide sio:SIO_000313 ?complex .\n"
-        "    ?complex sio:SIO_000062 ?mech .\n"
-        "    ?cellLineNode rdf:type sio:SIO_010054 .\n"
+        "    ?peptide sio:SIO_000008 ?cpp_role .\n"
+        "    ?cpp_role sio:SIO_000356 ?mech .\n"
         "    ?cellLineNode sio:SIO_000062 ?mech .\n"
-        "    ?cellLineNode rdfs:label ?cellLineLabel .\n"
+        "    ?cellLineNode cppS:cellLine ?cellLineLabel .\n"
         '    FILTER(CONTAINS(LCASE(STR(?cellLineLabel)), LCASE("{term}")))\n'
     ),
     "cargo": (
         "    ?peptide sio:SIO_000313 ?complex .\n"
         "    ?complex sio:SIO_000369 ?cargoNode .\n"
-        "    OPTIONAL { ?cargoNode cppS:cargoType ?cargoType . }\n"
+        "    ?cargoNode cppS:cargoType ?cargoType .\n"
         '    FILTER(CONTAINS(LCASE(STR(?cargoType)), LCASE("{term}")))\n'
     ),
     "doc_id": (
-        "    ?peptide sio:SIO_000313 ?complex .\n"
-        "    ?complex sio:SIO_000062 ?mech .\n"
+        "    ?docNode rdf:type sio:SIO_000148 .\n"
+        '    FILTER(CONTAINS(LCASE(STR(?docNode)), LCASE("{term}")))\n'
         "    ?exp rdf:type sio:SIO_000994 .\n"
-        "    ?exp sio:SIO_000053 ?mech .\n"
         "    ?exp sio:SIO_000557 ?docNode .\n"
-        '    BIND(REPLACE(STR(?docNode), ".*identifiers.org/", "") AS ?docId)\n'
-        '    FILTER(CONTAINS(LCASE(STR(?docId)), LCASE("{term}")))\n'
+        "    ?mech sio:SIO_000093 ?exp .\n"
+        "    ?role sio:SIO_000356 ?mech .\n"
+        "    ?peptide sio:SIO_000008 ?role .\n"
     ),
 }
 
-MAX_MATCHED_PEPTIDES = 250
+MAX_MATCHED_PEPTIDES = 5000
 MAX_RESULT_ROWS = 5000
 
 _CANDIDATE_WHERE_TOKEN = "##CANDIDATE_WHERE##"
@@ -281,8 +282,8 @@ CANDIDATE_QUERY = (
     "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
     "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
     "PREFIX sio:  <http://semanticscience.org/resource/>\n"
-    "PREFIX cpp:  <https://w3id.org/cpp/dataset/mechanisms/>\n"
-    "PREFIX cppS: <https://w3id.org/cpp/schema#>\n"
+    "PREFIX cpp:  <https://cppkg.bio2vec.net/dataset/>\n"
+    "PREFIX cppS: <https://cppkg.bio2vec.net/schema#>\n"
     "SELECT DISTINCT ?peptide\n"
     "WHERE {\n"
     "    ?peptide rdf:type cpp:CellPenetratingPeptide .\n"
@@ -295,8 +296,8 @@ DETAILS_QUERY = (
     "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
     "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
     "PREFIX sio:  <http://semanticscience.org/resource/>\n"
-    "PREFIX cpp:  <https://w3id.org/cpp/dataset/mechanisms/>\n"
-    "PREFIX cppS: <https://w3id.org/cpp/schema#>\n"
+    "PREFIX cpp:  <https://cppkg.bio2vec.net/dataset/>\n"
+    "PREFIX cppS: <https://cppkg.bio2vec.net/schema#>\n"
     "SELECT DISTINCT\n"
     "    ?cppId ?pepName ?sequence\n"
     "    ?cargoId ?cargoType\n"
@@ -481,31 +482,27 @@ def api_search():
 
         candidate_where = "\n".join(parts)
         candidate_query = CANDIDATE_QUERY.replace(_CANDIDATE_WHERE_TOKEN, candidate_where)
+        logging.debug("=== CANDIDATE QUERY ===\n%s", candidate_query)
+
         candidate_rows = list(g.query(candidate_query))
         peptides = [str(getattr(r, 'peptide', r[0])) for r in candidate_rows]
-
-        if not peptides:
-            return jsonify({"columns": [], "rows": [], "matched_peptides": 0, "warnings": []})
-
-        values_block = " ".join("<{}>".format(uri) for uri in peptides)
-        details_query = DETAILS_QUERY.replace(_VALUES_TOKEN, values_block)
-        vars_, rows = sparql_to_records(g, details_query)
-
-        display_cols = [COLUMN_LABELS.get(c, c) for c in vars_]
+        logging.debug("Matched peptide URIs (%d): %s", len(peptides), peptides)
 
         warnings = []
         if len(peptides) >= MAX_MATCHED_PEPTIDES:
             warnings.append(f"Matched at least {MAX_MATCHED_PEPTIDES} peptides. Refine the search term for faster results.")
-        if len(rows) >= MAX_RESULT_ROWS:
-            warnings.append(f"Result set reached the {MAX_RESULT_ROWS}-row limit. Refine your term for a narrower search.")
+
+        columns = ["Peptide URI"]
+        rows = [[uri] for uri in peptides]
 
         return jsonify({
-            "columns": display_cols,
+            "columns": columns,
             "rows":    rows,
             "matched_peptides": len(peptides),
             "warnings": warnings,
         })
     except Exception as exc:
+        logging.exception("api_search failed")
         return jsonify({"error": str(exc)}), 500
 
 
@@ -544,7 +541,7 @@ def sitemap_xml():
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         SELECT DISTINCT ?entity WHERE {
           ?entity rdf:type ?type .
-          FILTER(STRSTARTS(STR(?entity), "https://w3id.org/cpp/dataset/mechanisms/"))
+          FILTER(STRSTARTS(STR(?entity), "https://cppkg.bio2vec.net/dataset/"))
         }
         LIMIT 5000
         """
@@ -679,7 +676,7 @@ def api_browse():
         q = """
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        PREFIX cppS: <https://w3id.org/cpp/schema#>
+        PREFIX cppS: <https://cppkg.bio2vec.net/schema#>
         SELECT DISTINCT ?entity (SAMPLE(?lbl) AS ?label) (SAMPLE(?seq) AS ?sequence) WHERE {{
           ?entity rdf:type <{cls}> .
           OPTIONAL {{ ?entity rdfs:label ?lbl . }}
@@ -844,13 +841,13 @@ def _build_void_turtle() -> str:
 @prefix foaf:    <http://xmlns.com/foaf/0.1/> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 
-<https://w3id.org/cpp/dataset/mechanisms/>
+<https://cppkg.bio2vec.net/dataset/>
     a void:Dataset ;
     dcterms:title "CPP Mechanisms Knowledge Graph"@en ;
     dcterms:description "A structured RDF Knowledge Graph encoding endocytic and non-endocytic uptake mechanisms for Cell-Penetrating Peptides."@en ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     void:dataDump <https://mariacastillo982.github.io/cpp-mechanisms/data/mechanisms.ttl> ;
-    void:uriSpace "https://w3id.org/cpp/dataset/mechanisms/" .
+    void:uriSpace "https://cppkg.bio2vec.net/dataset/" .
 """
 
 
