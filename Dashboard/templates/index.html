@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Interactive dashboard for the CPP Mechanisms Knowledge Graph — explore cell-penetrating peptide uptake mechanisms, genes, cell lines, and cargo types." />
+  <title>CPP Mechanisms Knowledge Graph Dashboard</title>
+
+  <!-- Schema.org structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "name": "CPP Mechanisms Knowledge Graph",
+    "description": "A structured RDF Knowledge Graph encoding endocytic and non-endocytic uptake mechanisms for Cell-Penetrating Peptides.",
+    "url": "https://w3id.org/cpp/dataset/mechanisms/",
+    "license": "https://creativecommons.org/licenses/by/4.0/",
+    "keywords": ["cell-penetrating peptide","CPP","endocytosis","knowledge graph","RDF","mechanisms"],
+    "distribution": [
+      {"@type":"DataDownload","encodingFormat":"text/turtle","contentUrl":"/api/download/ttl"},
+      {"@type":"DataDownload","encodingFormat":"application/ld+json","contentUrl":"/api/download/jsonld"}
+    ]
+  }
+  </script>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      --accent: #1e6fcc;
+      --accent-light: #e8f0fb;
+      --bg: #f5f7fa;
+      --card-shadow: 0 2px 12px rgba(0,0,0,.08);
+      --sidebar-w: 230px;
+    }
+    body { background: var(--bg); font-family: 'Segoe UI', system-ui, sans-serif; }
+
+    /* ---- Sidebar ---- */
+    #sidebar {
+      width: var(--sidebar-w); min-height: 100vh;
+      background: #0d1b2e; color: #ccd6f6;
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; z-index: 200;
+      transition: transform .25s ease;
+    }
+    #sidebar .brand {
+      padding: 18px 16px 10px;
+      font-size: .95rem; font-weight: 700; color: #fff;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+      line-height: 1.4;
+    }
+    #sidebar .brand small { display:block; font-size:.7rem; font-weight:400; color:#8892b0; margin-top:2px; }
+    .nav-item-custom {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 20px; cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: background .15s, border-color .15s;
+      font-size: .9rem; color: #ccd6f6; text-decoration: none;
+    }
+    .nav-item-custom:hover { background: rgba(255,255,255,.07); color: #fff; }
+    .nav-item-custom.active { background: rgba(30,111,204,.25); border-left-color: var(--accent); color: #fff; }
+    .nav-item-custom i { font-size: 1.05rem; min-width: 18px; }
+    .nav-section-label {
+      padding: 12px 20px 4px; font-size: .68rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: .08em; color: #556;
+    }
+    #sidebar-footer {
+      margin-top: auto; padding: 14px 16px;
+      font-size: .72rem; color: #8892b0; border-top: 1px solid rgba(255,255,255,.07);
+    }
+
+    /* ---- Mobile hamburger ---- */
+    #hamburger {
+      display: none; position: fixed; top: 10px; left: 10px; z-index: 300;
+      background: #0d1b2e; color: #fff; border: none; border-radius: 6px;
+      padding: 6px 10px; font-size: 1.3rem; cursor: pointer;
+    }
+    #sidebar-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 199;
+    }
+
+    /* ---- Main ---- */
+    #main { margin-left: var(--sidebar-w); padding: 28px 32px; min-height: 100vh; }
+    .tab-pane { display: none; } .tab-pane.active { display: block; }
+
+    /* ---- Metric cards ---- */
+    .metric-card {
+      background: #fff; border-radius: 12px; padding: 20px 22px;
+      box-shadow: var(--card-shadow); text-align: center;
+    }
+    .metric-card .value { font-size: 2rem; font-weight: 700; color: var(--accent); }
+    .metric-card .label { font-size: .8rem; color: #6c757d; margin-top: 4px; }
+
+    /* ---- Section cards ---- */
+    .section-card { background: #fff; border-radius: 12px; padding: 20px 22px; box-shadow: var(--card-shadow); margin-bottom: 20px; }
+    .section-card h5 { font-weight: 700; margin-bottom: 12px; }
+
+    /* ---- Tables ---- */
+    .table-sm td, .table-sm th { font-size: .84rem; vertical-align: middle; }
+    .table-hover tbody tr:hover { background: var(--accent-light); }
+    .table-wrapper { overflow-x: auto; border-radius: 8px; border: 1px solid #dee2e6; }
+
+    /* ---- Loading overlay ---- */
+    #loading-overlay {
+      position: fixed; inset: 0; background: rgba(255,255,255,.93);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 9999;
+    }
+    #loading-overlay .spinner-border { width: 3rem; height: 3rem; color: var(--accent); }
+    #loading-overlay p { margin-top: 14px; font-size: 1rem; color: #444; }
+
+    /* ---- Search / SPARQL ---- */
+    .search-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+    .search-bar select, .search-bar input { height: 42px; border-radius: 8px; }
+    #sparql-editor {
+      font-family: 'Courier New', monospace; font-size: .85rem;
+      border-radius: 8px; border: 1px solid #ced4da;
+      padding: 12px; width: 100%; resize: vertical; min-height: 200px;
+      background: #1e1e2e; color: #cdd6f4;
+    }
+
+    /* ---- Status dot ---- */
+    #kg-status { width: 9px; height: 9px; border-radius: 50%; background: #f0ad4e; display: inline-block; margin-right: 5px; }
+    #kg-status.ready { background: #28a745; }
+    #kg-status.error { background: #dc3545; }
+
+    /* ---- Badges / messages ---- */
+    .badge-pill { border-radius: 20px; font-size: .73rem; padding: 3px 9px; }
+    .results-info { font-size: .87rem; color: #555; margin-bottom: 8px; }
+    .warning-box { background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 9px 13px; font-size: .84rem; margin-bottom: 8px; }
+    .error-box   { background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px; padding: 9px 13px; font-size: .84rem; margin-bottom: 8px; }
+    .success-box { background: #d4edda; border: 1px solid #c3e6cb; border-radius: 8px; padding: 9px 13px; font-size: .84rem; margin-bottom: 8px; }
+
+    /* ---- Browse ---- */
+    .class-btn { font-size: .78rem; border-radius: 20px; padding: 4px 12px; cursor: pointer; }
+    .class-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    /* ---- Entity detail ---- */
+    .prop-table td:first-child { font-weight: 600; font-size: .8rem; color: #555; white-space: nowrap; padding-right: 14px; min-width: 130px; }
+    .prop-table td:last-child { word-break: break-all; font-size: .84rem; }
+    #cy { height: 460px; border: 1px solid #dee2e6; border-radius: 8px; background: #fafafa; }
+
+    /* ---- Code blocks ---- */
+    .bibtex-block {
+      background: #1e1e2e; color: #cdd6f4; border-radius: 8px;
+      padding: 16px; font-family: 'Courier New', monospace; font-size: .82rem;
+      white-space: pre; overflow-x: auto;
+    }
+    .ns-badge { font-family: monospace; font-size: .8rem; background: #e9ecef; border-radius: 4px; padding: 2px 6px; }
+    .prefix-td { font-family: monospace; font-size: .83rem; color: var(--accent); }
+    .copy-btn { font-size: .72rem; padding: 1px 7px; border-radius: 4px; cursor: pointer; }
+
+    /* ---- Responsive ---- */
+    @media(max-width: 768px) {
+      #sidebar { transform: translateX(calc(var(--sidebar-w) * -1)); }
+      #sidebar.open { transform: translateX(0); }
+      #sidebar-overlay.open { display: block; }
+      #main { margin-left: 0; padding: 16px; }
+      #hamburger { display: block; }
+      .tab-pane h2 { font-size: 1.4rem; padding-top: 36px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Loading overlay -->
+<div id="loading-overlay">
+  <div class="spinner-border" role="status"></div>
+  <p id="loading-msg">Loading Knowledge Graph&hellip; this may take a moment.</p>
+</div>
+
+<!-- Mobile hamburger -->
+<button id="hamburger" onclick="toggleSidebar()" aria-label="Toggle navigation">
+  <i class="bi bi-list"></i>
+</button>
+<div id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+<!-- Sidebar -->
+<nav id="sidebar">
+  <div class="brand">
+    CPP Mechanisms KG
+    <small>Knowledge Graph Dashboard</small>
+  </div>
+  <div style="padding: 8px 0 0; overflow-y: auto; flex: 1;">
+    <div class="nav-section-label">Explore</div>
+    <a class="nav-item-custom" href="#home"     id="nav-home">    <i class="bi bi-house-fill"></i> Home</a>
+    <a class="nav-item-custom" href="#browse"   id="nav-browse">  <i class="bi bi-grid-3x3"></i> Browse</a>
+    <a class="nav-item-custom" href="#search"   id="nav-search">  <i class="bi bi-search"></i> Peptide Search</a>
+    <a class="nav-item-custom" href="#sparql"   id="nav-sparql">  <i class="bi bi-braces-asterisk"></i> SPARQL</a>
+    <div class="nav-section-label">Info</div>
+    <a class="nav-item-custom" href="#docs"     id="nav-docs">    <i class="bi bi-book-fill"></i> Documentation</a>
+    <a class="nav-item-custom" href="#download" id="nav-download"><i class="bi bi-cloud-download-fill"></i> Download</a>
+    <a class="nav-item-custom" href="#" id="nav-entity" style="display:none;">
+      <i class="bi bi-diagram-2-fill"></i> <span id="nav-entity-label">Entity</span>
+    </a>
+  </div>
+  <div id="sidebar-footer">
+    <span id="kg-status"></span><span id="kg-status-text">Connecting&hellip;</span><br/>
+    <span id="kg-triple-count"></span>
+  </div>
+</nav>
+
+<!-- Main -->
+<div id="main">
+
+  <!-- ===== HOME ===== -->
+  <div class="tab-pane active" id="tab-home">
+    <h2 class="mb-1">CPP Mechanisms Knowledge Graph</h2>
+    <p class="text-muted mb-3">
+      A structured RDF representation of endocytic and non-endocytic pathways through which
+      <strong>Cell-Penetrating Peptides (CPPs)</strong> enter cells. The graph encodes relationships between
+      mechanisms, genes, inhibitors, cell lines, and cargo types — enabling semantic queries and knowledge
+      discovery across the CPP literature.
+      <a href="https://github.com/mariacastillo982/cpp-mechanisms" target="_blank" rel="noopener">Source on GitHub &nearr;</a>
+    </p>
+    <hr/>
+
+    <h5 class="mb-3"><i class="bi bi-bar-chart-fill me-2 text-primary"></i>Global Metrics</h5>
+    <div class="row g-3 mb-4">
+      <div class="col-md-4"><div class="metric-card"><div class="value" id="m-triples">&mdash;</div><div class="label">Total Triples</div></div></div>
+      <div class="col-md-4"><div class="metric-card"><div class="value" id="m-nodes">&mdash;</div><div class="label">Unique Nodes</div></div></div>
+      <div class="col-md-4"><div class="metric-card"><div class="value" id="m-preds">&mdash;</div><div class="label">Unique Edge Types</div></div></div>
+    </div>
+    <hr/>
+
+    <div class="section-card">
+      <h5><i class="bi bi-diagram-3-fill me-2 text-primary"></i>Instances per Class</h5>
+      <p class="text-muted" style="font-size:.84rem;">Click a row to browse that class.</p>
+      <div class="row">
+        <div class="col-lg-7">
+          <div class="table-wrapper">
+            <table class="table table-sm table-hover mb-0">
+              <thead class="table-light"><tr><th>Class</th><th>Description</th><th class="text-end"># Instances</th></tr></thead>
+              <tbody id="class-tbody"><tr><td colspan="3" class="text-center text-muted py-3">Loading&hellip;</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col-lg-5"><canvas id="class-chart" style="max-height:280px;"></canvas></div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <h5><i class="bi bi-link-45deg me-2 text-primary"></i>Association Types</h5>
+      <p class="text-muted" style="font-size:.84rem;">Usage counts for the seven key relationship types.</p>
+      <div class="row">
+        <div class="col-lg-7">
+          <div class="table-wrapper">
+            <table class="table table-sm table-hover mb-0">
+              <thead class="table-light"><tr><th>Association</th><th>Description</th><th class="text-end"># Uses</th></tr></thead>
+              <tbody id="assoc-tbody"><tr><td colspan="3" class="text-center text-muted py-3">Loading&hellip;</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col-lg-5"><canvas id="assoc-chart" style="max-height:280px;"></canvas></div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <h5><i class="bi bi-book-fill me-2 text-primary"></i>Data Sources &amp; Ontologies</h5>
+      <div class="row g-3">
+        <div class="col-md-3"><strong>Ensembl</strong><br/><small class="text-muted">Gene identifiers (ENSG&hellip;). <a href="https://www.ensembl.org" target="_blank" rel="noopener">ensembl.org &nearr;</a></small></div>
+        <div class="col-md-3"><strong>ChEBI</strong><br/><small class="text-muted">Inhibitor compound IDs (CHEBI_&hellip;). <a href="https://www.ebi.ac.uk/chebi/" target="_blank" rel="noopener">ebi.ac.uk/chebi &nearr;</a></small></div>
+        <div class="col-md-3"><strong>Gene Ontology</strong><br/><small class="text-muted">Biological process &amp; cellular component terms. <a href="https://geneontology.org/" target="_blank" rel="noopener">geneontology.org &nearr;</a></small></div>
+        <div class="col-md-3"><strong>CLO — Cell Line Ontology</strong><br/><small class="text-muted">Standardised cell line identifiers. <a href="https://obofoundry.org/ontology/clo.html" target="_blank" rel="noopener">obofoundry.org &nearr;</a></small></div>
+        <div class="col-md-6"><strong>SIO — Semanticscience Integrated Ontology</strong><br/><small class="text-muted">Core entity types and semantic relations. <a href="http://semanticscience.org/" target="_blank" rel="noopener">semanticscience.org &nearr;</a></small></div>
+        <div class="col-md-6"><strong>CPP Mechanisms Ontology (custom)</strong><br/><small class="text-muted">Domain-specific schema: CPP-Complex, CellPenetratingPeptide, CargoRole, UptakeMechanism. <a href="https://w3id.org/cpp/schema#" target="_blank" rel="noopener">w3id.org/cpp &nearr;</a></small></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== BROWSE ===== -->
+  <div class="tab-pane" id="tab-browse">
+    <h2 class="mb-1"><i class="bi bi-grid-3x3 me-2"></i>Browse Entities</h2>
+    <p class="text-muted mb-3">Browse all instances of each entity class. Click any row to view the full entity detail page.</p>
+    <hr/>
+    <div class="section-card">
+      <div class="d-flex flex-wrap gap-2 mb-3" id="browse-class-btns">
+        <span class="text-muted" style="font-size:.85rem;">Loading classes&hellip;</span>
+      </div>
+      <div class="d-flex gap-2 mb-3 flex-wrap">
+        <input id="browse-filter-input" type="text" class="form-control" placeholder="Filter by label or URI&hellip;"
+               style="max-width:280px;" oninput="debounceBrowseFilter()" />
+        <button class="btn btn-sm btn-outline-secondary" onclick="applyBrowseFilter()">
+          <i class="bi bi-funnel"></i> Filter
+        </button>
+      </div>
+      <div id="browse-status"></div>
+      <div class="table-wrapper">
+        <table class="table table-sm table-hover mb-0">
+          <thead class="table-light">
+            <tr><th style="width:140px;">ID</th><th>Label</th><th class="d-none d-md-table-cell">URI</th><th style="width:80px;"></th></tr>
+          </thead>
+          <tbody id="browse-tbody">
+            <tr><td colspan="4" class="text-center text-muted py-4">Select a class above to browse entities.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="d-flex justify-content-between align-items-center mt-3" id="browse-pagination" style="display:none!important;">
+        <span id="browse-page-info" class="text-muted" style="font-size:.84rem;"></span>
+        <div class="d-flex gap-2 align-items-center">
+          <button class="btn btn-sm btn-outline-secondary" id="browse-prev" onclick="browseChangePage(-1)">
+            <i class="bi bi-chevron-left"></i> Prev
+          </button>
+          <span id="browse-page-btns" class="d-flex gap-1"></span>
+          <button class="btn btn-sm btn-outline-secondary" id="browse-next" onclick="browseChangePage(1)">
+            Next <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ENTITY DETAIL ===== -->
+  <div class="tab-pane" id="tab-entity">
+    <div id="entity-loading" class="text-center py-5" style="display:none;">
+      <div class="spinner-border" style="color:var(--accent);" role="status"></div>
+      <p class="mt-3 text-muted">Loading entity&hellip;</p>
+    </div>
+    <div id="entity-404" style="display:none;" class="text-center py-5">
+      <i class="bi bi-question-circle" style="font-size:3rem; color:#999;"></i>
+      <h4 class="mt-3">Entity not found</h4>
+      <p class="text-muted" id="entity-404-msg"></p>
+      <a href="#browse" class="btn btn-outline-primary mt-2">Browse entities</a>
+    </div>
+    <div id="entity-content" style="display:none;">
+      <div class="d-flex align-items-start gap-3 mb-1 flex-wrap">
+        <div>
+          <h2 id="entity-title" class="mb-0"></h2>
+          <span class="badge bg-secondary mt-1" id="entity-type-badge"></span>
+        </div>
+        <div class="ms-auto d-flex gap-2 flex-wrap mt-1">
+          <button class="btn btn-sm btn-outline-secondary" onclick="copyEntityUri(event)">
+            <i class="bi bi-clipboard me-1"></i>Copy URI
+          </button>
+          <a id="entity-ttl-btn"    class="btn btn-sm btn-outline-primary"  target="_blank" rel="noopener">Turtle</a>
+          <a id="entity-jsonld-btn" class="btn btn-sm btn-outline-success"  target="_blank" rel="noopener">JSON-LD</a>
+        </div>
+      </div>
+      <div class="mb-2">
+        <code id="entity-uri-display" class="text-muted" style="word-break:break-all; font-size:.8rem;"></code>
+      </div>
+      <div id="entity-ext-links-row" class="mb-3"></div>
+      <hr/>
+
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <div class="section-card">
+            <h5>Properties <span class="badge bg-light text-dark ms-1" id="entity-props-count" style="font-size:.75rem;"></span></h5>
+            <div class="table-wrapper" style="max-height:300px; overflow-y:auto;">
+              <table class="table table-sm mb-0 prop-table">
+                <tbody id="entity-props-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="section-card">
+            <h5>Outgoing Links <span class="badge bg-primary badge-pill ms-1" id="entity-out-count"></span></h5>
+            <div class="table-wrapper" style="max-height:280px; overflow-y:auto;">
+              <table class="table table-sm mb-0">
+                <thead class="table-light"><tr><th>Predicate</th><th>Object</th></tr></thead>
+                <tbody id="entity-out-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="section-card">
+            <h5>Incoming Links <span class="badge bg-success badge-pill ms-1" id="entity-in-count"></span></h5>
+            <div class="table-wrapper" style="max-height:280px; overflow-y:auto;">
+              <table class="table table-sm mb-0">
+                <thead class="table-light"><tr><th>Subject</th><th>Predicate</th></tr></thead>
+                <tbody id="entity-in-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-7">
+          <div class="section-card">
+            <h5>Neighborhood Graph</h5>
+            <p class="text-muted mb-2" style="font-size:.82rem;">Immediate connections. Click any node to navigate to it.</p>
+            <div id="cy"></div>
+            <div class="mt-2 d-flex gap-3 flex-wrap" style="font-size:.78rem; color:#666;">
+              <span><span style="width:10px;height:10px;background:#e53e3e;display:inline-block;border-radius:2px;margin-right:4px;"></span>This entity</span>
+              <span><span style="width:10px;height:10px;background:#1e6fcc;display:inline-block;border-radius:2px;margin-right:4px;"></span>Connected nodes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SEARCH ===== -->
+  <div class="tab-pane" id="tab-search">
+    <h2 class="mb-1"><i class="bi bi-search me-2"></i>Peptide Search</h2>
+    <p class="text-muted mb-3">Search peptides and retrieve all associations — mechanism, cargo, cell line, subcellular delivery, and source document.</p>
+    <hr/>
+    <div class="search-bar">
+      <div class="row g-2 w-100">
+        <div class="col-12 col-md-6 col-lg-3">
+          <label class="form-label">Sequence</label>
+          <input id="filter-sequence" class="form-control" placeholder="e.g. RQIKIWFQ" />
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+          <label class="form-label">CPP ID</label>
+          <input id="filter-cpp_id" class="form-control" placeholder="e.g. CPP_000002" />
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+          <label class="form-label">Uptake Mechanism</label>
+          <input id="filter-mechanism" class="form-control" placeholder="e.g. Endocytosis" />
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+          <label class="form-label">Subcellular Delivery</label>
+          <input id="filter-subcell" class="form-control" placeholder="e.g. Nucleus" />
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+          <label class="form-label">Cell Line</label>
+          <input id="filter-cell_line" class="form-control" placeholder="e.g. HeLa" />
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+          <label class="form-label">Cargo</label>
+          <input id="filter-cargo" class="form-control" placeholder="e.g. DNA" />
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+          <label class="form-label">PubMed / Patent ID</label>
+          <input id="filter-doc_id" class="form-control" placeholder="e.g. pubmed:9188504" />
+        </div>
+        <div class="col-12 col-md-6 col-lg-3 d-flex align-items-end gap-2">
+          <button id="search-btn" class="btn btn-primary w-100" disabled onclick="doSearch()"><i class="bi bi-search me-1"></i>Search</button>
+          <button id="search-clear-all" class="btn btn-outline-secondary" onclick="clearSearch()">Clear all</button>
+        </div>
+      </div>
+    </div>
+    <div id="active-filters" class="mb-2" aria-live="polite"></div>
+    <div id="search-status"></div>
+    <div id="search-results-wrap" style="display:none;">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="results-info" id="search-results-info"></span>
+        <button class="btn btn-sm btn-outline-success" onclick="downloadCSV('search')"><i class="bi bi-download me-1"></i>CSV</button>
+      </div>
+      <div class="table-wrapper">
+        <table class="table table-sm table-hover mb-0">
+          <thead class="table-light" id="search-thead"></thead>
+          <tbody id="search-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SPARQL ===== -->
+  <div class="tab-pane" id="tab-sparql">
+    <h2 class="mb-1"><i class="bi bi-braces-asterisk me-2"></i>SPARQL Query Interface</h2>
+    <p class="text-muted mb-3">Write or select a SPARQL <code>SELECT</code> query to interrogate the Knowledge Graph directly.</p>
+    <hr/>
+    <div class="section-card">
+      <h6>Quick Examples</h6>
+      <div class="d-flex flex-wrap gap-2 mb-3" id="example-btns"></div>
+      <h6>Competency Questions</h6>
+      <div class="d-flex flex-wrap gap-2 mb-3" id="cq-btns"></div>
+      <hr/>
+      <label class="form-label fw-semibold">SPARQL Query</label>
+      <textarea id="sparql-editor" spellcheck="false"></textarea>
+      <div class="d-flex gap-2 mt-3">
+        <button class="btn btn-primary" onclick="runSparql()"><i class="bi bi-play-fill me-1"></i>Run</button>
+        <button class="btn btn-outline-secondary" onclick="clearSparql()"><i class="bi bi-trash me-1"></i>Clear</button>
+      </div>
+    </div>
+    <div id="sparql-status" class="mt-2"></div>
+    <div id="sparql-results-wrap" style="display:none;" class="section-card mt-3">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="results-info" id="sparql-results-info"></span>
+        <button class="btn btn-sm btn-outline-success" onclick="downloadCSV('sparql')"><i class="bi bi-download me-1"></i>CSV</button>
+      </div>
+      <div class="table-wrapper">
+        <table class="table table-sm table-hover mb-0">
+          <thead class="table-light" id="sparql-thead"></thead>
+          <tbody id="sparql-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== DOCUMENTATION ===== -->
+  <div class="tab-pane" id="tab-docs">
+    <h2 class="mb-1"><i class="bi bi-book-fill me-2"></i>Documentation</h2>
+    <p class="text-muted mb-3">Schema description, ontology reuse, data provenance, and how to cite this resource.</p>
+    <hr/>
+
+    <div class="section-card">
+      <h5>Entity Classes</h5>
+      <div class="table-wrapper">
+        <table class="table table-sm mb-0">
+          <thead class="table-light"><tr><th>Class</th><th>URI / Prefix</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Cell-Penetrating Peptide</strong></td><td><span class="ns-badge">cpp:CellPenetratingPeptide</span></td><td>A short amino acid sequence with intrinsic ability to traverse biological membranes.</td></tr>
+            <tr><td><strong>CPP-Complex</strong></td><td><span class="ns-badge">cpp:CPP-Complex</span></td><td>A molecular assembly formed between a CPP and its associated cargo molecule.</td></tr>
+            <tr><td><strong>Cargo</strong></td><td><span class="ns-badge">cpp:Cargo</span></td><td>A therapeutic or reporter molecule transported into cells via a CPP.</td></tr>
+            <tr><td><strong>Uptake Mechanism</strong></td><td><span class="ns-badge">cppS:UptakeMechanism</span></td><td>A cellular route (endocytic or non-endocytic) through which the CPP-complex crosses the membrane.</td></tr>
+            <tr><td><strong>Gene</strong></td><td><span class="ns-badge">sio:SIO_010035</span></td><td>Upregulator genes that positively regulate an endocytic uptake mechanism.</td></tr>
+            <tr><td><strong>Inhibitor</strong></td><td><span class="ns-badge">sio:SIO_010435</span></td><td>A chemical compound used to selectively block an endocytic uptake mechanism.</td></tr>
+            <tr><td><strong>Cell Line</strong></td><td><span class="ns-badge">sio:SIO_010054</span></td><td>The cultured cell population serving as the experimental host model.</td></tr>
+            <tr><td><strong>Subcellular Entity</strong></td><td><span class="ns-badge">sio:SIO_001400</span></td><td>An organelle or intracellular compartment where CPPs/cargo are delivered.</td></tr>
+            <tr><td><strong>Experiment</strong></td><td><span class="ns-badge">sio:SIO_000994</span></td><td>The experimental validation for CPP-complex internalization activity.</td></tr>
+            <tr><td><strong>Document</strong></td><td><span class="ns-badge">sio:SIO_000148</span></td><td>The scientific article or patent evidencing the experimental validation.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <h5>Key Properties</h5>
+      <div class="table-wrapper">
+        <table class="table table-sm mb-0">
+          <thead class="table-light"><tr><th>Property</th><th>URI</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td>Is component part of</td><td><span class="ns-badge">sio:SIO_000313</span></td><td>CPP is a component part of a CPP-Complex.</td></tr>
+            <tr><td>Is participant in</td><td><span class="ns-badge">sio:SIO_000062</span></td><td>CPP-Complex or Cell Line participates in an Uptake Mechanism.</td></tr>
+            <tr><td>Has role / cargo</td><td><span class="ns-badge">sio:SIO_000369</span></td><td>CPP-Complex has an associated Cargo entity.</td></tr>
+            <tr><td>Has location</td><td><span class="ns-badge">sio:SIO_000061</span></td><td>CPP-Complex is delivered to a Subcellular Entity.</td></tr>
+            <tr><td>Positively regulates</td><td><span class="ns-badge">sio:SIO_001401</span></td><td>Gene positively regulates an Uptake Mechanism.</td></tr>
+            <tr><td>Negatively regulates</td><td><span class="ns-badge">sio:SIO_001402</span></td><td>Inhibitor negatively regulates an Uptake Mechanism.</td></tr>
+            <tr><td>Is realized in</td><td><span class="ns-badge">sio:SIO_000356</span></td><td>A CPP or Cargo role is realized in an Uptake Mechanism.</td></tr>
+            <tr><td>Is described by</td><td><span class="ns-badge">sio:SIO_000557</span></td><td>An Experiment is described by a Document (PubMed/patent).</td></tr>
+            <tr><td>sequence</td><td><span class="ns-badge">cppS:sequence</span></td><td>Amino acid sequence of the CPP (one-letter code).</td></tr>
+            <tr><td>peptideName</td><td><span class="ns-badge">cppS:peptideName</span></td><td>Common name of the CPP (e.g., Penetratin, TAT).</td></tr>
+            <tr><td>cargoType</td><td><span class="ns-badge">cppS:cargoType</span></td><td>Categorical type of cargo (e.g., protein, nucleic acid).</td></tr>
+            <tr><td>uptakeEfficiency</td><td><span class="ns-badge">cppS:uptakeEfficiency</span></td><td>Qualitative or quantitative uptake efficiency from the experiment.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <h5>Namespace Prefixes</h5>
+      <table class="table table-sm mb-0">
+        <thead class="table-light"><tr><th>Prefix</th><th>URI</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td class="prefix-td">cpp:</td><td><code>https://w3id.org/cpp/dataset/mechanisms/</code></td><td>CPP dataset instances</td></tr>
+          <tr><td class="prefix-td">cppS:</td><td><code>https://w3id.org/cpp/schema#</code></td><td>CPP custom schema / ontology</td></tr>
+          <tr><td class="prefix-td">sio:</td><td><code>http://semanticscience.org/resource/</code></td><td>Semanticscience Integrated Ontology</td></tr>
+          <tr><td class="prefix-td">obo:</td><td><code>http://purl.obolibrary.org/obo/</code></td><td>OBO Foundry (GO, CLO terms)</td></tr>
+          <tr><td class="prefix-td">rdf:</td><td><code>http://www.w3.org/1999/02/22-rdf-syntax-ns#</code></td><td>RDF vocabulary</td></tr>
+          <tr><td class="prefix-td">rdfs:</td><td><code>http://www.w3.org/2000/01/rdf-schema#</code></td><td>RDF Schema</td></tr>
+          <tr><td class="prefix-td">owl:</td><td><code>http://www.w3.org/2002/07/owl#</code></td><td>Web Ontology Language</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-card">
+      <h5>Provenance</h5>
+      <p>The CPP Mechanisms Knowledge Graph was constructed by manual curation of scientific literature on cell-penetrating peptide uptake. Experimental records were extracted from primary research articles, standardised against public databases (Ensembl, ChEBI, GO, CLO), and serialised as RDF/OWL&nbsp;2 in Turtle format using the SIO framework and a custom CPP domain schema.</p>
+      <p>Data collection focused on: (1)&nbsp;identification of endocytic and non-endocytic uptake routes; (2)&nbsp;genes that regulate each pathway; (3)&nbsp;chemical inhibitors used to validate pathway specificity; (4)&nbsp;cell line models; (5)&nbsp;cargo molecule types; and (6)&nbsp;subcellular delivery destinations.</p>
+    </div>
+
+    <div class="section-card">
+      <h5>How to Cite</h5>
+      <div class="bibtex-block">@dataset{castillo_cpp_mechanisms_kg,
+  title   = {CPP Mechanisms Knowledge Graph},
+  author  = {Castillo, Maria},
+  year    = {2024},
+  url     = {https://github.com/mariacastillo982/cpp-mechanisms},
+  license = {CC-BY 4.0}
+}</div>
+    </div>
+  </div>
+
+  <!-- ===== DOWNLOAD ===== -->
+  <div class="tab-pane" id="tab-download">
+    <h2 class="mb-1"><i class="bi bi-cloud-download-fill me-2"></i>Download</h2>
+    <p class="text-muted mb-3">Download the full knowledge graph in standard RDF formats, or access it programmatically via the REST API.</p>
+    <hr/>
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="section-card h-100">
+          <h5><i class="bi bi-file-earmark-code me-2 text-primary"></i>Turtle (.ttl)</h5>
+          <p class="text-muted">Full RDF graph in Turtle serialization. Compatible with Protege, rdflib, Apache Jena, and all major triple stores.</p>
+          <div class="d-flex gap-2 flex-wrap">
+            <a href="/api/download/ttl" class="btn btn-primary"><i class="bi bi-download me-1"></i>Download Turtle</a>
+            <a href="https://raw.githubusercontent.com/mariacastillo982/cpp-mechanisms/main/data/mechanisms.ttl"
+               class="btn btn-outline-secondary" target="_blank" rel="noopener"><i class="bi bi-github me-1"></i>Raw on GitHub</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="section-card h-100">
+          <h5><i class="bi bi-filetype-json me-2 text-success"></i>JSON-LD (.jsonld)</h5>
+          <p class="text-muted">Full RDF graph in JSON-LD format. Ideal for web applications and Schema.org integration.</p>
+          <a href="/api/download/jsonld" class="btn btn-success"><i class="bi bi-download me-1"></i>Download JSON-LD</a>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="section-card">
+          <h5><i class="bi bi-github me-2"></i>Source Repository</h5>
+          <p class="text-muted">Source data, conversion scripts, and ontology files are maintained on GitHub.</p>
+          <a href="https://github.com/mariacastillo982/cpp-mechanisms" class="btn btn-outline-dark" target="_blank" rel="noopener">
+            <i class="bi bi-github me-1"></i>GitHub Repository
+          </a>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="section-card">
+          <h5><i class="bi bi-code-slash me-2"></i>REST API Reference</h5>
+          <div class="table-wrapper">
+            <table class="table table-sm mb-0">
+              <thead class="table-light"><tr><th>Endpoint</th><th>Method</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>/api/status</code></td><td>GET</td><td>Graph load status and triple count</td></tr>
+                <tr><td><code>/api/metrics</code></td><td>GET</td><td>Global graph metrics (nodes, predicates)</td></tr>
+                <tr><td><code>/api/classes</code></td><td>GET</td><td>Instance counts per class (includes URI)</td></tr>
+                <tr><td><code>/api/browse?class=URI&amp;page=1</code></td><td>GET</td><td>Paginated entity browser</td></tr>
+                <tr><td><code>/api/entity/{id}</code></td><td>GET</td><td>Full entity detail (properties + graph)</td></tr>
+                <tr><td><code>/api/search</code></td><td>POST JSON</td><td>Peptide search across multiple fields</td></tr>
+                <tr><td><code>/api/sparql</code></td><td>POST JSON</td><td>Ad-hoc SPARQL SELECT queries</td></tr>
+                <tr><td><code>/api/charts/mechanisms</code></td><td>GET</td><td>Mechanism distribution data</td></tr>
+                <tr><td><code>/api/charts/cargo</code></td><td>GET</td><td>Cargo type distribution data</td></tr>
+                <tr><td><code>/api/charts/celllines</code></td><td>GET</td><td>Cell line frequency data</td></tr>
+                <tr><td><code>/api/download/ttl</code></td><td>GET</td><td>Download full graph as Turtle</td></tr>
+                <tr><td><code>/api/download/jsonld</code></td><td>GET</td><td>Download full graph as JSON-LD</td></tr>
+                <tr><td><code>/dataset/{id}</code></td><td>GET</td><td>Content-negotiated entity access (RDF or HTML redirect)</td></tr>
+                <tr><td><code>/robots.txt</code></td><td>GET</td><td>Robots exclusion file</td></tr>
+                <tr><td><code>/sitemap.xml</code></td><td>GET</td><td>XML sitemap of all entities</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ======================================================================
+     JAVASCRIPT
+     ====================================================================== -->
+<script>
+'use strict';
+
+// ============================================================
+//  Global state
+// ============================================================
+let classChart = null, assocChart = null;
+let searchData = { columns: [], rows: [] };
+let sparqlData = { columns: [], rows: [] };
+let cytoscapeLoaded = false;
+let cyInstance = null;
+let currentEntityUri = '';
+
+let browseState = {
+  classUri: '', className: '',
+  page: 1, pages: 1, total: 0, perPage: 50, filter: '',
+};
+let browseFilterTimer = null;
+
+// ============================================================
+//  Utilities
+// ============================================================
+function fmt(n) { return Number(n).toLocaleString(); }
+
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showMsg(id, type, msg) {
+  const cls = { success:'success-box', warning:'warning-box', error:'error-box' }[type] || 'success-box';
+  document.getElementById(id).innerHTML = '<div class="' + cls + '">' + escHtml(msg) + '</div>';
+}
+function clearMsg(id) { document.getElementById(id).innerHTML = ''; }
+
+function copyToClipboard(text, btn) {
+  navigator.clipboard.writeText(text).then(function() {
+    if (btn) { var orig = btn.innerHTML; btn.innerHTML = '<i class="bi bi-check2"></i>'; setTimeout(function(){ btn.innerHTML = orig; }, 1500); }
+  }).catch(function() {
+    var ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+  });
+}
+
+function isUri(s) { return s && (s.startsWith('http://') || s.startsWith('https://')); }
+
+function uriFragment(uri) {
+  var i = uri.lastIndexOf('#');
+  if (i >= 0 && i < uri.length - 1) return uri.slice(i + 1);
+  i = uri.lastIndexOf('/');
+  if (i >= 0 && i < uri.length - 1) return uri.slice(i + 1);
+  return uri;
+}
+
+function getExternalLinks(uri) {
+  var links = [];
+  var m;
+  m = uri.match(/pubmed\/(\d+)/i);
+  if (m) links.push({ name: 'PubMed', url: 'https://pubmed.ncbi.nlm.nih.gov/' + m[1] + '/', cls: 'btn-outline-danger' });
+  m = uri.match(/CHEBI[_:](\d+)/i) || uri.match(/chebi\/(\d+)/i);
+  if (m) links.push({ name: 'ChEBI', url: 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:' + m[1], cls: 'btn-outline-warning' });
+  m = uri.match(/(ENSG\d+)/);
+  if (m) links.push({ name: 'Ensembl', url: 'https://www.ensembl.org/Homo_sapiens/Gene/Summary?g=' + m[1], cls: 'btn-outline-info' });
+  m = uri.match(/GO[_:](\d+)/);
+  if (m) links.push({ name: 'QuickGO', url: 'https://www.ebi.ac.uk/QuickGO/term/GO:' + m[1].padStart(7,'0'), cls: 'btn-outline-success' });
+  m = uri.match(/CLO[_:](\d+)/);
+  if (m) links.push({ name: 'CLO', url: 'https://www.ebi.ac.uk/ols/ontologies/clo/terms?iri=http://purl.obolibrary.org/obo/CLO_' + m[1], cls: 'btn-outline-secondary' });
+  return links;
+}
+
+function renderTable(theadId, tbodyId, columns, rows, maxRows) {
+  maxRows = maxRows || 2000;
+  var thead = document.getElementById(theadId);
+  var tbody = document.getElementById(tbodyId);
+  if (!thead || !tbody) return;
+  thead.innerHTML = '<tr>' + columns.map(function(c){ return '<th>' + escHtml(c) + '</th>'; }).join('') + '</tr>';
+  tbody.innerHTML = rows.slice(0, maxRows).map(function(row){
+    return '<tr>' + row.map(function(cell){ return '<td>' + escHtml(cell) + '</td>'; }).join('') + '</tr>';
+  }).join('');
+}
+
+// ============================================================
+//  Sidebar / mobile
+// ============================================================
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebar-overlay').classList.toggle('open');
+}
+
+// ============================================================
+//  Hash router
+// ============================================================
+function parseHash() {
+  var raw = window.location.hash.slice(1) || 'home';
+  var qIdx = raw.indexOf('?');
+  var path = qIdx >= 0 ? raw.slice(0, qIdx) : raw;
+  var qs   = qIdx >= 0 ? raw.slice(qIdx + 1) : '';
+  var params = {};
+  if (qs) { new URLSearchParams(qs).forEach(function(v,k){ params[k]=v; }); }
+  var slash = path.indexOf('/');
+  var section = slash >= 0 ? path.slice(0, slash) : path;
+  var sub     = slash >= 0 ? path.slice(slash + 1) : '';
+  return { section: section, sub: sub, params: params };
+}
+
+function route() {
+  var parsed = parseHash();
+  var section = parsed.section, sub = parsed.sub, params = parsed.params;
+  var valid = ['home','browse','search','sparql','docs','download','entity'];
+  var tab = valid.indexOf(section) >= 0 ? section : 'home';
+  activateTab(tab);
+
+  if (tab === 'browse' && params.class) {
+    browseState.classUri = params.class;
+    browseState.page     = parseInt(params.page) || 1;
+    browseState.filter   = params.filter || '';
+    document.getElementById('browse-filter-input').value = browseState.filter;
+    loadBrowsePage();
+  } else if (tab === 'entity' && sub) {
+    loadEntity(decodeURIComponent(sub));
+  } else if (tab === 'search') {
+    var keys = ['sequence','cpp_id','mechanism','subcell','cell_line','cargo','doc_id'];
+    var any = false;
+    keys.forEach(function(k){ if (params[k]) { var el = document.getElementById('filter-' + k); if (el) { el.value = params[k]; any = true; } } });
+    updateSearchControls();
+    if (any) doSearch();
+  }
+}
+
+function activateTab(name) {
+  document.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.nav-item-custom').forEach(function(n){ n.classList.remove('active'); });
+  var pane = document.getElementById('tab-' + name);
+  if (pane) pane.classList.add('active');
+  var nav = document.getElementById('nav-' + name);
+  if (nav) nav.classList.add('active');
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+}
+
+window.addEventListener('hashchange', route);
+
+// ============================================================
+//  Chart helpers
+// ============================================================
+function COLORS(n) {
+  var p = ['#1e6fcc','#38b2ac','#f6ad55','#fc8181','#68d391','#76e4f7','#b794f4','#f687b3','#fbd38d','#9ae6b4'];
+  return Array.from({ length: n }, function(_, i){ return p[i % p.length]; });
+}
+
+function drawBarChart(canvasId, labels, values, existing) {
+  var ctx = document.getElementById(canvasId);
+  if (!ctx) return null;
+  if (existing) existing.destroy();
+  return new Chart(ctx.getContext('2d'), {
+    type: 'bar',
+    data: { labels: labels, datasets: [{ data: values, backgroundColor: COLORS(labels.length), borderRadius: 5 }] },
+    options: {
+      indexAxis: 'y',
+      plugins: { legend: { display: false } },
+      scales: { x: { beginAtZero: true, grid: { color: '#e9ecef' } }, y: { grid: { display: false } } },
+      responsive: true, maintainAspectRatio: false,
+    }
+  });
+}
+
+function drawDoughnutChart(canvasId, labels, values, existing) {
+  var ctx = document.getElementById(canvasId);
+  if (!ctx) return null;
+  if (existing) existing.destroy();
+  return new Chart(ctx.getContext('2d'), {
+    type: 'doughnut',
+    data: { labels: labels, datasets: [{ data: values, backgroundColor: COLORS(labels.length), borderWidth: 2 }] },
+    options: {
+      plugins: { legend: { position: 'right', labels: { font: { size: 11 }, boxWidth: 14, padding: 10 } } },
+      responsive: true, maintainAspectRatio: false,
+    }
+  });
+}
+
+// ============================================================
+//  Dashboard data (Home tab)
+// ============================================================
+async function loadMetrics() {
+  try {
+    var r = await fetch('/api/metrics');
+    var d = await r.json();
+    if (d.error) return;
+    document.getElementById('m-triples').textContent = fmt(d.total_triples);
+    document.getElementById('m-nodes').textContent   = fmt(d.total_nodes);
+    document.getElementById('m-preds').textContent   = fmt(d.total_predicates);
+  } catch(_) {}
+}
+
+async function loadClasses() {
+  try {
+    var r = await fetch('/api/classes');
+    var data = await r.json();
+    if (!Array.isArray(data)) return;
+    var tbody = document.getElementById('class-tbody');
+    tbody.innerHTML = data.map(function(d){
+      return '<tr style="cursor:pointer;" onclick="navigateToBrowse(\'' +
+        encodeURIComponent(d.uri) + '\',\'' + escHtml(d.name) + '\')">' +
+        '<td><strong>' + escHtml(d.name) + '</strong></td>' +
+        '<td class="text-muted">' + escHtml(d.description) + '</td>' +
+        '<td class="text-end"><span class="badge bg-primary badge-pill">' + fmt(d.count) + '</span></td>' +
+        '</tr>';
+    }).join('');
+    classChart = drawBarChart('class-chart', data.map(function(d){return d.name;}), data.map(function(d){return d.count;}), classChart);
+    populateBrowseClassButtons(data);
+  } catch(_) {}
+}
+
+async function loadAssociations() {
+  try {
+    var r = await fetch('/api/associations');
+    var data = await r.json();
+    if (!Array.isArray(data)) return;
+    var sorted = data.slice().sort(function(a,b){ return b.count - a.count; });
+    var tbody = document.getElementById('assoc-tbody');
+    tbody.innerHTML = sorted.map(function(d){
+      return '<tr><td><strong>' + escHtml(d.name) + '</strong></td>' +
+        '<td class="text-muted">' + escHtml(d.description) + '</td>' +
+        '<td class="text-end"><span class="badge bg-success badge-pill">' + fmt(d.count) + '</span></td></tr>';
+    }).join('');
+    assocChart = drawBarChart('assoc-chart', sorted.map(function(d){return d.name;}), sorted.map(function(d){return d.count;}), assocChart);
+  } catch(_) {}
+}
+
+// ============================================================
+//  Browse
+// ============================================================
+function populateBrowseClassButtons(classes) {
+  var wrap = document.getElementById('browse-class-btns');
+  wrap.innerHTML = '';
+  classes.forEach(function(cls) {
+    var btn = document.createElement('button');
+    btn.className = 'btn btn-outline-secondary class-btn';
+    btn.id = 'classbtn-' + btoa(unescape(encodeURIComponent(cls.uri))).replace(/=/g,'');
+    btn.textContent = cls.name + ' (' + fmt(cls.count) + ')';
+    (function(c){ btn.onclick = function(){ navigateToBrowse(c.uri, c.name); }; })(cls);
+    wrap.appendChild(btn);
+  });
+}
+
+function navigateToBrowse(classUri, className) {
+  browseState.classUri  = classUri;
+  browseState.className = className || classUri;
+  browseState.page      = 1;
+  browseState.filter    = '';
+  document.getElementById('browse-filter-input').value = '';
+  window.location.hash = '#browse?class=' + encodeURIComponent(classUri) + '&page=1';
+}
+
+function debounceBrowseFilter() {
+  clearTimeout(browseFilterTimer);
+  browseFilterTimer = setTimeout(applyBrowseFilter, 400);
+}
+
+function applyBrowseFilter() {
+  browseState.filter = document.getElementById('browse-filter-input').value.trim();
+  browseState.page   = 1;
+  if (browseState.classUri) loadBrowsePage();
+}
+
+function browseChangePage(delta) {
+  var newPage = browseState.page + delta;
+  if (newPage < 1 || newPage > browseState.pages) return;
+  browseState.page = newPage;
+  updateBrowseHash();
+  loadBrowsePage();
+}
+
+function updateBrowseHash() {
+  var qs = 'class=' + encodeURIComponent(browseState.classUri) + '&page=' + browseState.page;
+  if (browseState.filter) qs += '&filter=' + encodeURIComponent(browseState.filter);
+  history.replaceState(null, '', '#browse?' + qs);
+}
+
+async function loadBrowsePage() {
+  if (!browseState.classUri) return;
+
+  document.querySelectorAll('.class-btn').forEach(function(b){ b.classList.remove('active'); });
+  try {
+    var btnId = 'classbtn-' + btoa(unescape(encodeURIComponent(browseState.classUri))).replace(/=/g,'');
+    var activeBtn = document.getElementById(btnId);
+    if (activeBtn) activeBtn.classList.add('active');
+  } catch(_) {}
+
+  var tbody = document.getElementById('browse-tbody');
+  tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">' +
+    '<div class="spinner-border spinner-border-sm me-2"></div>Loading&hellip;</td></tr>';
+  clearMsg('browse-status');
+
+  try {
+    var qs = 'class=' + encodeURIComponent(browseState.classUri) +
+      '&page=' + browseState.page +
+      '&per_page=' + browseState.perPage +
+      '&filter=' + encodeURIComponent(browseState.filter);
+    var r = await fetch('/api/browse?' + qs);
+    var d = await r.json();
+
+    if (d.error) { showMsg('browse-status', 'error', d.error); tbody.innerHTML = ''; return; }
+
+    browseState.total = d.total;
+    browseState.pages = d.pages;
+
+    if (!d.items || !d.items.length) {
+      tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">No entities found' +
+        (browseState.filter ? ' matching "' + escHtml(browseState.filter) + '"' : '') + '.</td></tr>';
+    } else {
+      tbody.innerHTML = d.items.map(function(item) {
+        var frag = item.local_id;
+        var extLinks = getExternalLinks(item.uri);
+        var extBadge = extLinks.length
+          ? ' <a href="' + escHtml(extLinks[0].url) + '" target="_blank" rel="noopener" class="badge bg-light text-dark" style="font-size:.7rem;">' + escHtml(extLinks[0].name) + ' &nearr;</a>'
+          : '';
+        var extra = item.extra
+          ? '<br/><small class="text-muted font-monospace">' + escHtml(item.extra.slice(0,32)) + (item.extra.length>32?'&hellip;':'') + '</small>'
+          : '';
+        var uriEsc = escHtml(item.uri).replace(/'/g,"&#39;");
+        return '<tr>' +
+          '<td><code style="font-size:.8rem;">' + escHtml(frag) + '</code></td>' +
+          '<td>' + escHtml(item.label) + extra + extBadge + '</td>' +
+          '<td class="d-none d-md-table-cell text-muted" style="font-size:.75rem; word-break:break-all;">' +
+            escHtml(item.uri) +
+            ' <button class="btn btn-outline-secondary copy-btn" onclick="copyToClipboard(\'' + uriEsc + '\',this)" title="Copy URI"><i class="bi bi-clipboard"></i></button>' +
+          '</td>' +
+          '<td><a href="#entity/' + encodeURIComponent(item.uri) + '" class="btn btn-sm btn-outline-primary">Detail</a></td>' +
+          '</tr>';
+      }).join('');
+    }
+    renderBrowsePagination();
+    updateBrowseHash();
+  } catch(e) {
+    showMsg('browse-status', 'error', 'Network error: ' + e.message);
+  }
+}
+
+function renderBrowsePagination() {
+  var info = document.getElementById('browse-page-info');
+  info.textContent = 'Page ' + browseState.page + ' of ' + browseState.pages +
+    ' (' + fmt(browseState.total) + ' total ' + browseState.className + ' entities)';
+  document.getElementById('browse-prev').disabled = browseState.page <= 1;
+  document.getElementById('browse-next').disabled = browseState.page >= browseState.pages;
+  document.getElementById('browse-pagination').style.display = 'flex';
+
+  var btnWrap = document.getElementById('browse-page-btns');
+  btnWrap.innerHTML = '';
+  var lo = Math.max(1, browseState.page - 2);
+  var hi = Math.min(browseState.pages, browseState.page + 2);
+  for (var p = lo; p <= hi; p++) {
+    var btn = document.createElement('button');
+    btn.className = 'btn btn-sm ' + (p === browseState.page ? 'btn-primary' : 'btn-outline-secondary');
+    btn.textContent = p;
+    (function(pg){ btn.onclick = function(){ browseState.page = pg; updateBrowseHash(); loadBrowsePage(); }; })(p);
+    btnWrap.appendChild(btn);
+  }
+}
+
+// ============================================================
+//  Entity detail
+// ============================================================
+function ensureCytoscape(cb) {
+  if (cytoscapeLoaded) { cb(); return; }
+  var s = document.createElement('script');
+  s.src = 'https://cdn.jsdelivr.net/npm/cytoscape@3.29.2/dist/cytoscape.min.js';
+  s.onload = function(){ cytoscapeLoaded = true; cb(); };
+  document.head.appendChild(s);
+}
+
+async function loadEntity(entityId) {
+  currentEntityUri = '';
+  document.getElementById('entity-loading').style.display = 'block';
+  document.getElementById('entity-content').style.display = 'none';
+  document.getElementById('entity-404').style.display = 'none';
+  document.getElementById('nav-entity').style.display = 'flex';
+  document.getElementById('nav-entity-label').textContent = entityId.length > 18 ? entityId.slice(0,16)+'...' : entityId;
+
+  try {
+    var r = await fetch('/api/entity/' + encodeURIComponent(entityId));
+    var d = await r.json();
+    document.getElementById('entity-loading').style.display = 'none';
+    if (d.error) {
+      document.getElementById('entity-404').style.display = 'block';
+      document.getElementById('entity-404-msg').textContent = d.error;
+      return;
+    }
+    currentEntityUri = d.uri;
+    renderEntityDetail(d);
+  } catch(e) {
+    document.getElementById('entity-loading').style.display = 'none';
+    document.getElementById('entity-404').style.display = 'block';
+    document.getElementById('entity-404-msg').textContent = 'Network error: ' + e.message;
+  }
+}
+
+function renderEntityDetail(d) {
+  var uri  = d.uri;
+  var frag = uriFragment(uri);
+
+  document.getElementById('entity-title').textContent = frag;
+  document.getElementById('entity-uri-display').textContent = uri;
+  document.getElementById('entity-ttl-btn').href    = '/dataset/' + encodeURIComponent(uri);
+  document.getElementById('entity-jsonld-btn').href = '/dataset/' + encodeURIComponent(uri);
+
+  // External links
+  var extLinks = getExternalLinks(uri);
+  var extRow = document.getElementById('entity-ext-links-row');
+  if (extLinks.length) {
+    extRow.innerHTML = extLinks.map(function(lnk){
+      return '<a href="' + escHtml(lnk.url) + '" target="_blank" rel="noopener" class="btn btn-sm ' + lnk.cls + ' me-2">' +
+        escHtml(lnk.name) + ' &nearr;</a>';
+    }).join('');
+  } else { extRow.innerHTML = ''; }
+
+  var outRows = d.outgoing || [];
+  var inRows  = d.incoming || [];
+
+  // Type badge
+  var typeRow = outRows.find(function(row){ return row[0].includes('22-rdf-syntax-ns#type') || row[0].endsWith('/type'); });
+  document.getElementById('entity-type-badge').textContent = typeRow ? uriFragment(typeRow[1]) : '';
+
+  // Split into literals vs URI links
+  var literals  = outRows.filter(function(row){ return !isUri(row[1]); });
+  var uriLinks  = outRows.filter(function(row){ return  isUri(row[1]); });
+
+  // Properties
+  document.getElementById('entity-props-count').textContent = literals.length;
+  var propsTbody = document.getElementById('entity-props-tbody');
+  if (literals.length) {
+    propsTbody.innerHTML = literals.map(function(row){
+      return '<tr><td>' + escHtml(uriFragment(row[0])) + '</td><td>' + escHtml(row[1]) + '</td></tr>';
+    }).join('');
+  } else {
+    propsTbody.innerHTML = '<tr><td colspan="2" class="text-muted">No literal properties.</td></tr>';
+  }
+
+  // Outgoing URI links
+  document.getElementById('entity-out-count').textContent = uriLinks.length;
+  var outTbody = document.getElementById('entity-out-tbody');
+  if (uriLinks.length) {
+    outTbody.innerHTML = uriLinks.map(function(row){
+      var predLabel = uriFragment(row[0]);
+      var objUri    = row[1];
+      var objLabel  = row[2] || uriFragment(objUri);
+      var objFrag   = uriFragment(objUri);
+      return '<tr>' +
+        '<td><small class="text-muted">' + escHtml(predLabel) + '</small></td>' +
+        '<td><a href="#entity/' + encodeURIComponent(objUri) + '" title="' + escHtml(objUri) + '">' + escHtml(objLabel) + '</a></td>' +
+        '</tr>';
+    }).join('');
+  } else {
+    outTbody.innerHTML = '<tr><td colspan="2" class="text-muted">No outgoing URI links.</td></tr>';
+  }
+
+  // Incoming
+  document.getElementById('entity-in-count').textContent = inRows.length;
+  var inTbody = document.getElementById('entity-in-tbody');
+  if (inRows.length) {
+    inTbody.innerHTML = inRows.map(function(row){
+      var subjUri   = row[0];
+      var subjLabel = row[1] || uriFragment(subjUri);
+      var predLabel = uriFragment(row[2]);
+      var subjFrag  = uriFragment(subjUri);
+      return '<tr>' +
+        '<td><a href="#entity/' + encodeURIComponent(subjUri) + '" title="' + escHtml(subjUri) + '">' + escHtml(subjLabel) + '</a></td>' +
+        '<td><small class="text-muted">' + escHtml(predLabel) + '</small></td>' +
+        '</tr>';
+    }).join('');
+  } else {
+    inTbody.innerHTML = '<tr><td colspan="2" class="text-muted">No incoming links.</td></tr>';
+  }
+
+  document.getElementById('entity-content').style.display = 'block';
+  ensureCytoscape(function(){ buildCytoscape(d.graph, uri); });
+}
+
+function buildCytoscape(graphData, focusUri) {
+  if (cyInstance) { cyInstance.destroy(); cyInstance = null; }
+  if (!graphData || !graphData.nodes || !graphData.nodes.length) return;
+
+  var COLOR_MAP = {
+    CellPenetratingPeptide: '#1e6fcc', 'CPP-Complex': '#38b2ac', Cargo: '#f6ad55',
+    UptakeMechanism: '#68d391', Gene: '#b794f4', Inhibitor: '#fc8181',
+    SIO_010054: '#76e4f7', SIO_000994: '#fbd38d', SIO_000148: '#9ae6b4',
+  };
+
+  var elements = graphData.nodes.map(function(n) {
+    return { group: 'nodes', data: {
+      id: n.data.id,
+      label: (n.data.label || '').slice(0, 28),
+      entityId: n.data.entityId,
+      color: n.data.focus ? '#e53e3e' : (COLOR_MAP[n.data.type] || '#a0aec0'),
+      isFocus: n.data.focus ? true : false,
+    }};
+  }).concat(graphData.edges.map(function(e) {
+    return { group: 'edges', data: {
+      id: e.data.id,
+      source: e.data.source,
+      target: e.data.target,
+      label: (e.data.label || '').slice(0, 22),
+    }};
+  }));
+
+  cyInstance = window.cytoscape({
+    container: document.getElementById('cy'),
+    elements:  elements,
+    style: [
+      { selector: 'node', style: {
+        'label': 'data(label)', 'background-color': 'data(color)',
+        'color': '#1a202c', 'text-valign': 'center', 'text-halign': 'center',
+        'font-size': '10px', 'text-wrap': 'wrap', 'text-max-width': '90px',
+        'width': 'label', 'height': 'label', 'padding': '8px',
+        'shape': 'roundrectangle', 'border-width': 2, 'border-color': '#fff',
+      }},
+      { selector: 'node[?isFocus]', style: { 'border-color': '#e53e3e', 'border-width': 3, 'font-weight': 'bold' }},
+      { selector: 'edge', style: {
+        'label': 'data(label)', 'font-size': '9px', 'color': '#718096',
+        'curve-style': 'bezier', 'target-arrow-shape': 'triangle', 'arrow-scale': 0.8,
+        'line-color': '#a0aec0', 'target-arrow-color': '#a0aec0',
+        'text-background-color': '#fff', 'text-background-opacity': 0.75, 'text-background-padding': '2px',
+      }},
+    ],
+    layout: { name: 'cose', animate: false, nodeRepulsion: 8000, idealEdgeLength: 120, gravity: 0.5 }
+  });
+
+  cyInstance.on('tap', 'node', function(evt) {
+    var nodeId = evt.target.data('entityId');
+    if (nodeId) window.location.hash = '#entity/' + encodeURIComponent(nodeId);
+  });
+}
+
+function copyEntityUri(evt) {
+  var uri = document.getElementById('entity-uri-display').textContent;
+  if (uri) copyToClipboard(uri, evt.currentTarget);
+}
+
+// ============================================================
+//  Search
+// ============================================================
+function getSearchFilters() {
+  var keys = ['sequence','cpp_id','mechanism','subcell','cell_line','cargo','doc_id'];
+  var out = {};
+  keys.forEach(function(k){
+    var el = document.getElementById('filter-' + k);
+    if (!el) return;
+    var v = (el.value || '').trim();
+    if (v) out[k] = v;
+  });
+  return out;
+}
+
+function renderActiveFilters(filters) {
+  var map = {
+    sequence: 'Sequence', cpp_id: 'CPP ID', mechanism: 'Uptake Mechanism', subcell: 'Subcellular Delivery',
+    cell_line: 'Cell Line', cargo: 'Cargo', doc_id: 'PubMed / Patent ID'
+  };
+  var wrap = document.getElementById('active-filters');
+  wrap.innerHTML = '';
+  Object.entries(filters).forEach(function(kv){
+    var k = kv[0], v = kv[1];
+    var span = document.createElement('span');
+    span.className = 'badge bg-primary me-2';
+    span.style.cursor = 'pointer';
+    span.innerHTML = escHtml(map[k] || k) + ': ' + escHtml(v) + ' \u00D7';
+    span.title = 'Click to remove filter and re-run search';
+    span.onclick = function(){ document.getElementById('filter-' + k).value = ''; updateSearchControls(); if (Object.keys(getSearchFilters()).length) doSearch(); else clearSearch(); };
+    wrap.appendChild(span);
+  });
+}
+
+function updateSearchControls() {
+  var filters = getSearchFilters();
+  var btn = document.getElementById('search-btn');
+  if (btn) btn.disabled = Object.keys(filters).length === 0;
+  renderActiveFilters(filters);
+  // update location hash for deep-linking
+  var qs = new URLSearchParams();
+  Object.entries(filters).forEach(function(kv){ qs.set(kv[0], kv[1]); });
+  if (Object.keys(filters).length) history.replaceState(null, '', '#search?' + qs.toString());
+  else history.replaceState(null, '', '#search');
+}
+
+async function doSearch() {
+  var filters = getSearchFilters();
+  if (!Object.keys(filters).length) { showMsg('search-status','warning','Please enter at least one filter.'); return; }
+  clearMsg('search-status');
+  document.getElementById('search-results-wrap').style.display = 'none';
+  showMsg('search-status','success','Searching the Knowledge Graph\u2026');
+
+  try {
+    var r = await fetch('/api/search', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filters: filters })
+    });
+    var d = await r.json();
+    clearMsg('search-status');
+    if (d.error) { showMsg('search-status','error','Search Error: ' + d.error); return; }
+    if (!d.rows.length) { showMsg('search-status','warning','No results found for the applied filters.'); return; }
+    (d.warnings || []).forEach(function(w){ document.getElementById('search-status').innerHTML += '<div class="warning-box">' + escHtml(w) + '</div>'; });
+    searchData = { columns: d.columns, rows: d.rows };
+    renderTable('search-thead','search-tbody', d.columns, d.rows);
+    document.getElementById('search-results-info').textContent = 'Found ' + fmt(d.rows.length) + ' association(s) \u2014 matched ' + fmt(d.matched_peptides) + ' peptide(s).';
+    document.getElementById('search-results-wrap').style.display = 'block';
+  } catch(e) { showMsg('search-status','error','Network error: ' + e.message); }
+}
+
+function clearSearch() {
+  var keys = ['sequence','cpp_id','mechanism','subcell','cell_line','cargo','doc_id'];
+  keys.forEach(function(k){ var el = document.getElementById('filter-' + k); if (el) el.value = ''; });
+  clearMsg('search-status');
+  document.getElementById('search-results-wrap').style.display = 'none';
+  document.getElementById('active-filters').innerHTML = '';
+  history.replaceState(null, '', '#search');
+  updateSearchControls();
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && e.target && /filter-/.test(e.target.id)) doSearch();
+});
+
+// Wire up reactive control updates
+['sequence','cpp_id','mechanism','subcell','cell_line','cargo','doc_id'].forEach(function(k){
+  var el = document.getElementById('filter-' + k); if (el) el.addEventListener('input', updateSearchControls);
+});
+
+// Initialize controls state on load
+updateSearchControls();
+
+// ============================================================
+//  SPARQL
+// ============================================================
+var EXAMPLE_QUERIES = {
+  'List 10 triples': 'SELECT ?subject ?predicate ?object\nWHERE { ?subject ?predicate ?object . }\nLIMIT 10',
+  'All classes': 'PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX owl: <http://www.w3.org/2002/07/owl#>\nSELECT DISTINCT ?class WHERE {\n  { ?class a owl:Class . } UNION { ?x rdf:type ?class . }\n}\nORDER BY ?class',
+  'Named entities (50)': 'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nSELECT DISTINCT ?entity ?label WHERE {\n  ?entity rdfs:label ?label .\n}\nORDER BY ?label LIMIT 50',
+  'Object properties': 'PREFIX owl: <http://www.w3.org/2002/07/owl#>\nSELECT DISTINCT ?property WHERE {\n  ?property a owl:ObjectProperty .\n}\nORDER BY ?property',
+};
+
+var EVAL_PFX = 'PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX owl:   <http://www.w3.org/2002/07/owl#>\nPREFIX sio:   <http://semanticscience.org/resource/>\nPREFIX obo:   <http://purl.obolibrary.org/obo/>\nPREFIX cppm:  <https://w3id.org/cpp/dataset/mechanisms/>\nPREFIX cppi:  <https://w3id.org/cpp/dataset/individuals/>\nPREFIX cpps:  <https://w3id.org/cpp/schema#>\n';
+
+var COMPETENCY_QUERIES = {
+  'CPP-Complex \u2229 Endocytosis': EVAL_PFX + 'SELECT DISTINCT ?peptide ?mechanism\nWHERE {\n  ?peptide a cppm:CPP-Complex ; sio:SIO_000062 ?mechanism .\n  ?mechanism rdfs:subClassOf* obo:GO_0006897 .\n}\nORDER BY ?peptide LIMIT 30',
+  'Genes \u2192 macropinocytosis': EVAL_PFX + 'SELECT DISTINCT ?gene ?geneLabel\nWHERE {\n  ?gene a sio:SIO_010035 .\n  ?gene (sio:SIO_000008 / sio:SIO_000356 / sio:SIO_001401) obo:GO_0044351 .\n  OPTIONAL { ?gene rdfs:label ?geneLabel . }\n}\nORDER BY ?geneLabel',
+  'CPP-Complex \u2192 Nucleus': EVAL_PFX + 'SELECT DISTINCT ?complex ?mechanismLabel\nWHERE {\n  ?complex a cppm:CPP-Complex .\n  ?complex sio:SIO_000061+ obo:GO_0005634 .\n  OPTIONAL {\n    ?complex sio:SIO_000062 ?mechanism .\n    ?mechanism a cpps:UptakeMechanism .\n    OPTIONAL { ?mechanism rdfs:label ?mechanismLabel . }\n  }\n}\nORDER BY ?mechanismLabel ?complex LIMIT 40',
+};
+
+function initSparql() {
+  var editor = document.getElementById('sparql-editor');
+  editor.value = Object.values(EXAMPLE_QUERIES)[0];
+  var exWrap = document.getElementById('example-btns');
+  Object.keys(EXAMPLE_QUERIES).forEach(function(label) {
+    var btn = document.createElement('button');
+    btn.className = 'btn btn-outline-secondary btn-sm';
+    btn.textContent = label;
+    (function(q){ btn.onclick = function(){ editor.value = q; }; })(EXAMPLE_QUERIES[label]);
+    exWrap.appendChild(btn);
+  });
+  var cqWrap = document.getElementById('cq-btns');
+  Object.keys(COMPETENCY_QUERIES).forEach(function(label) {
+    var btn = document.createElement('button');
+    btn.className = 'btn btn-outline-primary btn-sm';
+    btn.textContent = label;
+    (function(q){ btn.onclick = function(){ editor.value = q; }; })(COMPETENCY_QUERIES[label]);
+    cqWrap.appendChild(btn);
+  });
+}
+
+async function runSparql() {
+  var query = document.getElementById('sparql-editor').value.trim();
+  if (!query) { showMsg('sparql-status','warning','Please enter a SPARQL query.'); return; }
+  clearMsg('sparql-status');
+  document.getElementById('sparql-results-wrap').style.display = 'none';
+  showMsg('sparql-status','success','Running query\u2026');
+  try {
+    var r = await fetch('/api/sparql', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: query })
+    });
+    var d = await r.json();
+    clearMsg('sparql-status');
+    if (d.error) { showMsg('sparql-status','error','Query Error: ' + d.error); return; }
+    if (!d.rows.length) { showMsg('sparql-status','warning','The query returned no results.'); return; }
+    sparqlData = { columns: d.columns, rows: d.rows };
+    renderTable('sparql-thead','sparql-tbody', d.columns, d.rows);
+    document.getElementById('sparql-results-info').textContent = 'Returned ' + fmt(d.rows.length) + ' row(s).';
+    document.getElementById('sparql-results-wrap').style.display = 'block';
+  } catch(e) { showMsg('sparql-status','error','Network error: ' + e.message); }
+}
+
+function clearSparql() {
+  document.getElementById('sparql-editor').value = Object.values(EXAMPLE_QUERIES)[0];
+  clearMsg('sparql-status');
+  document.getElementById('sparql-results-wrap').style.display = 'none';
+}
+
+// ============================================================
+//  CSV download
+// ============================================================
+function downloadCSV(source) {
+  var data = source === 'search' ? searchData : sparqlData;
+  if (!data.columns.length) return;
+  var lines = [data.columns.map(function(c){ return '"' + c + '"'; }).join(',')];
+  data.rows.forEach(function(row){
+    lines.push(row.map(function(v){ return '"' + String(v).replace(/"/g,'""') + '"'; }).join(','));
+  });
+  var blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = source + '_results.csv'; a.click();
+}
+
+// ============================================================
+//  KG status polling & init
+// ============================================================
+async function pollStatus() {
+  try {
+    var r = await fetch('/api/status');
+    var d = await r.json();
+    var dot = document.getElementById('kg-status');
+    var txt = document.getElementById('kg-status-text');
+    var cnt = document.getElementById('kg-triple-count');
+    if (d.status === 'ready') {
+      dot.className = 'ready';
+      txt.textContent = 'Graph ready';
+      cnt.textContent = fmt(d.triples) + ' triples';
+      document.getElementById('loading-overlay').style.display = 'none';
+      loadMetrics(); loadClasses(); loadAssociations();
+    } else {
+      dot.className = 'error'; txt.textContent = 'Error';
+      document.getElementById('loading-msg').textContent = 'Error loading graph: ' + (d.message || 'Unknown error');
+    }
+  } catch(_) { setTimeout(pollStatus, 3000); }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  initSparql();
+  pollStatus();
+  var iv = setInterval(async function() {
+    try { var r = await fetch('/api/status'); var d = await r.json(); if (d.status==='ready') clearInterval(iv); } catch(_) {}
+  }, 4000);
+  route();
+});
+</script>
+</body>
+</html>
