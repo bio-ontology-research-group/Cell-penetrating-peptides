@@ -27,7 +27,7 @@ data/
                                                      Dataset after ontology normalisation
   Ground_Truth_CHEBI.csv         ChEBI ground truth for evaluation
   Ground_Truth_CLO.csv           CLO ground truth for evaluation
-  BC5CDR.csv                     BC5CDR corpus (NER support)
+  biosamples.csv                 biosamples corpus (NER support)
   CRAFT.csv                      CRAFT corpus (NER support)
   CPP_KG.ttl                     Final knowledge graph in Turtle format
   void.ttl                       VoID dataset description
