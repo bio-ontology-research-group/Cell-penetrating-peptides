@@ -80,7 +80,7 @@ python scripts/Ontology_normalizer.py --input data/Natural_CPP3_download_annotat
 --rag-url      "http://127.0.0.1:$PORT/v1"
 ```
 
-Requires CLO and ChEBI OBO files. It is recommended to set up an Ollama instance beforehand. Example to start the Ollama server (ollama-server-start.sh): the script generates an ollama_port.txt file with the accessible port. Otherwise, set the OpenRouter API key and OpenRouter model as environment variables or in your configuration file.
+Requires CLO and ChEBI OBO files. It is recommended to set up an Ollama instance beforehand (`run_normalizer.slurm`). Otherwise, set the OpenRouter API key and OpenRouter model as environment variables or in your configuration file.
 Produces
 `data/Natural_CPP3_download_annotated_preprocessed_Ontology_Normalization.csv`.
 

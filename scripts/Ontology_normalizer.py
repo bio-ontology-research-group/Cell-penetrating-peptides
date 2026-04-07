@@ -1134,7 +1134,7 @@ def parse_args():
                     help="Which methods to run (space-separated)")
     p.add_argument("--fuzzy-threshold",  type=float, default=0.92,
                     help="Fuzzy match threshold for exact method (0–1)")
-    p.add_argument("--biosyn-batch",     type=int, default=128,
+    p.add_argument("--biosyn-batch",     type=int, default=256,
                     help="Batch size for BioSyn encoding")
     p.add_argument("--rag-backend",  default="openrouter",
                     choices=["openrouter", "ollama"],
