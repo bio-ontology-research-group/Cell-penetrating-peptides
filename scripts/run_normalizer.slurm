@@ -12,12 +12,11 @@ mkdir -p logs
 
 # ── Config ────────────────────────────────────────────────────────────────────
 RAG_MODEL=${RAG_MODEL:-"gpt-oss:20b"}
-
-WORKDIR=.
+WORKDIR=/ibex/user/$USER
 OLLAMA_MODELS_SCRATCH=./ollama_models_scratch
 SINGULARITY_INSTANCE=ollama
-PORT_FILE="./ollama_port.txt"
-OLLAMA_LOG="./logs/ollama_${SLURM_JOB_ID}.log"
+PORT_FILE="$WORKDIR/ollama_port.txt"
+OLLAMA_LOG="$WORKDIR/logs/ollama_${SLURM_JOB_ID}.log"
 
 echo "====================================================="
 echo "Job:      $SLURM_JOB_ID"
@@ -49,7 +48,7 @@ export SINGULARITYENV_OLLAMA_MODELS=$OLLAMA_MODELS_SCRATCH
 echo "Ollama port: $PORT"
 
 # Pull image if not present
-SIF="./ollama_latest.sif"
+SIF="$WORKDIR/ollama_latest.sif"
 if [ ! -f "$SIF" ]; then
     echo "Pulling Ollama Singularity image …"
     singularity pull --name "$SIF" docker://ollama/ollama
