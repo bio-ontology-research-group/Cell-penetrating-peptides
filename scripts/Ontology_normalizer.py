@@ -977,7 +977,6 @@ def run_pipeline(
     obo_path: str,
     output_path: str,
     methods: List[str],
-    spacy_model: str,
     fuzzy_threshold: float,
     biosyn_batch: int,
     rag_backend: str = "openrouter",

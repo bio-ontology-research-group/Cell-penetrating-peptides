@@ -31,3 +31,4 @@ dependencies:
     - rapidfuzz
     - faiss-cpu
     - pyld
+    - pydantic

@@ -79,11 +79,11 @@ singularity exec instance://$SINGULARITY_INSTANCE ollama pull "$RAG_MODEL"
 cd "$WORKDIR"
 
 uv run scripts/Ontology_normalizer.py \
-    --input        "data/Natural_CPP3_download_annotated_preprocessed.csv" \
+    --input        "data/Ground_Truth_CLO.csv" \
     --column       "Cell Line" \
     --ontology     "clo" \
     --obo          "data/Ontology/clo.obo" \
-    --output       "data/Natural_CPP3_download_annotated_preprocessed_clo.csv" \
+    --output       "data/Ground_Truth_CLO_Ontology_Normalization.csv" \
     --rag-backend  ollama \
     --rag-model    "$RAG_MODEL" \
     --rag-url      "http://127.0.0.1:$PORT/v1"
@@ -102,11 +102,11 @@ echo "====================================================="
 
 # ── Run Ontology_normalizer on CHEBI too (same Ollama instance) ───────────────────────
 uv run scripts/Ontology_normalizer.py \
-    --input        "data/Natural_CPP3_download_annotated_preprocessed.csv" \
+    --input        "data/Ground_Truth_CHEBI.csv" \
     --column       "Cargo" \
     --ontology     "chebi" \
     --obo          "data/Ontology/chebi.obo" \
-    --output       "data/Natural_CPP3_download_annotated_preprocessed_chebi.csv" \
+    --output       "data/Ground_Truth_CHEBI_Ontology_Normalization.csv" \
     --rag-backend  ollama \
     --rag-model    "$RAG_MODEL" \
     --rag-url      "http://127.0.0.1:$PORT/v1"
