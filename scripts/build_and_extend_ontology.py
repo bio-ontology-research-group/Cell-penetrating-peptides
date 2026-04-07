@@ -3,7 +3,7 @@
 Bio-Ontology Construction Script using mowl Library
 
 This script performs three phases:
-1. Phase 1: Load Ontology/sio.owl and define:
+1. Phase 1: Load data/Ontology/sio.owl and define:
                 - cpp:UptakeMechanism as a subclass of SIO process (SIO_000006)
                 - Ensembl genes as SIO gene (SIO_010035) instances, each with an
                 activator role (SIO_000804) via hasAttribute (SIO_000008),
@@ -92,7 +92,7 @@ CPP_DATASET_NS   = "https://cppkg.bio2vec.net/dataset/"
 # TBox: UptakeMechanism class lives in the schema namespace (not the dataset)
 UPTAKE_MECHANISM_CLASS = CPP_SCHEMA_NS + "UptakeMechanism"
 
-SIO_OWL = "Ontology/sio.owl"
+SIO_OWL = "data/Ontology/sio.owl"
 # Intermediate files directory (triplets, downloaded SIO, metadata)
 INTERMEDIATE_DIR = "data/intermediate"
 
@@ -349,7 +349,7 @@ def _add_features(manager, ontology, factory, subject_iri_str, col_value_pairs):
 
 def extend_gene_regulation(gene_to_go_file: str, output_file: str):
     """
-    Load Ontology/sio.owl and add Ensembl gene individuals from gene_to_go_file.
+    Load data/Ontology/sio.owl and add Ensembl gene individuals from gene_to_go_file.
 
     TBox addition:
         cpp:UptakeMechanism  rdfs:subClassOf  sio:SIO_000006  (process)
@@ -772,7 +772,7 @@ def extend_inhibitor_regulation(chebi_to_go_file: str, input_file: str, output_f
 # PHASE 3 HELPER: GENERATE TRIPLET TSV FILES FROM CPP CSV
 # ============================================================================
 
-def prepare_annotation_files(cpp_csv_file: str, output_dir: str = "triplets"):
+def prepare_annotation_files(cpp_csv_file: str, output_dir: str = "data/triplets"):
     """
     Read the CPP CSV file and write four subject→object TSV files required by
     mowl insert_annotations.  All object columns are converted to full OBO PURLs
@@ -835,7 +835,7 @@ def extend_ontology_with_annotations(ontology: str,
                                     cpp_cargo_file: str,
                                     cpp_location_file: str,
                                     cpp_cell_file: str,
-                                    output_file: str = "Ontology/CPP_KG.owl"):
+                                    output_file: str = "data/Ontology/CPP_KG.owl"):
     """
     Phase 3a — TBox enrichment (OWLAPI):
         cpp:CPP-Complex          subClassOf  sio:SIO_000004  (material entity)
@@ -1499,8 +1499,8 @@ def main():
                                     gene_out=GENE_TO_GO_FILE,
                                     chebi_out=CHEBI_TO_GO_FILE)
 
-    genes_ontology    = "Ontology/sio_genes.owl"
-    inhibitors_ontology = "Ontology/sio_genes_inhibitors.owl"
+    genes_ontology    = "data/Ontology/sio_genes.owl"
+    inhibitors_ontology = "data/Ontology/sio_genes_inhibitors.owl"
 
     # PHASE 1: Load sio.owl, populate gene individuals and GO mechanism instances
     if os.path.exists(GENE_TO_GO_FILE):
@@ -1527,7 +1527,7 @@ def main():
             cpp_cargo_file=cpp_cargo_file,
             cpp_location_file=cpp_location_file,
             cpp_cell_file=cpp_cell_file,
-            output_file="Ontology/CPP_KG.owl"
+            output_file="data/Ontology/CPP_KG.owl"
         )
 
 
