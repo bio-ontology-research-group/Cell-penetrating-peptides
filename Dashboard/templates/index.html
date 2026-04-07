@@ -446,6 +446,23 @@
         </table>
       </div>
     </div>
+    <div id="search-debug-wrap" style="display:none; margin-top:16px;">
+      <button class="btn btn-sm btn-outline-secondary" type="button"
+              data-bs-toggle="collapse" data-bs-target="#search-debug-panel"
+              aria-expanded="false">
+        <i class="bi bi-braces me-1"></i>Debug info
+      </button>
+      <div class="collapse mt-2" id="search-debug-panel">
+        <p class="text-muted mb-1" style="font-size:.82rem;"><strong>Step 1 — Candidate query</strong> (finds matching peptide URIs)</p>
+        <pre id="search-debug-candidate" style="font-family:'Courier New',monospace;font-size:.8rem;background:#1e1e2e;color:#cdd6f4;border-radius:8px;padding:12px;white-space:pre-wrap;word-break:break-all;"></pre>
+        <p class="text-muted mb-1 mt-2" style="font-size:.82rem;"><strong>Step 1 result — matched peptide URIs</strong></p>
+        <pre id="search-debug-peptides" style="font-family:'Courier New',monospace;font-size:.8rem;background:#1e1e2e;color:#a6e3a1;border-radius:8px;padding:12px;white-space:pre-wrap;word-break:break-all;"></pre>
+        <p class="text-muted mb-1 mt-3" style="font-size:.82rem;"><strong>Step 2 — Details query</strong> (fetches all associations for matched peptides)</p>
+        <pre id="search-debug-details" style="font-family:'Courier New',monospace;font-size:.8rem;background:#1e1e2e;color:#cdd6f4;border-radius:8px;padding:12px;white-space:pre-wrap;word-break:break-all;"></pre>
+        <p class="text-muted mb-1 mt-2" style="font-size:.82rem;"><strong>Step 2 result — total rows &amp; first row (which fields were bound?)</strong></p>
+        <pre id="search-debug-sample" style="font-family:'Courier New',monospace;font-size:.8rem;background:#1e1e2e;color:#a6e3a1;border-radius:8px;padding:12px;white-space:pre-wrap;word-break:break-all;"></pre>
+      </div>
+    </div>
   </div>
 
   <!-- ===== SPARQL ===== -->
@@ -1240,6 +1257,24 @@ async function doSearch() {
     renderTable('search-thead','search-tbody', d.columns, d.rows);
     document.getElementById('search-results-info').textContent = 'Found ' + fmt(d.rows.length) + ' association(s) \u2014 matched ' + fmt(d.matched_peptides) + ' peptide(s).';
     document.getElementById('search-results-wrap').style.display = 'block';
+    if (d.debug) {
+      var dbg = d.debug;
+      document.getElementById('search-debug-candidate').textContent = dbg.candidate_query || '';
+      var pepList = (dbg.step1_matched_peptides || []);
+      document.getElementById('search-debug-peptides').textContent =
+        pepList.length ? pepList.join('\n') + '\n(' + pepList.length + ' peptide(s) matched)' : '(none)';
+      document.getElementById('search-debug-details').textContent = dbg.details_query || '(not executed — 0 peptides matched)';
+      var sampleLines = ['Total detail rows: ' + (dbg.step3_total_detail_rows || 0), ''];
+      var sample = dbg.step3_sample_first_row || {};
+      if (Object.keys(sample).length) {
+        sampleLines.push('First row fields:');
+        Object.entries(sample).forEach(function([k, v]) {
+          sampleLines.push('  ' + k + ': ' + (v === '' ? '(empty string)' : v === null ? '(null/unbound)' : v));
+        });
+      }
+      document.getElementById('search-debug-sample').textContent = sampleLines.join('\n');
+      document.getElementById('search-debug-wrap').style.display = 'block';
+    }
   } catch(e) { showMsg('search-status','error','Network error: ' + e.message); }
 }
 
@@ -1248,6 +1283,7 @@ function clearSearch() {
   keys.forEach(function(k){ var el = document.getElementById('filter-' + k); if (el) el.value = ''; });
   clearMsg('search-status');
   document.getElementById('search-results-wrap').style.display = 'none';
+  document.getElementById('search-debug-wrap').style.display = 'none';
   document.getElementById('active-filters').innerHTML = '';
   history.replaceState(null, '', '#search');
   updateSearchControls();
