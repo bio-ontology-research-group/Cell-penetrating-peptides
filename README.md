@@ -34,6 +34,8 @@ data/
 
 Ontology/
   sio.owl                        Semanticscience Integrated Ontology (input)
+  chebi.obo                      Chemical Entities of Biological Interest
+  clo.obo                        Cell Line Ontology (CLO)
 
 environment.yml                  Conda environment specification
 ```
