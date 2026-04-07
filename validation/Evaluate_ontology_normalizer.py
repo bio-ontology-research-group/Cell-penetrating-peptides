@@ -59,29 +59,16 @@ def get_first(raw):
 # ---------------------------------------------------------------------------
 
 FILE_CONFIG = {
-    "Gold_standard_CLO_OUR.csv": {
-        "ground_truth_col": "CLO_ID",
-        "predicted": [
-            {"col": "clo_ids", "multi": True, "label": "Gold_standard_CLO_OUR"},
-        ],
-    },
-    "Gold_standard_CLO_exactmatch_others.csv": {
-        "ground_truth_col": "CLO_ID",
-        "predicted": [
-            {"col": "exact_curie",  "multi": False, "label": "Gold_standard_CLO_exact"},
-            {"col": "biosyn_curie", "multi": False, "label": "Gold_standard_CLO_biosyn"},
-            {"col": "rag_curie", "multi": False, "label": "Gold_standard_CLO_rag"},
-        ],
-    },
     
-    "Ground_Truth_CHEBI_OUR.csv": {
-        "ground_truth_col": "Cargo_CHEBI_id",
+    "CRAFT_Ontology_Normalization.csv": {
+        "ground_truth_col": "gold_id",
         "predicted": [
-            {"col": "chebi_ids", "multi": True, "label": "Ground_Truth_CHEBI_OUR"},
+            {"col": "exact_curie",  "multi": False, "label": "CRAFT_exact"},
+            {"col": "biosyn_curie", "multi": False, "label": "CRAFT_biosyn"},
+            {"col": "rag_curie", "multi": False, "label": "CRAFT_rag"},
         ],
     },
-    
-    "Ground_Truth_CHEBI_exactmatch_others.csv": {
+    "Ground_Truth_CHEBI_Ontology_Normalization.csv": {
         "ground_truth_col": "Cargo_CHEBI_id",
         "predicted": [
             {"col": "exact_curie",  "multi": False, "label": "Ground_Truth_CHEBI_exact"},
@@ -89,33 +76,20 @@ FILE_CONFIG = {
             {"col": "rag_curie", "multi": False, "label": "Ground_Truth_CHEBI_rag"},
         ],
     },
-    "Ground_Truth_CLO_exactmatch_others.csv": {
+    "biosamples_Ontology_Normalization.csv": {
+        "ground_truth_col": "CLO_ID",
+        "predicted": [
+            {"col": "exact_curie",  "multi": False, "label": "biosamples_CLO_exact"},
+            {"col": "biosyn_curie", "multi": False, "label": "biosamples_CLO_biosyn"},
+            {"col": "rag_curie", "multi": False, "label": "biosamples_CLO_rag"},
+        ],
+    },
+    "Ground_Truth_CLO__Ontology_Normalization.csv": {
         "ground_truth_col": "CLO_id",
         "predicted": [
             {"col": "exact_curie",  "multi": False, "label": "Ground_Truth_CLO_exact"},
             {"col": "biosyn_curie", "multi": False, "label": "Ground_Truth_CLO_biosyn"},
             {"col": "rag_curie", "multi": False, "label": "Ground_Truth_CLO_rag"},
-        ],
-    },
-    "Ground_Truth_CLO_OURS.csv": {
-        "ground_truth_col": "CLO_id",
-        "predicted": [
-            {"col": "clo_ids", "multi": True, "label": "Ground_Truth_CLO_OUR"},
-        ],
-    },
-    
-    "gold_standard_craft_chebi_OUR.csv": {
-        "ground_truth_col": "gold_id",
-        "predicted": [
-            {"col": "chebi_ids", "multi": True, "label": "gold_standard_craft_chebi_OUR"},
-        ],
-    },
-    "gold_standard_craft_chebi_exactmatch_others.csv": {
-        "ground_truth_col": "gold_id",
-        "predicted": [
-            {"col": "exact_curie",  "multi": False, "label": "gold_standard_craft_chebi_exact"},
-            {"col": "biosyn_curie", "multi": False, "label": "gold_standard_craft_chebi_biosyn"},
-            {"col": "rag_curie", "multi": False, "label": "gold_standard_craft_chebi_rag"},
         ],
     },
     
@@ -203,7 +177,7 @@ def main():
             )
 
     # Save report
-    report_path = os.path.join(RESULTS_DIR, "evaluation_report.csv")
+    report_path = os.path.join(RESULTS_DIR, "data/evaluation_report.csv")
     report_df = pd.DataFrame(records)
     report_df.to_csv(report_path, index=False)
     print(f"\nReport saved → {report_path}")
