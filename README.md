@@ -2,7 +2,7 @@
 
 A knowledge graph of cell-penetrating peptides (CPPs) built from curated
 experimental data and linked to biomedical ontologies (SIO, GO, ChEBI, CLO).
-The pipeline preprocesses annotated CSV data, normalises ontology terms, and
+The pipeline preprocesses annotated CSV data, normalizes ontology terms, and
 constructs an OWL/RDF knowledge graph that can be queried via SPARQL.
 
 Web interface: <https://cppkg.bio2vec.net/>
@@ -17,14 +17,14 @@ scripts/
 
 validation/
   validate_shex.py               ShEx shape validation of the KG
-  Evaluate_ontology_normalizer.py  Evaluate normaliser against ground truth
+  Evaluate_ontology_normalizer.py  Evaluate normalizer against ground truth
   mechanisms_shapes.shex         ShEx shape definitions
 
 data/
   Natural_CPP3_download_annotated.csv                Raw annotated dataset
   Natural_CPP3_download_annotated_preprocessed.csv   Preprocessed dataset
   Natural_CPP3_download_annotated_preprocessed_Ontology_Normalization.csv
-                                                     Dataset after ontology normalisation
+                                                     Dataset after ontology normalization
   Ground_Truth_CHEBI.csv         ChEBI ground truth for evaluation
   Ground_Truth_CLO.csv           CLO ground truth for evaluation
   biosamples.csv                 biosamples corpus (NER support)
@@ -43,7 +43,7 @@ environment.yml                  Conda environment specification
 - Python 3.10
 - Conda (recommended) or pip
 - Java runtime (required by mowl / OWL API)
-- OBO files for CLO and ChEBI (used by the ontology normaliser)
+- OBO files for CLO and ChEBI (used by the ontology normalizer)
 - SIO ontology (`Ontology/sio.owl`)
 
 ## Installation
@@ -66,13 +66,20 @@ python scripts/Preprocess_dataset.py
 Reads `data/Natural_CPP3_download_annotated.csv` and produces
 `data/Natural_CPP3_download_annotated_preprocessed.csv`.
 
-### 2. Normalise ontology terms
+### 2. Normalize ontology terms
 
 ```bash
-python scripts/Ontology_normalizer.py
+python scripts/Ontology_normalizer.py --input data/Natural_CPP3_download_annotated_preprocessed.csv \
+--column       "Cargo" \ #"Cell Line"
+--ontology     "chebi" \#"clo"
+--obo          "data/Ontology/chebi.obo" \""data/Ontology/clo.obo"
+--rag-backend  ollama \
+--rag-model    "gpt-oss:20b" \
+--rag-url      "http://127.0.0.1:$PORT/v1"
 ```
 
-Requires CLO and ChEBI OBO files. Produces
+Requires CLO and ChEBI OBO files. It is recommended to set up an Ollama instance beforehand. Example to start the Ollama server (ollama-server-start.sh): the script generates an ollama_port.txt file with the accessible port. Otherwise, set the OpenRouter API key and OpenRouter model as environment variables or in your configuration file.
+Produces
 `data/Natural_CPP3_download_annotated_preprocessed_Ontology_Normalization.csv`.
 
 ### 3. Build the knowledge graph
@@ -81,25 +88,23 @@ Requires CLO and ChEBI OBO files. Produces
 python scripts/build_and_extend_ontology.py
 ```
 
-Requires `Ontology/sio.owl`. Produces `data/CPP_KG.ttl`.
+Requires `data/Ontology/sio.owl`. Produces `data/Ontology/CPP_KG.ttl`.
 
 ### 4. Validate the knowledge graph
 
 ```bash
-python validation/validate_shex.py
+python validation/validate_shex.py --ttl data/Ontology/CPP_KG.ttl --shex validation/mechanisms_shapes.shex
 ```
 
-Validates `data/CPP_KG.ttl` against the ShEx shapes in
+Validates `data/Ontology/CPP_KG.ttl` against the ShEx shapes in
 `validation/mechanisms_shapes.shex`.
 
-### 5. Evaluate the ontology normaliser
+### 5. Evaluate the ontology normalizer
 
 ```bash
 python validation/Evaluate_ontology_normalizer.py
 ```
-
-Compares normalised terms against `data/Ground_Truth_CHEBI.csv` and
-`data/Ground_Truth_CLO.csv`.
+To reproduce Table 3 results. First, to reproduce the `data/Ground_Truth_CHEBI_Ontology_Normalization.csv`, `data/Ground_Truth_CLO_Ontology_Normalization.csv`, `data/CRAFT.csv` and `data/biosamples.csv`, run `scripts/Ontology_normalizer.py` on `data/Ground_Truth_CHEBI.csv`, `data/Ground_Truth_CLO.csv`, `data/CRAFT.csv` and `data/biosamples.csv`. Results will be saved in `data/evaluation_report.csv`.
 
 ### 6. Verify all numerical claims in the paper
 
