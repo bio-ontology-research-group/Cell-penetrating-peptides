@@ -12,8 +12,11 @@ mkdir -p logs
 
 # ── Config ────────────────────────────────────────────────────────────────────
 RAG_MODEL=${RAG_MODEL:-"gpt-oss:20b"}
-WORKDIR=/ibex/user/$USER
-OLLAMA_MODELS_SCRATCH=./ollama_models_scratch
+
+
+
+WORKDIR=/ibex/user/$USER/Cell-penetrating-peptides
+OLLAMA_MODELS_SCRATCH="/ibex/user/$USER/ollama_models_scratch"
 SINGULARITY_INSTANCE=ollama
 PORT_FILE="$WORKDIR/ollama_port.txt"
 OLLAMA_LOG="$WORKDIR/logs/ollama_${SLURM_JOB_ID}.log"
@@ -48,7 +51,7 @@ export SINGULARITYENV_OLLAMA_MODELS=$OLLAMA_MODELS_SCRATCH
 echo "Ollama port: $PORT"
 
 # Pull image if not present
-SIF="$WORKDIR/ollama_latest.sif"
+SIF="$OLLAMA_MODELS_SCRATCH/ollama_latest.sif"
 if [ ! -f "$SIF" ]; then
     echo "Pulling Ollama Singularity image …"
     singularity pull --name "$SIF" docker://ollama/ollama
@@ -73,8 +76,9 @@ echo "Pulling model: $RAG_MODEL"
 singularity exec instance://$SINGULARITY_INSTANCE ollama pull "$RAG_MODEL"
 
 # ── Run Ontology_normalizer ───────────────────────────────────────────────────────────
+cd "$WORKDIR"
 
-uv run python Ontology_normalizer.py \
+uv run scripts/Ontology_normalizer.py \
     --input        "data/Natural_CPP3_download_annotated_preprocessed.csv" \
     --column       "Cell Line" \
     --ontology     "clo" \
@@ -97,7 +101,7 @@ echo "Started:  $(date)"
 echo "====================================================="
 
 # ── Run Ontology_normalizer on CHEBI too (same Ollama instance) ───────────────────────
-uv run python Ontology_normalizer.py \
+uv run scripts/Ontology_normalizer.py \
     --input        "data/Natural_CPP3_download_annotated_preprocessed.csv" \
     --column       "Cargo" \
     --ontology     "chebi" \
