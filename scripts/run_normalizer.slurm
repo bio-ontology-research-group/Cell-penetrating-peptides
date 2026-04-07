@@ -4,7 +4,7 @@
 #SBATCH --error=logs/normalizer_%j.err
 #SBATCH --time=04:00:00
 #SBATCH --mem=64G
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:v100:1
 #SBATCH --ntasks=4
 
 set -euo pipefail
