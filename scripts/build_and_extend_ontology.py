@@ -173,7 +173,7 @@ def _apply_ontology_metadata(manager, ontology, factory):
         # F1B weak: void:uriSpace exposes identifiers.org namespace in metadata
         (VOID_NS   + "uriSpace",      "http://identifiers.org/ensembl/"),
         # F2A strong
-        (DC_TERMS  + "title",         "CPP Mechanisms Dataset"),
+        (DC_TERMS  + "title",         "CPP knowledge graph ontology"),
         (DC_TERMS  + "description",
         "This ontology extends the Semanticscience Integrated Ontology (SIO) "
         "to represent the mechanisms by which cell-penetrating peptides (CPPs) "
@@ -214,7 +214,7 @@ def _apply_ontology_metadata(manager, ontology, factory):
         (SCHEMA_NS + "license",       "https://creativecommons.org/licenses/by/4.0/"),
         # F2A — access/download endpoints as IRIs
         (DCAT_NS   + "accessURL",     DATASET_IRI),
-        (DCAT_NS   + "downloadURL",   DATASET_IRI + "/download"),
+        (DCAT_NS   + "downloadURL",   DATASET_IRI + "/api/download/ttl"),
         # I3 — void:vocabulary links to shared vocabularies in different domains,
         (VOID_NS   + "vocabulary",    "http://semanticscience.org/resource/"),
         (VOID_NS   + "vocabulary",    "http://purl.obolibrary.org/obo/"),
