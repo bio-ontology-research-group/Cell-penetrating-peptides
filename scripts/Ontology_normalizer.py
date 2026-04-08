@@ -279,7 +279,7 @@ class ExactSynonymNormalizer:
 
         # Build a set of accepted CURIE prefixes — only the target ontology.
         # Rejects imported/external terms (UBERON, RO, BFO, etc.).
-        _accepted_prefix = f"{ontology}:" if ontology else None
+        _accepted_prefix = f"{ontology.upper()}:" if ontology else None
 
         added = 0
         skipped = 0

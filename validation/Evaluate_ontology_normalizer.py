@@ -20,7 +20,7 @@ import re
 import os
 import pandas as pd
 
-RESULTS_DIR = os.path.join(os.path.dirname(__file__), "results")
+RESULTS_DIR = os.path.join(os.path.dirname(__file__), "../")
 
 # ---------------------------------------------------------------------------
 # Normalisation
@@ -60,7 +60,7 @@ def get_first(raw):
 
 FILE_CONFIG = {
     
-    "CRAFT_Ontology_Normalization.csv": {
+    "data/CRAFT_Ontology_Normalization.csv": {
         "ground_truth_col": "gold_id",
         "predicted": [
             {"col": "exact_curie",  "multi": False, "label": "CRAFT_exact"},
@@ -68,7 +68,7 @@ FILE_CONFIG = {
             {"col": "rag_curie", "multi": False, "label": "CRAFT_rag"},
         ],
     },
-    "Ground_Truth_CHEBI_Ontology_Normalization.csv": {
+    "data/Ground_Truth_CHEBI_Ontology_Normalization.csv": {
         "ground_truth_col": "Cargo_CHEBI_id",
         "predicted": [
             {"col": "exact_curie",  "multi": False, "label": "Ground_Truth_CHEBI_exact"},
@@ -76,7 +76,7 @@ FILE_CONFIG = {
             {"col": "rag_curie", "multi": False, "label": "Ground_Truth_CHEBI_rag"},
         ],
     },
-    "biosamples_Ontology_Normalization.csv": {
+    "data/biosamples_Ontology_Normalization.csv": {
         "ground_truth_col": "CLO_ID",
         "predicted": [
             {"col": "exact_curie",  "multi": False, "label": "biosamples_CLO_exact"},
@@ -84,7 +84,7 @@ FILE_CONFIG = {
             {"col": "rag_curie", "multi": False, "label": "biosamples_CLO_rag"},
         ],
     },
-    "Ground_Truth_CLO__Ontology_Normalization.csv": {
+    "data/Ground_Truth_CLO_Ontology_Normalization.csv": {
         "ground_truth_col": "CLO_id",
         "predicted": [
             {"col": "exact_curie",  "multi": False, "label": "Ground_Truth_CLO_exact"},
