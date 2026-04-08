@@ -22,15 +22,19 @@ from rdflib.namespace import RDF, RDFS
 
 app = Flask(__name__)
 
-TTL_URL = "https://mariacastillo982.github.io/cpp-mechanisms/data/mechanisms.ttl"
+# Primary source: GitHub raw TTL (single request, CDN-backed).
+GITHUB_TTL_URL = "https://raw.githubusercontent.com/bio-ontology-research-group/Cell-penetrating-peptides/main/data/Ontology/CPP_KG.ttl"
+# Fallback: Zenodo record JSON API for the canonical versioned TTL file.
+# The API endpoint exposes a `files` array with download links.
+ZENODO_API_URL = "https://zenodo.org/api/records/19427198"
+_HERE = Path(__file__).parent
 LOCAL_TTL_CANDIDATES = [
-    Path("Ontology/mechanisms.ttl"),
-    Path("mechanisms.ttl"),
+    _HERE / "../data/Ontology/CPP_KG.ttl",
+    _HERE / "../data/CPP_KG.ttl",
 ]
 
 ENTITY_URI_PREFIXES = [
-    "https://w3id.org/cpp/dataset/mechanisms/",
-    "https://w3id.org/cpp/dataset/individuals/",
+    "https://cppkg.bio2vec.net/dataset/",
 ]
 
 # ---------------------------------------------------------------------------
@@ -44,44 +48,52 @@ _graph_lock = threading.Lock()
 
 def _load_graph() -> Graph:
     g = Graph()
+    # First try: local files (offline / dev fallback).
     for ttl_path in LOCAL_TTL_CANDIDATES:
         if ttl_path.exists():
             g.parse(str(ttl_path), format="turtle")
+            print(f"Loaded TTL from local file: {ttl_path}")
             return g
-    # Try to fetch via Zenodo API to find the .ttl file
+    # Second try: GitHub raw (single request, CDN-backed — fastest).
     try:
-        r = requests.get(TTL_URL, timeout=30)
+        r = requests.get(GITHUB_TTL_URL, timeout=30)
         r.raise_for_status()
-        # If API returns JSON describing files, find a turtle file
-        if 'application/json' in r.headers.get('Content-Type', '') or r.text.strip().startswith('{'):
-            info = r.json()
-            files = info.get('files', []) if isinstance(info, dict) else []
-            ttl_link = None
-            for f in files:
-                fname = f.get('filename', '')
-                if fname.lower().endswith('.ttl'):
-                    links = f.get('links', {})
-                    ttl_link = links.get('download') or links.get('self')
-                    break
-            if not ttl_link:
-                # fallback: try to find any file with .ttl in its filename string
-                for f in files:
-                    if '.ttl' in f.get('filename', '').lower():
-                        ttl_link = f.get('links', {}).get('download') or f.get('links', {}).get('self')
-                        break
-            if ttl_link:
-                rr = requests.get(ttl_link, timeout=60)
-                rr.raise_for_status()
-                g.parse(data=rr.text, format='turtle')
-                return g
-        # If response looks like raw TTL, try parsing directly
-        if r.text.strip().startswith('@prefix') or r.text.strip().startswith('<') or 'turtle' in r.headers.get('Content-Type',''):
-            g.parse(data=r.text, format='turtle')
+        g.parse(data=r.text, format='turtle')
+        print(f"Loaded TTL from GitHub: {GITHUB_TTL_URL}")
+        return g
+    except Exception as exc:
+        print(f"GitHub TTL fetch failed ({exc}), trying Zenodo...")
+
+    # Third try: Zenodo record API (canonical versioned copy).
+    try:
+        r = requests.get(ZENODO_API_URL, timeout=30)
+        r.raise_for_status()
+        info = r.json()
+        files = info.get('files', []) if isinstance(info, dict) else []
+        ttl_link = None
+        for f in files:
+            fname = (f.get('key') or f.get('filename') or '').lower()
+            links = f.get('links', {}) or {}
+            candidate = links.get('download') or links.get('self') or links.get('content')
+            if fname.endswith('.ttl') and candidate:
+                ttl_link = candidate
+                break
+        if ttl_link:
+            rr = requests.get(ttl_link, timeout=60)
+            rr.raise_for_status()
+            g.parse(data=rr.text, format='turtle')
+            print(f"Loaded TTL from Zenodo: {ttl_link}")
             return g
-    except Exception:
-        pass
-    # Last resort: raise informative error
-    raise RuntimeError('Failed to load TTL from Zenodo API. Please download the TTL file manually and place it at mechanisms.ttl or Ontology/mechanisms.ttl')
+    except Exception as exc:
+        print(f"Zenodo TTL fetch failed ({exc}), trying local files...")
+
+    
+    
+
+    raise RuntimeError(
+        'Failed to load TTL from GitHub, Zenodo, and no local TTL found. '
+        'Please place the file at data/Ontology/CPP_KG.ttl.'
+    )
 
 
 def get_graph() -> Graph:
@@ -158,17 +170,17 @@ ASSOCIATION_CATALOG = [
     {
         "name": "Cargo Role: Is Realized In",
         "description": "Functional role of the Cargo realized in the Uptake Mechanism.",
-        "query": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX sio: <http://semanticscience.org/resource/> PREFIX cpp: <https://w3id.org/cpp/dataset/mechanisms/> SELECT (COUNT(*) AS ?count) WHERE { ?s rdf:type cpp:CargoRole . ?s sio:SIO_000356 ?o . }",
+        "query": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX sio: <http://semanticscience.org/resource/> PREFIX cpp: <https://cppkg.bio2vec.net/dataset/> SELECT (COUNT(*) AS ?count) WHERE { ?s rdf:type cpp:CargoRole . ?s sio:SIO_000356 ?o . }",
     },
     {
         "name": "CPP Role: Is Realized In",
         "description": "Functional role of the Cell-penetrating peptide realized in the Uptake Mechanism.",
-        "query": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX sio: <http://semanticscience.org/resource/> PREFIX cpp: <https://w3id.org/cpp/dataset/mechanisms/> SELECT (COUNT(*) AS ?count) WHERE { ?s rdf:type cpp:CellPenetratingPeptideRole . ?s sio:SIO_000356 ?o . }",
+        "query": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX sio: <http://semanticscience.org/resource/> PREFIX cpp: <https://cppkg.bio2vec.net/dataset/> SELECT (COUNT(*) AS ?count) WHERE { ?s rdf:type cpp:CellPenetratingPeptideRole . ?s sio:SIO_000356 ?o . }",
     },
     {
         "name": "CPP-Complex: Is Participant In",
         "description": "CPP-Complex interaction with a specific the uptake mechanism.",
-        "query": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX sio: <http://semanticscience.org/resource/> PREFIX cpp: <https://w3id.org/cpp/dataset/mechanisms/> SELECT (COUNT(*) AS ?count) WHERE { ?s rdf:type cpp:CPP-Complex . ?s sio:SIO_000062 ?o . }",
+        "query": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX sio: <http://semanticscience.org/resource/> PREFIX cpp: <https://cppkg.bio2vec.net/dataset/> SELECT (COUNT(*) AS ?count) WHERE { ?s rdf:type cpp:CPP-Complex . ?s sio:SIO_000062 ?o . }",
     },
     {
         "name": "Cell Line: Is Participant In",
@@ -178,7 +190,7 @@ ASSOCIATION_CATALOG = [
     {
         "name": "Subcellular Delivery Localization",
         "description": "CPP-Complex interaction with Subcellular Entity.",
-        "query": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX sio: <http://semanticscience.org/resource/> PREFIX cpp: <https://w3id.org/cpp/dataset/mechanisms/> SELECT (COUNT(*) AS ?count) WHERE { ?s rdf:type cpp:CPP-Complex . ?s sio:SIO_000061 ?o . }",
+        "query": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX sio: <http://semanticscience.org/resource/> PREFIX cpp: <https://cppkg.bio2vec.net/dataset/> SELECT (COUNT(*) AS ?count) WHERE { ?s rdf:type cpp:CPP-Complex . ?s sio:SIO_000061 ?o . }",
     },
 ]
 
@@ -191,19 +203,19 @@ CLASS_CATALOG = {
         "name": "Inhibitor",
         "description": "A chemical compound used experimentally to selectively block an endocytic uptake mechanism.",
     },
-    "https://w3id.org/cpp/schema#UptakeMechanism": {
+    "https://cppkg.bio2vec.net/schema#UptakeMechanism": {
         "name": "Uptake Mechanism",
         "description": "A cellular route or process - endocytic or non-endocytic - through which the CPP-complex crosses the cell membrane.",
     },
-    "https://w3id.org/cpp/dataset/mechanisms/CPP-Complex": {
+    "https://cppkg.bio2vec.net/dataset/CPP-Complex": {
         "name": "CPP-Complex",
         "description": "A molecular assembly formed between a cell-penetrating peptide and its associated cargo molecule.",
     },
-    "https://w3id.org/cpp/dataset/mechanisms/CellPenetratingPeptide": {
+    "https://cppkg.bio2vec.net/dataset/CellPenetratingPeptide": {
         "name": "Cell-Penetrating Peptide",
         "description": "A short amino acid sequence with intrinsic ability to traverse biological membranes.",
     },
-    "https://w3id.org/cpp/dataset/mechanisms/Cargo": {
+    "https://cppkg.bio2vec.net/dataset/Cargo": {
         "name": "Cargo",
         "description": "A therapeutic or reporter molecule transported into cells through its association with a CPP.",
     },
@@ -281,8 +293,8 @@ CANDIDATE_QUERY = (
     "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
     "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
     "PREFIX sio:  <http://semanticscience.org/resource/>\n"
-    "PREFIX cpp:  <https://w3id.org/cpp/dataset/mechanisms/>\n"
-    "PREFIX cppS: <https://w3id.org/cpp/schema#>\n"
+    "PREFIX cpp:  <https://cppkg.bio2vec.net/dataset/>\n"
+    "PREFIX cppS: <https://cppkg.bio2vec.net/schema#>\n"
     "SELECT DISTINCT ?peptide\n"
     "WHERE {\n"
     "    ?peptide rdf:type cpp:CellPenetratingPeptide .\n"
@@ -295,8 +307,8 @@ DETAILS_QUERY = (
     "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
     "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
     "PREFIX sio:  <http://semanticscience.org/resource/>\n"
-    "PREFIX cpp:  <https://w3id.org/cpp/dataset/mechanisms/>\n"
-    "PREFIX cppS: <https://w3id.org/cpp/schema#>\n"
+    "PREFIX cpp:  <https://cppkg.bio2vec.net/dataset/>\n"
+    "PREFIX cppS: <https://cppkg.bio2vec.net/schema#>\n"
     "SELECT DISTINCT\n"
     "    ?cppId ?pepName ?sequence\n"
     "    ?cargoId ?cargoType\n"
@@ -485,7 +497,16 @@ def api_search():
         peptides = [str(getattr(r, 'peptide', r[0])) for r in candidate_rows]
 
         if not peptides:
-            return jsonify({"columns": [], "rows": [], "matched_peptides": 0, "warnings": []})
+            return jsonify({
+                "columns": [], "rows": [], "matched_peptides": 0, "warnings": [],
+                "debug": {
+                    "candidate_query": candidate_query,
+                    "details_query": None,
+                    "step1_matched_peptides": [],
+                    "step2_values_block": None,
+                    "step3_detail_rows": [],
+                },
+            })
 
         values_block = " ".join("<{}>".format(uri) for uri in peptides)
         details_query = DETAILS_QUERY.replace(_VALUES_TOKEN, values_block)
@@ -499,11 +520,22 @@ def api_search():
         if len(rows) >= MAX_RESULT_ROWS:
             warnings.append(f"Result set reached the {MAX_RESULT_ROWS}-row limit. Refine your term for a narrower search.")
 
+        # Sample the first detail row to show what fields were bound vs None
+        sample_row = dict(zip(vars_, rows[0])) if rows else {}
+
         return jsonify({
             "columns": display_cols,
             "rows":    rows,
             "matched_peptides": len(peptides),
             "warnings": warnings,
+            "debug": {
+                "candidate_query":          candidate_query,
+                "details_query":            details_query,
+                "step1_matched_peptides":   peptides,
+                "step2_values_block":       values_block,
+                "step3_total_detail_rows":  len(rows),
+                "step3_sample_first_row":   sample_row,
+            },
         })
     except Exception as exc:
         return jsonify({"error": str(exc)}), 500
@@ -544,7 +576,7 @@ def sitemap_xml():
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         SELECT DISTINCT ?entity WHERE {
           ?entity rdf:type ?type .
-          FILTER(STRSTARTS(STR(?entity), "https://w3id.org/cpp/dataset/mechanisms/"))
+          FILTER(STRSTARTS(STR(?entity), "https://cppkg.bio2vec.net/dataset/"))
         }
         LIMIT 5000
         """
@@ -679,7 +711,7 @@ def api_browse():
         q = """
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        PREFIX cppS: <https://w3id.org/cpp/schema#>
+        PREFIX cppS: <https://cppkg.bio2vec.net/schema#>
         SELECT DISTINCT ?entity (SAMPLE(?lbl) AS ?label) (SAMPLE(?seq) AS ?sequence) WHERE {{
           ?entity rdf:type <{cls}> .
           OPTIONAL {{ ?entity rdfs:label ?lbl . }}
@@ -718,16 +750,7 @@ def api_browse():
 
 @app.route("/api/download/ttl")
 def api_download_ttl():
-    try:
-        g = get_graph()
-        ttl = g.serialize(format="turtle")
-        return Response(
-            ttl,
-            mimetype="text/turtle",
-            headers={"Content-Disposition": "attachment; filename=mechanisms.ttl"},
-        )
-    except Exception as exc:
-        return jsonify({"error": str(exc)}), 500
+    return redirect("https://zenodo.org/records/19427198/files/CPP_KG.ttl?download=1", code=302)
 
 
 @app.route("/api/download/jsonld")
@@ -741,7 +764,7 @@ def api_download_jsonld():
         return Response(
             jld,
             mimetype="application/ld+json",
-            headers={"Content-Disposition": "attachment; filename=mechanisms.jsonld"},
+            headers={"Content-Disposition": "attachment; filename=CPP_KG.jsonld"},
         )
     except Exception as exc:
         return jsonify({"error": str(exc)}), 500
@@ -844,13 +867,13 @@ def _build_void_turtle() -> str:
 @prefix foaf:    <http://xmlns.com/foaf/0.1/> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 
-<https://w3id.org/cpp/dataset/mechanisms/>
+<https://cppkg.bio2vec.net/dataset/>
     a void:Dataset ;
     dcterms:title "CPP Mechanisms Knowledge Graph"@en ;
     dcterms:description "A structured RDF Knowledge Graph encoding endocytic and non-endocytic uptake mechanisms for Cell-Penetrating Peptides."@en ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     void:dataDump <https://mariacastillo982.github.io/cpp-mechanisms/data/mechanisms.ttl> ;
-    void:uriSpace "https://w3id.org/cpp/dataset/mechanisms/" .
+    void:uriSpace "https://cppkg.bio2vec.net/dataset/" .
 """
 
 
