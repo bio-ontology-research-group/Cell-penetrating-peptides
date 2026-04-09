@@ -113,9 +113,9 @@ To reproduce Table 3 results. First, to reproduce the `data/Ground_Truth_CHEBI_O
 ### 6. Run Competency Questions
 
 ```bash
-python validation/Competency_Questions.py
+python validation/Competency_Questions.py --federated
 ```
-To reproduce the results in Table 4, it runs 6 SPARQL Queries against the knowledge graph.
+To reproduce the results in Table 4, it runs 3 local and 3 federated SPARQL Queries against the knowledge graph. 
 
 ### 7. Verify all numerical claims in the paper
 
