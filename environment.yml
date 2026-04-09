@@ -32,3 +32,5 @@ dependencies:
     - faiss-cpu
     - pyld
     - pydantic
+    - pyshex
+    - ollama
