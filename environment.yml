@@ -1,15 +1,14 @@
 name: cpp_kg
 channels:
-  - pytorch
   - conda-forge
   - defaults
 dependencies:
   - python=3.10
+  - pip
   # data handling
   - pandas
   - numpy
-  # deep learning
-  - pytorch::pytorch
+  # utilities
   - tqdm
   # HTTP / preprocessing
   - requests
@@ -19,12 +18,11 @@ dependencies:
   # ontology / RDF
   - rdflib
   - jpype1
-  # Java runtime for JPype / OWLAPI
-  - conda-forge::openjdk
   # HuggingFace
   - conda-forge::transformers
   # pip-only packages
   - pip:
+    - torch
     - mowl-borg
     - pyshex
     - pronto
@@ -32,5 +30,4 @@ dependencies:
     - faiss-cpu
     - pyld
     - pydantic
-    - pyshex
     - ollama
