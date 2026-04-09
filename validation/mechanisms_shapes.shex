@@ -18,12 +18,12 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 # CPPShape              mech:CellPenetratingPeptide  ∃sio:SIO_000313.Complex
 # GeneShape             sio:SIO_010035               ∃sio:SIO_000008.Role
 # InhibitorShape        sio:SIO_010435               ∃sio:SIO_000008.Role
-# CellLineShape         sio:SIO_010054               —
+# CellLineShape         sio:SIO_010054               ∃sio:SIO_000062.Experiment
 # SubcellularEntityShape sio:SIO_001400              —
-# UptakeMechanismShape  cpps:UptakeMechanism         —
-# CPPComplexShape       mech:CPP-Complex             ∃sio:SIO_000369.{CPP,Cargo}
+# UptakeMechanismShape  cpps:UptakeMechanism         ∃sio:SIO_000093.Experiment
+# CPPComplexShape       mech:CPP-Complex             ∃sio:SIO_000369.{CPP,Cargo}  ∃sio:SIO_000062.Experiment
 # CargoShape            mech:Cargo                   ∃sio:SIO_000008.Role
-# ExperimentShape       sio:SIO_000994               ∃sio:SIO_000557.Document
+# ExperimentShape       sio:SIO_000994               ∃sio:SIO_000557.Document  ∃sio:SIO_000132.{Complex,CellLine}  ∃sio:SIO_000053.UptakeMechanism
 # DocumentShape         sio:SIO_000148               —
 # ==========================================================================
 
@@ -51,7 +51,7 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
     cpps:nTerminalModification   xsd:string              ? ;
     cpps:cTerminalModification   xsd:string              ? ;
     cpps:chemicalModification    xsd:string              ? ;
-    rdfs:label                   xsd:string              ? ;
+    rdfs:label                   xsd:string              * ;
 }
 
 
@@ -66,7 +66,7 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
     # has-attribute → activator_role individual
     sio:SIO_000008     IRI                               + ;
 
-    rdfs:label         xsd:string                        ? ;
+    rdfs:label         xsd:string                        * ;
     dcterms:identifier xsd:string                        ? ;
 }
 
@@ -78,11 +78,13 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 <InhibitorShape> {
     rdf:type           [ owl:NamedIndividual ]            ;
     rdf:type           [ sio:SIO_010435 ]                 ;
+    # Some ChEBI inhibitors are also typed as Cargo when they appear in the CPP CSV
+    rdf:type           [ mech:Cargo ]                    ? ;
 
-    # has-attribute → inhibitor_role individual
+    # has-attribute → inhibitor_role individual (and optionally cargo_role)
     sio:SIO_000008     IRI                               + ;
 
-    rdfs:label         xsd:string                        ? ;
+    rdfs:label         xsd:string                        * ;
     dcterms:identifier xsd:string                        ? ;
 }
 
@@ -95,7 +97,10 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
     rdf:type           [ owl:NamedIndividual ]            ;
     rdf:type           [ sio:SIO_010054 ]                 ;
 
-    rdfs:label         xsd:string                        ? ;
+    # is-participant-in → Experiment (SIO:000062)
+    sio:SIO_000062     IRI                               + ;
+
+    rdfs:label         xsd:string                        * ;
     dcterms:identifier xsd:string                        ? ;
     cpps:cellLine      xsd:string                        ? ;
 }
@@ -109,7 +114,7 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
     rdf:type           [ owl:NamedIndividual ]            ;
     rdf:type           [ sio:SIO_001400 ]                 ;
 
-    rdfs:label         xsd:string                        ? ;
+    rdfs:label         xsd:string                        * ;
     dcterms:identifier xsd:string                        ? ;
 }
 
@@ -121,6 +126,10 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 <UptakeMechanismShape> {
     rdf:type           [ owl:NamedIndividual ]            ;
     rdf:type           [ cpps:UptakeMechanism ]           ;
+
+    # is-proper-part-of → Experiment (SIO:000093)
+    # * because Phase-1 GO-term individuals may not link to an experiment
+    sio:SIO_000093     IRI                               * ;
 
     rdfs:label         xsd:string                        * ;
     dcterms:identifier xsd:string                        ? ;
@@ -138,6 +147,9 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
     # has-component-part → CPP individual + Cargo individual
     sio:SIO_000369     IRI                               + ;
 
+    # is-participant-in → Experiment (SIO:000062)
+    sio:SIO_000062     IRI                               + ;
+
     # is-located-in → subcellular entity (optional — not all complexes have it)
     sio:SIO_000061     IRI                               * ;
     dcterms:identifier xsd:string                        ? ;
@@ -151,11 +163,13 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 <CargoShape> {
     rdf:type           [ owl:NamedIndividual ]            ;
     rdf:type           [ mech:Cargo ]                     ;
+    # Some ChEBI cargo entities are also typed as Inhibitor when they appear in the inhibitor data
+    rdf:type           [ sio:SIO_010435 ]                ? ;
 
-    # has-attribute → cargo_role individual
+    # has-attribute → cargo_role individual (and optionally inhibitor_role)
     sio:SIO_000008     IRI                               + ;
 
-    rdfs:label         xsd:string                        ? ;
+    rdfs:label         xsd:string                        * ;
     dcterms:identifier xsd:string                        ? ;
 }
 
@@ -168,10 +182,16 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
     rdf:type           [ owl:NamedIndividual ]            ;
     rdf:type           [ sio:SIO_000994 ]                 ;
 
-    # is-cited-by → Document (provenance, optional when no PubMed/patent available)
+    # has-participant → CPP-Complex and/or Cell Line (SIO:000132); at least one (complex always present)
+    sio:SIO_000132     IRI                               + ;
+
+    # has-proper-part → UptakeMechanism (SIO:000053); * because mechanism IRI may be absent
+    sio:SIO_000053     IRI                               * ;
+
+    # is-described-by → Document (provenance, optional when no PubMed/patent available)
     sio:SIO_000557     IRI                               * ;
 
-    rdfs:label         xsd:string                        ? ;
+    rdfs:label         xsd:string                        * ;
     dcterms:identifier xsd:string                        ? ;
     cpps:uptakeEfficiency  xsd:string                    ? ;
     cpps:inVitroModel      xsd:string                    ? ;
@@ -187,6 +207,6 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
     rdf:type           [ owl:NamedIndividual ]            ;
     rdf:type           [ sio:SIO_000148 ]                 ;
 
-    rdfs:label         xsd:string                        ? ;
+    rdfs:label         xsd:string                        * ;
     dcterms:identifier xsd:string                        ? ;
 }

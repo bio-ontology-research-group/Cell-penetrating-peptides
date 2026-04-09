@@ -1,121 +1,121 @@
-﻿Cell Line,CLO_label,CLO_id,exact_curie,exact_label,exact_score,exact_match_type,biosyn_curie,biosyn_label,biosyn_score,biosyn_match_type,rag_curie,rag_label,rag_score,rag_match_type
-HeLa,HeLa cell,CLO:0003684,CLO:0003684,HeLa cell,1,exact_pref,CLO:0003684,HeLa cell,0.9421,dense_nn,CLO:0003684,HeLa cell,0.9421,rag_unconfident
-Jurkat,JURKAT cell,CLO:0007043,CLO:0007043,JURKAT cell,1,exact_pref,CLO:0007043,JURKAT cell,0.9555,dense_nn,CLO:0007043,JURKAT cell,0.9555,rag_unconfident
-RAW 264.7,RAW 264.7 cell,CLO:0008753,CLO:0008753,RAW 264.7 cell,1,exact_pref,CLO:0008753,RAW 264.7 cell,0.9477,dense_nn,CLO:0008753,RAW 264.7 cell,0.9477,rag_unconfident
-PC-12,PC-12 cell,CLO:0008392,CLO:0008392,PC-12 cell,1,exact_pref,CLO:0008392,PC-12 cell,0.7835,dense_nn,CLO:0008392,PC-12 cell,0.7835,rag_unconfident
-V79 cells,V-79 cell,CLO:0009500,,,0,NIL,CLO:0009504,V79-4 cell,0.9471,dense_nn,CLO:0009504,V79-4 cell,0.9471,rag_unconfident
-PC-12 cells,PC-12 cell,CLO:0008392,CLO:0008392,PC-12 cell,1,prefix_truncated,CLO:0008392,PC-12 cell,0.9909,dense_nn,CLO:0008392,PC-12 cell,0.9909,rag_unconfident
-NIH-3T3,NIH-3T3 cell,CLO:0008172,CLO:0008172,NIH-3T3 cell,1,exact_pref,CLO:0008172,NIH-3T3 cell,0.9515,dense_nn,CLO:0008172,NIH-3T3 cell,0.9515,rag_unconfident
-PANC-1,PANC-1 cell,CLO:0008381,CLO:0008381,PANC-1 cell,1,exact_pref,CLO:0008381,PANC-1 cell,0.8476,dense_nn,CLO:0008381,PANC-1 cell,0.8476,rag_unconfident
-C6 glioma cells,C6 cell,CLO:0002140,CLO:0002140,C6 cell,1,prefix_truncated,CLO:0002140,C6 cell,0.9042,dense_nn,CLO:0002140,C6 cell,0.9042,rag_unconfident
-primary hepatocyte cultures,Hep-2 cell,CLO:0003707,,,0,NIL,CLO:0037329,primary cultured liver cell,0.8697,dense_nn,CLO:0037329,primary cultured liver cell,0.8697,rag_unconfident
-HCT116,HCT 116 cell,CLO:0003665,,,0,NIL,CLO:0003665,HCT 116 cell,0.6922,dense_nn,CLO:0003665,HCT 116 cell,0.6922,rag_unconfident
-HL-60,HL-60 cell,CLO:0003775,CLO:0003775,HL-60 cell,1,exact_pref,CLO:0003775,HL-60 cell,0.9379,dense_nn,CLO:0003775,HL-60 cell,0.9379,rag_unconfident
-K562,K-562 cell,CLO:0007059,,,0,NIL,CLO:0007060,K562 cl.6 cell,0.8894,dense_nn,CLO:0007060,K562 cl.6 cell,0.8894,rag_unconfident
-Molt4,MOLT-4 cell,CLO:0007825,,,0,NIL,CLO:0007825,MOLT-4 cell,0.7518,dense_nn,CLO:0007825,MOLT-4 cell,0.7518,rag_unconfident
-HeLa,HeLa cell,CLO:0003684,CLO:0003684,HeLa cell,1,exact_pref,CLO:0003684,HeLa cell,0.9421,dense_nn,CLO:0003684,HeLa cell,0.9421,rag_unconfident
-CHO K1,CHO K1 cell,CLO:0002427,CLO:0002427,CHO K1 cell,1,exact_pref,CLO:0002427,CHO K1 cell,0.907,dense_nn,CLO:0002427,CHO K1 cell,0.907,rag_unconfident
-SiHa,SiHa cell,CLO:0009017,CLO:0009017,SiHa cell,1,exact_pref,CLO:0009017,SiHa cell,0.6899,dense_nn,CLO:0009017,SiHa cell,0.6899,rag_unconfident
-CasKi,CaSki cell,CLO:0002201,CLO:0002201,CaSki cell,1,exact_pref,CLO:0002201,CaSki cell,0.6715,dense_nn,CLO:0002201,CaSki cell,0.6715,rag_unconfident
-Hep2,Hep-2 cell,CLO:0003707,,,0,NIL,CLO:0003707,HEp-2 cell,0.7453,dense_nn,CLO:0003707,HEp-2 cell,0.7453,rag_unconfident
-PBMC,primary cultured peripheral blood mononuclear cell,CLO:0037274,,,0,NIL,CLO:0037273,primary cultured peripheral blood cell,0.7625,dense_nn,CLO:0037273,primary cultured peripheral blood cell,0.7625,rag_unconfident
-CHO,CHO cell,CLO:0002421,CLO:0002421,CHO cell,1,exact_pref,CLO:0002421,CHO cell,0.6996,dense_nn,CLO:0002421,CHO cell,0.6996,rag_unconfident
-HBCEC,immortal human breast epithelial cell line cell,CLO:0037194,,,0,NIL,CLO:0037358,HSE-Bla HeLa,0.6336,dense_nn,CLO:0037358,HSE-Bla HeLa,0.6336,rag_unconfident
-EBTr cells,EBTr cell,CLO:0002876,CLO:0002876,EBTr cell,1,prefix_truncated,CLO:0002876,EBTr cell,0.9833,dense_nn,CLO:0002876,EBTr cell,0.9833,rag_unconfident
-MDA MB 231,MDA-MB-231 cell,CLO:0007634,,,0,NIL,CLO:0007634,MDA-MB-231 cell,0.9386,dense_nn,CLO:0007634,MDA-MB-231 cell,0.9386,rag_unconfident
-MCF-7,MCF7 cell,CLO:0007606,,,0,NIL,CLO:0007605,obsolete: MCF-7 cell,0.8848,dense_nn,CLO:0007605,obsolete: MCF-7 cell,0.8848,rag_unconfident
-rat IEC-6 cells,IEC-6 cell,CLO:0004342,,,0,NIL,CLO:0004342,IEC-6 cell,0.8951,dense_nn,CLO:0004342,IEC-6 cell,0.8951,rag_unconfident
-IEC-6 cells,IEC-6 cell,CLO:0004342,CLO:0004342,IEC-6 cell,1,prefix_truncated,CLO:0004342,IEC-6 cell,0.9856,dense_nn,CLO:0004342,IEC-6 cell,0.9856,rag_unconfident
-HS-68,Hs 68 cell,CLO:0004255,,,0,NIL,CLO:0004041,Hs 68 cell,0.7065,dense_nn,CLO:0004041,Hs 68 cell,0.7065,rag_unconfident
-U2OS,U-2 OS cell,CLO:0009454,,,0,NIL,CLO:0008947,Saos-2 cell,0.7146,dense_nn,CLO:0008947,Saos-2 cell,0.7146,rag_unconfident
-HUVEC,HUV-EC-C cell,CLO:0004307,,,0,NIL,CLO:0002881,ECV304 cell,0.8076,dense_nn,CLO:0002881,ECV304 cell,0.8076,rag_unconfident
-THP1,THP-1 cell,CLO:0009348,,,0,NIL,CLO:0009348,THP-1 cell,0.67,dense_nn,CLO:0009348,THP-1 cell,0.67,rag_unconfident
-Cos-1 cells,COS-1 cell,CLO:0002596,CLO:0002596,COS-1 cell,1,prefix_truncated,CLO:0002596,COS-1 cell,0.9873,dense_nn,CLO:0002596,COS-1 cell,0.9873,rag_unconfident
-Cos-7,COS-7 cell,CLO:0002597,CLO:0002597,COS-7 cell,1,exact_pref,CLO:0002597,COS-7 cell,0.9129,dense_nn,CLO:0002597,COS-7 cell,0.9129,rag_unconfident
-MDA-MB-435,MDA-MB-435S cell,CLO:0007638,CLO:0007638,MDA-MB-435S cell,0.9524,fuzzy,CLO:0007638,MDA-MB-435S cell,0.8672,dense_nn,CLO:0007638,MDA-MB-435S cell,0.8672,rag_unconfident
-HepG2,Hep G2 cell,CLO:0003704,,,0,NIL,CLO:0003704,Hep G2 cell,0.7714,dense_nn,CLO:0003704,Hep G2 cell,0.7714,rag_unconfident
-293 cells,293 N3S cell,CLO:0001233,,,0,NIL,CLO:0037237,293-derived cell,0.9601,dense_nn,CLO:0037237,293-derived cell,0.9601,rag_unconfident
-A549,A549 cell,CLO:0001601,CLO:0001601,A549 cell,1,exact_pref,CLO:0001601,A549 cell,0.9202,dense_nn,CLO:0001601,A549 cell,0.9202,rag_unconfident
-HT cells,HT cell,CLO:0004265,CLO:0004265,HT cell,1,prefix_truncated,CLO:0004265,HT cell,0.9827,dense_nn,CLO:0004265,HT cell,0.9827,rag_unconfident
-BJ,BJ cell,CLO:0001980,CLO:0001980,BJ cell,1,exact_pref,CLO:0001980,BJ cell,0.7216,dense_nn,CLO:0001980,BJ cell,0.7216,rag_unconfident
-LNCaP,LNCAP cell,CLO:0037116,CLO:0007365,LNCAP cell,1,exact_pref,CLO:0037116,LNCaP cell,0.9101,dense_nn,CLO:0037116,LNCaP cell,0.9101,rag_unconfident
-DU-145,DU 145 cell,CLO:0002840,,,0,NIL,CLO:0002840,DU 145 cell,0.7207,dense_nn,CLO:0002840,DU 145 cell,0.7207,rag_unconfident
-Calu-3 cells,Calu-3 cell,CLO:0002192,CLO:0002192,Calu-3 cell,1,prefix_truncated,CLO:0002192,Calu-3 cell,0.9742,dense_nn,CLO:0002192,Calu-3 cell,0.9742,rag_unconfident
-MDCK cells,MDCK cell,CLO:0007646,CLO:0007646,MDCK cell,1,prefix_truncated,CLO:0007646,MDCK cell,0.9882,dense_nn,CLO:0007646,MDCK cell,0.9882,rag_unconfident
-MDCK,MDCK cell,CLO:0007646,CLO:0007646,MDCK cell,1,exact_pref,CLO:0007646,MDCK cell,0.8659,dense_nn,CLO:0007646,MDCK cell,0.8659,rag_unconfident
-Calu-3,Calu-3 cell,CLO:0002192,CLO:0002192,Calu-3 cell,1,exact_pref,CLO:0002192,Calu-3 cell,0.7478,dense_nn,CLO:0002192,Calu-3 cell,0.7478,rag_unconfident
-Human SH-SY5Y,SH-SY5Y cell,CLO:0009015,,,0,NIL,CLO:0009015,SH-SY5Y cell,0.9481,dense_nn,CLO:0009015,SH-SY5Y cell,0.9481,rag_unconfident
-N2A,Neuro-2a cell,CLO:0008154,,,0,NIL,CLO:0007926,N22 cell,0.6031,dense_nn,CLO:0007926,N22 cell,0.6031,rag_unconfident
-K562 cells,K 562 cell,CLO:0007059,,,0,NIL,CLO:0007060,K562 cl.6 cell,0.9317,dense_nn,CLO:0007060,K562 cl.6 cell,0.9317,rag_unconfident
-N2A cells,Neuro-2a cell,CLO:0008154,,,0,NIL,CLO:0007926,N22 cell,0.8894,dense_nn,CLO:0007926,N22 cell,0.8894,rag_unconfident
-Human bowes melanoma,HMCB (Human Melanoma Cell Bowes) cell,CLO:0003785,,,0,NIL,CLO:0003785,HMCB (Human Melanoma Cell Bowes) cell,0.6876,dense_nn,CLO:0003785,HMCB (Human Melanoma Cell Bowes) cell,0.6876,rag_unconfident
-N1e neuroblastoma,N1E-115 cell,CLO:0007922,,,0,NIL,CLO:0007922,N1E-115 cell,0.6825,dense_nn,CLO:0007922,N1E-115 cell,0.6825,rag_unconfident
-COS-7,COS-7 cell,CLO:0002597,CLO:0002597,COS-7 cell,1,exact_pref,CLO:0002597,COS-7 cell,0.9129,dense_nn,CLO:0002597,COS-7 cell,0.9129,rag_unconfident
-CHO-K1 cells,CHO-K1 cell,CLO:0002463,CLO:0002462,CHO-K1 cell,1,prefix_truncated,CLO:0002463,CHO-K1 cell,0.991,dense_nn,CLO:0002463,CHO-K1 cell,0.991,rag_unconfident
-HFL-1,HFL1 cell,CLO:0003734,,,0,NIL,CLO:0003730,HFF-1 cell,0.5936,dense_nn,CLO:0003730,HFF-1 cell,0.5936,rag_unconfident
-RAW 264.7 cells,RAW 264.7 cell,CLO:0008753,CLO:0008753,RAW 264.7 cell,1,prefix_truncated,CLO:0008753,RAW 264.7 cell,0.9926,dense_nn,CLO:0008753,RAW 264.7 cell,0.9926,rag_unconfident
-Daudi,Daudi cell,CLO:0002708,CLO:0002708,Daudi cell,1,exact_pref,CLO:0002708,Daudi cell,0.8546,dense_nn,CLO:0002708,Daudi cell,0.8546,rag_unconfident
-MDA-MB-435 cells,MDA-MB-435S cell,CLO:0007638,CLO:0007638,MDA-MB-435S cell,0.9375,fuzzy,CLO:0007638,MDA-MB-435S cell,0.9477,dense_nn,CLO:0007638,MDA-MB-435S cell,0.9477,rag_unconfident
-HEK 293,HEK293T cell,CLO:0037372,,,0,NIL,CLO:0001230,HEK293,0.8972,dense_nn,CLO:0001230,HEK293,0.8972,rag_unconfident
-HuH7,Huh7 cell,CLO:0009989,CLO:0009989,Huh7 cell,1,exact_pref,CLO:0009989,Huh7 cell,0.9031,dense_nn,CLO:0009989,Huh7 cell,0.9031,rag_unconfident
-3T3,3T3 cell,CLO:0001345,CLO:0001345,3T3 cell,1,exact_pref,CLO:0001345,3T3 cell,0.9129,dense_nn,CLO:0001345,3T3 cell,0.9129,rag_unconfident
-HuH7 cells,Huh7 cell,CLO:0009989,CLO:0009989,Huh7 cell,1,prefix_truncated,CLO:0009989,Huh7 cell,0.9933,dense_nn,CLO:0009989,Huh7 cell,0.9933,rag_unconfident
-MDA-MB-231,MDA-MB-231 cell,CLO:0007634,CLO:0007634,MDA-MB-231 cell,1,exact_pref,CLO:0007634,MDA-MB-231 cell,0.9511,dense_nn,CLO:0007634,MDA-MB-231 cell,0.9511,rag_unconfident
-HepG2 cells,Hep G2 cell,CLO:0003704,,,0,NIL,CLO:0003704,Hep G2 cell,0.8246,dense_nn,CLO:0003704,Hep G2 cell,0.8246,rag_unconfident
-Human monocyte-derived DCs,immortal human monocyte cell line cell,CLO:0000936,,,0,NIL,CLO:0000103,immortal dendritic cell line cell,0.7894,dense_nn,CLO:0000103,immortal dendritic cell line cell,0.7894,rag_unconfident
-PC12 cells,PC-12 cell,CLO:0008392,,,0,NIL,CLO:0008393,PC1296 cell,0.8801,dense_nn,CLO:0008393,PC1296 cell,0.8801,rag_unconfident
-Human carcinoma A431,A431 cell,CLO:0001591,,,0,NIL,CLO:0001591,A431 cell,0.8296,dense_nn,CLO:0001591,A431 cell,0.8296,rag_unconfident
-CV-1,CV-1 cell,CLO:0002640,CLO:0002640,CV-1 cell,1,exact_pref,CLO:0002640,CV-1 cell,0.683,dense_nn,CLO:0002640,CV-1 cell,0.683,rag_unconfident
-Hep G2,Hep G2 cell,CLO:0003704,CLO:0003704,Hep G2 cell,1,exact_pref,CLO:0003704,Hep G2 cell,0.8837,dense_nn,CLO:0003704,Hep G2 cell,0.8837,rag_unconfident
-CaCo2,Caco-2 cell,CLO:0002172,,,0,NIL,CLO:0002180,CAL-12T cell,0.5129,dense_nn,CLO:0002180,CAL-12T cell,0.5129,rag_unconfident
-HS-68 Cells,Hs 68 cell,CLO:0004255,,,0,NIL,CLO:0004041,Hs 68 cell,0.9755,dense_nn,CLO:0004041,Hs 68 cell,0.9755,rag_unconfident
-NCI-H460,NCI-H460 cell,CLO:0008089,CLO:0008089,NCI-H460 cell,1,exact_pref,CLO:0008089,NCI-H460 cell,0.8943,dense_nn,CLO:0008089,NCI-H460 cell,0.8943,rag_unconfident
-PC-3,PC-3 cell,CLO:0008395,CLO:0008395,PC-3 cell,1,exact_pref,CLO:0008395,PC-3 cell,0.8404,dense_nn,CLO:0008395,PC-3 cell,0.8404,rag_unconfident
-Porcine skin,immortal skin-derived cell line cell,CLO:0000197,,,0,NIL,CLO:0000744,immortal pig cell line cell,0.5887,dense_nn,CLO:0000744,immortal pig cell line cell,0.5887,rag_unconfident
-P5 DRG neurons,immortal neuron cell line cell,CLO:0000081,,,0,NIL,CLO:0007191,L5 cell,0.6698,dense_nn,CLO:0007191,L5 cell,0.6698,rag_unconfident
-ECV-304,ECV-304 cell,CLO:0002882,CLO:0002882,ECV-304 cell,1,exact_pref,CLO:0002882,ECV-304 cell,0.8135,dense_nn,CLO:0002882,ECV-304 cell,0.8135,rag_unconfident
-HEK 293T cells,HEK293T cell,CLO:0037372,,,0,NIL,CLO:0037346,HEK293H cell,0.8477,dense_nn,CLO:0037346,HEK293H cell,0.8477,rag_unconfident
-HIG-82 cells,HIG-82 cell,CLO:0003752,CLO:0003752,HIG-82 cell,1,prefix_truncated,CLO:0003752,HIG-82 cell,0.9885,dense_nn,CLO:0003752,HIG-82 cell,0.9885,rag_unconfident
-Human primary T cells,T cell,CL:0000084,,,0,NIL,CLO:0000012,immortal human T cell line cell,0.8308,dense_nn,CLO:0000012,immortal human T cell line cell,0.8308,rag_unconfident
-Calu 3 cells,Calu-3 cell,CLO:0002192,,,0,NIL,CLO:0002192,Calu-3 cell,0.9826,dense_nn,CLO:0002192,Calu-3 cell,0.9826,rag_unconfident
-HS-68 cells,Hs 68 cell,CLO:0004255,,,0,NIL,CLO:0004041,Hs 68 cell,0.9755,dense_nn,CLO:0004041,Hs 68 cell,0.9755,rag_unconfident
-9 L/LacZ cells,9L/lacZ cell,CLO:0001541,,,0,NIL,CLO:0001541,9L/lacZ cell,0.9637,dense_nn,CLO:0001541,9L/lacZ cell,0.9637,rag_unconfident
-murine taile fibroblast cells,fibroblast,CL:0000057,,,0,NIL,CLO:0000519,immortal mouse tail-derived cell line cell,0.7732,dense_nn,CLO:0000519,immortal mouse tail-derived cell line cell,0.7732,rag_unconfident
-Murine taile fibroblast (MTF) cells,fibroblast,CL:0000057,,,0,NIL,CLO:0000519,immortal mouse tail-derived cell line cell,0.7338,dense_nn,CLO:0000519,immortal mouse tail-derived cell line cell,0.7338,rag_unconfident
-COS-7 cells,COS-7 cell,CLO:0002597,CLO:0002597,COS-7 cell,1,prefix_truncated,CLO:0002597,COS-7 cell,0.987,dense_nn,CLO:0002597,COS-7 cell,0.987,rag_unconfident
-H9C2 cells,H9c2(2-1) cell,CLO:0003614,,,0,NIL,CLO:0003614,H9c2(2-1) cell,0.949,dense_nn,CLO:0003614,H9c2(2-1) cell,0.949,rag_unconfident
-A549 cells,A549 cell,CLO:0001601,CLO:0001601,A549 cell,1,prefix_truncated,CLO:0001601,A549 cell,0.9939,dense_nn,CLO:0001601,A549 cell,0.9939,rag_unconfident
-CHO-K1,CHO-K1 cell,CLO:0002463,CLO:0002462,CHO-K1 cell,1,exact_pref,CLO:0002463,CHO-K1 cell,0.9108,dense_nn,CLO:0002463,CHO-K1 cell,0.9108,rag_unconfident
-HepG4,Hep G2 cell,CLO:0003704,,,0,NIL,CLO:0003710,HEP-3B cell,0.6595,dense_nn,CLO:0003710,HEP-3B cell,0.6595,rag_unconfident
-ZR-75-1,ZR-75-1 cell,CLO:0009727,CLO:0009727,ZR-75-1 cell,1,exact_pref,CLO:0009727,ZR-75-1 cell,0.7528,dense_nn,CLO:0009727,ZR-75-1 cell,0.7528,rag_unconfident
-HCT-116,HCT 116 cell,CLO:0003665,,,0,NIL,CLO:0003665,HCT 116 cell,0.9354,dense_nn,CLO:0003665,HCT 116 cell,0.9354,rag_unconfident
-SK-OV-3,SK-OV-3 cell,CLO:0009063,CLO:0009063,SK-OV-3 cell,1,exact_pref,CLO:0009063,SK-OV-3 cell,0.9409,dense_nn,CLO:0009063,SK-OV-3 cell,0.9409,rag_unconfident
-CCRF-CEM,CCRF-CEM cell,CLO:0002334,CLO:0002334,CCRF-CEM cell,1,exact_pref,CLO:0002334,CCRF-CEM cell,0.9588,dense_nn,CLO:0002334,CCRF-CEM cell,0.9588,rag_unconfident
-MDA-MB-468,MDA-MB-468 cell,CLO:0007641,CLO:0007641,MDA-MB-468 cell,1,exact_pref,CLO:0007641,MDA-MB-468 cell,0.9365,dense_nn,CLO:0007641,MDA-MB-468 cell,0.9365,rag_unconfident
-C6 cells,C6 cell,CLO:0002140,CLO:0002140,C6 cell,1,prefix_truncated,CLO:0002140,C6 cell,0.9905,dense_nn,CLO:0002140,C6 cell,0.9905,rag_unconfident
-THP-1,THP-1 cell,CLO:0009348,CLO:0009348,THP-1 cell,1,exact_pref,CLO:0009348,THP-1 cell,0.9089,dense_nn,CLO:0009348,THP-1 cell,0.9089,rag_unconfident
-HLE B3 cells,HLE cell,CLO:0009986,CLO:0009986,HLE cell,1,prefix_truncated,CLO:0009986,HLE cell,0.8122,dense_nn,CLO:0009986,HLE cell,0.8122,rag_unconfident
-4T1,4T1 cell,CLO:0001401,CLO:0001401,4T1 cell,1,exact_pref,CLO:0001401,4T1 cell,0.831,dense_nn,CLO:0001401,4T1 cell,0.831,rag_unconfident
-HUVECs,HUV-EC-C cell,CLO:0004307,,,0,NIL,CLO:0002881,ECV304 cell,0.784,dense_nn,CLO:0002881,ECV304 cell,0.784,rag_unconfident
-CHO-pgsA745 cells,pgsA-745 cell,CLO:0008434,,,0,NIL,CLO:0008434,pgsA-745 cell,0.8452,dense_nn,CLO:0008434,pgsA-745 cell,0.8452,rag_unconfident
-CHO pgsD677 cells,pgsD-677 cell,CLO:0008438,CLO:0002421,CHO cell,1,prefix_truncated,CLO:0002457,CHO7PV cell,0.8024,dense_nn,CLO:0002457,CHO7PV cell,0.8024,rag_unconfident
-Beas-2B,BEAS-2B cell,CLO:0001925,CLO:0001925,BEAS-2B cell,1,exact_pref,CLO:0001925,BEAS-2B cell,0.7762,dense_nn,CLO:0001925,BEAS-2B cell,0.7762,rag_unconfident
-AGS cells,AGS cell,CLO:0001686,CLO:0001686,AGS cell,1,prefix_truncated,CLO:0001686,AGS cell,0.9823,dense_nn,CLO:0001686,AGS cell,0.9823,rag_unconfident
-Caco-2 cells,Caco-2 cell,CLO:0002172,CLO:0002172,Caco-2 cell,1,prefix_truncated,CLO:0002172,Caco-2 cell,0.9902,dense_nn,CLO:0002172,Caco-2 cell,0.9902,rag_unconfident
-AGS,AGS cell,CLO:0001686,CLO:0001686,AGS cell,1,exact_pref,CLO:0001686,AGS cell,0.6526,dense_nn,CLO:0001686,AGS cell,0.6526,rag_unconfident
-Caco-2,Caco-2 cell,CLO:0002172,CLO:0002172,Caco-2 cell,1,exact_pref,CLO:0002172,Caco-2 cell,0.7858,dense_nn,CLO:0002172,Caco-2 cell,0.7858,rag_unconfident
-HEK 293,HEK293,CLO:0001230,,,0,NIL,CLO:0001230,HEK293,0.8972,dense_nn,CLO:0001230,HEK293,0.8972,rag_unconfident
-U87 MG,U-87 MG cell,CLO:0009464,CLO:0009464,U-87 MG cell,0.9231,fuzzy,CLO:0009463,obsolete: U87 MG cell,0.9213,dense_nn,CLO:0009463,obsolete: U87 MG cell,0.9213,rag_unconfident
-293T,HEK293T cell,CLO:0037372,,,0,NIL,CLO:0001235,293T/17 cell,0.8441,dense_nn,CLO:0001235,293T/17 cell,0.8441,rag_unconfident
-EL-4 cells,EL4 cell,CLO:0002913,,,0,NIL,CLO:0002913,EL4 cell,0.9568,dense_nn,CLO:0002913,EL4 cell,0.9568,rag_unconfident
-human cervical cancer HeLa,HeLa cell,CLO:0003684,,,0,NIL,CLO:0003684,HeLa cell,0.9053,dense_nn,CLO:0003684,HeLa cell,0.9053,rag_unconfident
-HT-1080,HT-1080 cell,CLO:0004276,CLO:0004276,HT-1080 cell,1,exact_pref,CLO:0004276,HT-1080 cell,0.9164,dense_nn,CLO:0004276,HT-1080 cell,0.9164,rag_unconfident
-brain capillary endothelial cell bEnd.3 cell line,bEnd.3 cell,CLO:0001928,,,0,NIL,CLO:0001928,bEnd.3 cell,0.899,dense_nn,CLO:0001928,bEnd.3 cell,0.899,rag_unconfident
-J774A.1,J774A.1 cell,CLO:0007005,CLO:0007005,J774A.1 cell,1,exact_pref,CLO:0007005,J774A.1 cell,0.8523,dense_nn,CLO:0007005,J774A.1 cell,0.8523,rag_unconfident
-pgsD-677,pgsD-677 cell,CLO:0008438,CLO:0008438,pgsD-677 cell,1,exact_pref,CLO:0008438,pgsD-677 cell,0.7683,dense_nn,CLO:0008438,pgsD-677 cell,0.7683,rag_unconfident
-The glycosamino- glycan mutant pgsA-745,pgsA-745 cell,CLO:0008434,,,0,NIL,CLO:0008434,pgsA-745 cell,0.7106,dense_nn,CLO:0008434,pgsA-745 cell,0.7106,rag_unconfident
-Caco-2 cell line,Caco-2 cell,CLO:0002172,CLO:0002172,Caco-2 cell,1,prefix_truncated,CLO:0002172,Caco-2 cell,0.9615,dense_nn,CLO:0002172,Caco-2 cell,0.9615,rag_unconfident
-MIA PaCa-2 cells,MIA PaCa-2 cell,CLO:0007726,CLO:0007726,MIA PaCa-2 cell,1,prefix_truncated,CLO:0007726,MIA PaCa-2 cell,0.9913,dense_nn,CLO:0007726,MIA PaCa-2 cell,0.9913,rag_unconfident
-HeLa 654 cells,HeLa cell,CLO:0003684,CLO:0003684,HeLa cell,1,prefix_truncated,CLO:0003686,HeLa 382 cell,0.8326,dense_nn,CLO:0003686,HeLa 382 cell,0.8326,rag_unconfident
-SKOV3 cells,SK-OV-3 cell,CLO:0009063,,,0,NIL,CLO:0008279,OVCAR-3 cell,0.8339,dense_nn,CLO:0008279,OVCAR-3 cell,0.8339,rag_unconfident
-A431 cells,A431 cell,CLO:0001591,CLO:0001591,A431 cell,1,prefix_truncated,CLO:0001591,A431 cell,0.9897,dense_nn,CLO:0001591,A431 cell,0.9897,rag_unconfident
+Cell Line,CLO_label,CLO_id,exact_curie,exact_label,exact_score,exact_match_type,biosyn_curie,biosyn_label,biosyn_score,biosyn_match_type,rag_curie,rag_label,rag_score,rag_match_type
+HeLa,HeLa cell,CLO:0003684,CLO:0003684,HeLa cell,1.0,exact_pref,CLO:0003684,HeLa cell,1.0,exact_pref,CLO:0003684,HeLa cell,1.0,exact_pref
+Jurkat,JURKAT cell,CLO:0007043,CLO:0007043,JURKAT cell,1.0,exact_pref,CLO:0007043,JURKAT cell,1.0,exact_pref,CLO:0007043,JURKAT cell,1.0,exact_pref
+RAW 264.7,RAW 264.7 cell,CLO:0008753,CLO:0008753,RAW 264.7 cell,1.0,exact_pref,CLO:0008753,RAW 264.7 cell,1.0,exact_pref,CLO:0008753,RAW 264.7 cell,1.0,exact_pref
+PC-12,PC-12 cell,CLO:0008392,CLO:0008392,PC-12 cell,1.0,exact_pref,CLO:0008392,PC-12 cell,1.0,exact_pref,CLO:0008392,PC-12 cell,1.0,exact_pref
+V79 cells,V-79 cell,CLO:0009500,,,0.0,NIL,CLO:0009504,V79-4 cell,0.9471,dense_nn,CLO:0009500,V-79 cell,0.8266,rag_selected
+PC-12 cells,PC-12 cell,CLO:0008392,CLO:0008392,PC-12 cell,1.0,prefix_truncated,CLO:0008392,PC-12 cell,1.0,prefix_truncated,CLO:0008392,PC-12 cell,1.0,prefix_truncated
+NIH-3T3,NIH-3T3 cell,CLO:0008172,CLO:0008172,NIH-3T3 cell,1.0,exact_pref,CLO:0008172,NIH-3T3 cell,1.0,exact_pref,CLO:0008172,NIH-3T3 cell,1.0,exact_pref
+PANC-1,PANC-1 cell,CLO:0008381,CLO:0008381,PANC-1 cell,1.0,exact_pref,CLO:0008381,PANC-1 cell,1.0,exact_pref,CLO:0008381,PANC-1 cell,1.0,exact_pref
+C6 glioma cells,C6 cell,CLO:0002140,CLO:0002140,C6 cell,1.0,prefix_truncated,CLO:0002140,C6 cell,1.0,prefix_truncated,CLO:0002140,C6 cell,1.0,prefix_truncated
+primary hepatocyte cultures,Hep-2 cell,CLO:0003707,,,0.0,NIL,CLO:0037329,primary cultured liver cell,0.8697,dense_nn,CLO:0037329,primary cultured liver cell,0.8697,rag_selected
+HCT116,HCT 116 cell,CLO:0003665,,,0.0,NIL,CLO:0003665,HCT 116 cell,0.6922,dense_nn,CLO:0003665,HCT 116 cell,0.6922,rag_selected
+HL-60,HL-60 cell,CLO:0003775,CLO:0003775,HL-60 cell,1.0,exact_pref,CLO:0003775,HL-60 cell,1.0,exact_pref,CLO:0003775,HL-60 cell,1.0,exact_pref
+K562,K-562 cell,CLO:0007059,,,0.0,NIL,CLO:0007060,K562 cl.6 cell,0.8894,dense_nn,CLO:0007060,K562 cl.6 cell,0.8894,rag_selected
+Molt4,MOLT-4 cell,CLO:0007825,,,0.0,NIL,CLO:0007825,MOLT-4 cell,0.7518,dense_nn,CLO:0007825,MOLT-4 cell,0.7518,rag_selected
+HeLa,HeLa cell,CLO:0003684,CLO:0003684,HeLa cell,1.0,exact_pref,CLO:0003684,HeLa cell,1.0,exact_pref,CLO:0003684,HeLa cell,1.0,exact_pref
+CHO K1,CHO K1 cell,CLO:0002427,CLO:0002427,CHO K1 cell,1.0,exact_pref,CLO:0002427,CHO K1 cell,1.0,exact_pref,CLO:0002427,CHO K1 cell,1.0,exact_pref
+SiHa,SiHa cell,CLO:0009017,CLO:0009017,SiHa cell,1.0,exact_pref,CLO:0009017,SiHa cell,1.0,exact_pref,CLO:0009017,SiHa cell,1.0,exact_pref
+CasKi,CaSki cell,CLO:0002201,CLO:0002201,CaSki cell,1.0,exact_pref,CLO:0002201,CaSki cell,1.0,exact_pref,CLO:0002201,CaSki cell,1.0,exact_pref
+Hep2,Hep-2 cell,CLO:0003707,,,0.0,NIL,CLO:0003707,HEp-2 cell,0.7453,dense_nn,CLO:0003707,HEp-2 cell,0.7453,rag_selected
+PBMC,primary cultured peripheral blood mononuclear cell,CLO:0037274,,,0.0,NIL,CLO:0037273,primary cultured peripheral blood cell,0.7625,dense_nn,CLO:0037274,primary cultured peripheral blood mononuclear cell,0.7477,rag_selected
+CHO,CHO cell,CLO:0002421,CLO:0002421,CHO cell,1.0,exact_pref,CLO:0002421,CHO cell,1.0,exact_pref,CLO:0002421,CHO cell,1.0,exact_pref
+HBCEC,immortal human breast epithelial cell line cell,CLO:0037194,,,0.0,NIL,CLO:0037358,HSE-Bla HeLa,0.6336,dense_nn,CLO:0037358,HSE-Bla HeLa,0.6336,rag_selected
+EBTr cells,EBTr cell,CLO:0002876,CLO:0002876,EBTr cell,1.0,prefix_truncated,CLO:0002876,EBTr cell,1.0,prefix_truncated,CLO:0002876,EBTr cell,1.0,prefix_truncated
+MDA MB 231,MDA-MB-231 cell,CLO:0007634,,,0.0,NIL,CLO:0007634,MDA-MB-231 cell,0.9386,dense_nn,CLO:0007634,MDA-MB-231 cell,0.9386,rag_selected
+MCF-7,MCF7 cell,CLO:0007606,,,0.0,NIL,CLO:0007605,obsolete: MCF-7 cell,0.8848,dense_nn,CLO:0007605,obsolete: MCF-7 cell,0.8848,rag_selected
+rat IEC-6 cells,IEC-6 cell,CLO:0004342,,,0.0,NIL,CLO:0004342,IEC-6 cell,0.8951,dense_nn,CLO:0004342,IEC-6 cell,0.8951,rag_selected
+IEC-6 cells,IEC-6 cell,CLO:0004342,CLO:0004342,IEC-6 cell,1.0,prefix_truncated,CLO:0004342,IEC-6 cell,1.0,prefix_truncated,CLO:0004342,IEC-6 cell,1.0,prefix_truncated
+HS-68,Hs 68 cell,CLO:0004255,,,0.0,NIL,CLO:0004041,Hs 68 cell,0.7065,dense_nn,CLO:0004041,Hs 68 cell,0.7065,rag_selected
+U2OS,U-2 OS cell,CLO:0009454,,,0.0,NIL,CLO:0008947,Saos-2 cell,0.7146,dense_nn,CLO:0009454,U-2 OS cell,0.6793,rag_selected
+HUVEC,HUV-EC-C cell,CLO:0004307,,,0.0,NIL,CLO:0002881,ECV304 cell,0.8076,dense_nn,CLO:0000780,immortal human umbilical vein-derived endothelial cell line cell,0.7856,rag_selected
+THP1,THP-1 cell,CLO:0009348,,,0.0,NIL,CLO:0009348,THP-1 cell,0.67,dense_nn,CLO:0009348,THP-1 cell,0.67,rag_selected
+Cos-1 cells,COS-1 cell,CLO:0002596,CLO:0002596,COS-1 cell,1.0,prefix_truncated,CLO:0002596,COS-1 cell,1.0,prefix_truncated,CLO:0002596,COS-1 cell,1.0,prefix_truncated
+Cos-7,COS-7 cell,CLO:0002597,CLO:0002597,COS-7 cell,1.0,exact_pref,CLO:0002597,COS-7 cell,1.0,exact_pref,CLO:0002597,COS-7 cell,1.0,exact_pref
+MDA-MB-435,MDA-MB-435S cell,CLO:0007638,CLO:0007638,MDA-MB-435S cell,0.9524,fuzzy,CLO:0007638,MDA-MB-435S cell,0.8672,dense_nn,CLO:0007638,MDA-MB-435S cell,0.8672,rag_selected
+HepG2,Hep G2 cell,CLO:0003704,,,0.0,NIL,CLO:0003704,Hep G2 cell,0.7714,dense_nn,CLO:0003704,Hep G2 cell,0.7714,rag_selected
+293 cells,293 N3S cell,CLO:0001233,,,0.0,NIL,CLO:0037237,293-derived cell,0.9601,dense_nn,CLO:0037237,293-derived cell,0.9601,rag_selected
+A549,A549 cell,CLO:0001601,CLO:0001601,A549 cell,1.0,exact_pref,CLO:0001601,A549 cell,1.0,exact_pref,CLO:0001601,A549 cell,1.0,exact_pref
+HT cells,HT cell,CLO:0004265,CLO:0004265,HT cell,1.0,prefix_truncated,CLO:0004265,HT cell,1.0,prefix_truncated,CLO:0004265,HT cell,1.0,prefix_truncated
+BJ,BJ cell,CLO:0001980,CLO:0001980,BJ cell,1.0,exact_pref,CLO:0001980,BJ cell,1.0,exact_pref,CLO:0001980,BJ cell,1.0,exact_pref
+LNCaP,LNCAP cell,CLO:0037116,CLO:0007365,LNCAP cell,1.0,exact_pref,CLO:0007365,LNCAP cell,1.0,exact_pref,CLO:0007365,LNCAP cell,1.0,exact_pref
+DU-145,DU 145 cell,CLO:0002840,,,0.0,NIL,CLO:0002840,DU 145 cell,0.7207,dense_nn,CLO:0002840,DU 145 cell,0.7207,rag_selected
+Calu-3 cells,Calu-3 cell,CLO:0002192,CLO:0002192,Calu-3 cell,1.0,prefix_truncated,CLO:0002192,Calu-3 cell,1.0,prefix_truncated,CLO:0002192,Calu-3 cell,1.0,prefix_truncated
+MDCK cells,MDCK cell,CLO:0007646,CLO:0007646,MDCK cell,1.0,prefix_truncated,CLO:0007646,MDCK cell,1.0,prefix_truncated,CLO:0007646,MDCK cell,1.0,prefix_truncated
+MDCK,MDCK cell,CLO:0007646,CLO:0007646,MDCK cell,1.0,exact_pref,CLO:0007646,MDCK cell,1.0,exact_pref,CLO:0007646,MDCK cell,1.0,exact_pref
+Calu-3,Calu-3 cell,CLO:0002192,CLO:0002192,Calu-3 cell,1.0,exact_pref,CLO:0002192,Calu-3 cell,1.0,exact_pref,CLO:0002192,Calu-3 cell,1.0,exact_pref
+Human SH-SY5Y,SH-SY5Y cell,CLO:0009015,,,0.0,NIL,CLO:0009015,SH-SY5Y cell,0.9481,dense_nn,CLO:0009015,SH-SY5Y cell,0.9481,rag_selected
+N2A,Neuro-2a cell,CLO:0008154,,,0.0,NIL,CLO:0007926,N22 cell,0.6031,dense_nn,CLO:0008154,Neuro-2a cell,0.502,rag_selected
+K562 cells,K 562 cell,CLO:0007059,,,0.0,NIL,CLO:0007060,K562 cl.6 cell,0.9317,dense_nn,CLO:0007060,K562 cl.6 cell,0.9317,rag_selected
+N2A cells,Neuro-2a cell,CLO:0008154,,,0.0,NIL,CLO:0007926,N22 cell,0.8894,dense_nn,CLO:0008154,Neuro-2a cell,0.7931,rag_selected
+Human bowes melanoma,HMCB (Human Melanoma Cell Bowes) cell,CLO:0003785,,,0.0,NIL,CLO:0003785,HMCB (Human Melanoma Cell Bowes) cell,0.6876,dense_nn,CLO:0003785,HMCB (Human Melanoma Cell Bowes) cell,0.6876,rag_selected
+N1e neuroblastoma,N1E-115 cell,CLO:0007922,,,0.0,NIL,CLO:0007922,N1E-115 cell,0.6825,dense_nn,CLO:0007922,N1E-115 cell,0.6825,rag_selected
+COS-7,COS-7 cell,CLO:0002597,CLO:0002597,COS-7 cell,1.0,exact_pref,CLO:0002597,COS-7 cell,1.0,exact_pref,CLO:0002597,COS-7 cell,1.0,exact_pref
+CHO-K1 cells,CHO-K1 cell,CLO:0002463,CLO:0002462,CHO-K1 cell,1.0,prefix_truncated,CLO:0002462,CHO-K1 cell,1.0,prefix_truncated,CLO:0002462,CHO-K1 cell,1.0,prefix_truncated
+HFL-1,HFL1 cell,CLO:0003734,,,0.0,NIL,CLO:0003730,HFF-1 cell,0.5936,dense_nn,CLO:0003734,HFL1 cell,0.5431,rag_selected
+RAW 264.7 cells,RAW 264.7 cell,CLO:0008753,CLO:0008753,RAW 264.7 cell,1.0,prefix_truncated,CLO:0008753,RAW 264.7 cell,1.0,prefix_truncated,CLO:0008753,RAW 264.7 cell,1.0,prefix_truncated
+Daudi,Daudi cell,CLO:0002708,CLO:0002708,Daudi cell,1.0,exact_pref,CLO:0002708,Daudi cell,1.0,exact_pref,CLO:0002708,Daudi cell,1.0,exact_pref
+MDA-MB-435 cells,MDA-MB-435S cell,CLO:0007638,CLO:0007638,MDA-MB-435S cell,0.9375,fuzzy,CLO:0007638,MDA-MB-435S cell,0.9477,dense_nn,CLO:0007638,MDA-MB-435S cell,0.9477,rag_selected
+HEK 293,HEK293T cell,CLO:0037372,,,0.0,NIL,CLO:0001230,HEK293,0.8972,dense_nn,CLO:0001230,HEK293,0.8972,rag_selected
+HuH7,Huh7 cell,CLO:0009989,CLO:0009989,Huh7 cell,1.0,exact_pref,CLO:0009989,Huh7 cell,1.0,exact_pref,CLO:0009989,Huh7 cell,1.0,exact_pref
+3T3,3T3 cell,CLO:0001345,CLO:0001345,3T3 cell,1.0,exact_pref,CLO:0001345,3T3 cell,1.0,exact_pref,CLO:0001345,3T3 cell,1.0,exact_pref
+HuH7 cells,Huh7 cell,CLO:0009989,CLO:0009989,Huh7 cell,1.0,prefix_truncated,CLO:0009989,Huh7 cell,1.0,prefix_truncated,CLO:0009989,Huh7 cell,1.0,prefix_truncated
+MDA-MB-231,MDA-MB-231 cell,CLO:0007634,CLO:0007634,MDA-MB-231 cell,1.0,exact_pref,CLO:0007634,MDA-MB-231 cell,1.0,exact_pref,CLO:0007634,MDA-MB-231 cell,1.0,exact_pref
+HepG2 cells,Hep G2 cell,CLO:0003704,,,0.0,NIL,CLO:0003704,Hep G2 cell,0.8246,dense_nn,CLO:0003704,Hep G2 cell,0.8246,rag_selected
+Human monocyte-derived DCs,immortal human monocyte cell line cell,CLO:0000936,,,0.0,NIL,CLO:0000103,immortal dendritic cell line cell,0.7894,dense_nn,CLO:0000103,immortal dendritic cell line cell,0.7894,rag_unconfident
+PC12 cells,PC-12 cell,CLO:0008392,,,0.0,NIL,CLO:0008393,PC1296 cell,0.8801,dense_nn,CLO:0008392,PC-12 cell,0.7963,rag_selected
+Human carcinoma A431,A431 cell,CLO:0001591,,,0.0,NIL,CLO:0001591,A431 cell,0.8296,dense_nn,CLO:0001591,A431 cell,0.8296,rag_selected
+CV-1,CV-1 cell,CLO:0002640,CLO:0002640,CV-1 cell,1.0,exact_pref,CLO:0002640,CV-1 cell,1.0,exact_pref,CLO:0002640,CV-1 cell,1.0,exact_pref
+Hep G2,Hep G2 cell,CLO:0003704,CLO:0003704,Hep G2 cell,1.0,exact_pref,CLO:0003704,Hep G2 cell,1.0,exact_pref,CLO:0003704,Hep G2 cell,1.0,exact_pref
+CaCo2,Caco-2 cell,CLO:0002172,,,0.0,NIL,CLO:0002180,CAL-12T cell,0.5129,dense_nn,CLO:0002172,Caco-2 cell,0.4806,rag_selected
+HS-68 Cells,Hs 68 cell,CLO:0004255,,,0.0,NIL,CLO:0004041,Hs 68 cell,0.9755,dense_nn,CLO:0004041,Hs 68 cell,0.9755,rag_selected
+NCI-H460,NCI-H460 cell,CLO:0008089,CLO:0008089,NCI-H460 cell,1.0,exact_pref,CLO:0008089,NCI-H460 cell,1.0,exact_pref,CLO:0008089,NCI-H460 cell,1.0,exact_pref
+PC-3,PC-3 cell,CLO:0008395,CLO:0008395,PC-3 cell,1.0,exact_pref,CLO:0008395,PC-3 cell,1.0,exact_pref,CLO:0008395,PC-3 cell,1.0,exact_pref
+Porcine skin,immortal skin-derived cell line cell,CLO:0000197,,,0.0,NIL,CLO:0000744,immortal pig cell line cell,0.5887,dense_nn,CLO:0000744,immortal pig cell line cell,0.5887,rag_unconfident
+P5 DRG neurons,immortal neuron cell line cell,CLO:0000081,,,0.0,NIL,CLO:0007191,L5 cell,0.6698,dense_nn,CLO:0007191,L5 cell,0.6698,rag_unconfident
+ECV-304,ECV-304 cell,CLO:0002882,CLO:0002882,ECV-304 cell,1.0,exact_pref,CLO:0002882,ECV-304 cell,1.0,exact_pref,CLO:0002882,ECV-304 cell,1.0,exact_pref
+HEK 293T cells,HEK293T cell,CLO:0037372,,,0.0,NIL,CLO:0037346,HEK293H cell,0.8477,dense_nn,CLO:0037372,HEK293T cell,0.8226,rag_selected
+HIG-82 cells,HIG-82 cell,CLO:0003752,CLO:0003752,HIG-82 cell,1.0,prefix_truncated,CLO:0003752,HIG-82 cell,1.0,prefix_truncated,CLO:0003752,HIG-82 cell,1.0,prefix_truncated
+Human primary T cells,T cell,CL:0000084,,,0.0,NIL,CLO:0000012,immortal human T cell line cell,0.8308,dense_nn,CLO:0000012,immortal human T cell line cell,0.8308,rag_unconfident
+Calu 3 cells,Calu-3 cell,CLO:0002192,,,0.0,NIL,CLO:0002192,Calu-3 cell,0.9826,dense_nn,CLO:0002192,Calu-3 cell,0.9826,rag_selected
+HS-68 cells,Hs 68 cell,CLO:0004255,,,0.0,NIL,CLO:0004041,Hs 68 cell,0.9755,dense_nn,CLO:0004041,Hs 68 cell,0.9755,rag_selected
+9 L/LacZ cells,9L/lacZ cell,CLO:0001541,,,0.0,NIL,CLO:0001541,9L/lacZ cell,0.9637,dense_nn,CLO:0001541,9L/lacZ cell,0.9637,rag_selected
+murine taile fibroblast cells,fibroblast,CL:0000057,,,0.0,NIL,CLO:0000519,immortal mouse tail-derived cell line cell,0.7732,dense_nn,CLO:0000519,immortal mouse tail-derived cell line cell,0.7732,rag_selected
+Murine taile fibroblast (MTF) cells,fibroblast,CL:0000057,,,0.0,NIL,CLO:0000519,immortal mouse tail-derived cell line cell,0.7338,dense_nn,CLO:0000519,immortal mouse tail-derived cell line cell,0.7338,rag_selected
+COS-7 cells,COS-7 cell,CLO:0002597,CLO:0002597,COS-7 cell,1.0,prefix_truncated,CLO:0002597,COS-7 cell,1.0,prefix_truncated,CLO:0002597,COS-7 cell,1.0,prefix_truncated
+H9C2 cells,H9c2(2-1) cell,CLO:0003614,,,0.0,NIL,CLO:0003614,H9c2(2-1) cell,0.949,dense_nn,CLO:0003614,H9c2(2-1) cell,0.949,rag_selected
+A549 cells,A549 cell,CLO:0001601,CLO:0001601,A549 cell,1.0,prefix_truncated,CLO:0001601,A549 cell,1.0,prefix_truncated,CLO:0001601,A549 cell,1.0,prefix_truncated
+CHO-K1,CHO-K1 cell,CLO:0002463,CLO:0002462,CHO-K1 cell,1.0,exact_pref,CLO:0002462,CHO-K1 cell,1.0,exact_pref,CLO:0002462,CHO-K1 cell,1.0,exact_pref
+HepG4,Hep G2 cell,CLO:0003704,,,0.0,NIL,CLO:0003710,HEP-3B cell,0.6595,dense_nn,CLO:0003710,HEP-3B cell,0.6595,rag_unconfident
+ZR-75-1,ZR-75-1 cell,CLO:0009727,CLO:0009727,ZR-75-1 cell,1.0,exact_pref,CLO:0009727,ZR-75-1 cell,1.0,exact_pref,CLO:0009727,ZR-75-1 cell,1.0,exact_pref
+HCT-116,HCT 116 cell,CLO:0003665,,,0.0,NIL,CLO:0003665,HCT 116 cell,0.9354,dense_nn,CLO:0003665,HCT 116 cell,0.9354,rag_selected
+SK-OV-3,SK-OV-3 cell,CLO:0009063,CLO:0009063,SK-OV-3 cell,1.0,exact_pref,CLO:0009063,SK-OV-3 cell,1.0,exact_pref,CLO:0009063,SK-OV-3 cell,1.0,exact_pref
+CCRF-CEM,CCRF-CEM cell,CLO:0002334,CLO:0002334,CCRF-CEM cell,1.0,exact_pref,CLO:0002334,CCRF-CEM cell,1.0,exact_pref,CLO:0002334,CCRF-CEM cell,1.0,exact_pref
+MDA-MB-468,MDA-MB-468 cell,CLO:0007641,CLO:0007641,MDA-MB-468 cell,1.0,exact_pref,CLO:0007641,MDA-MB-468 cell,1.0,exact_pref,CLO:0007641,MDA-MB-468 cell,1.0,exact_pref
+C6 cells,C6 cell,CLO:0002140,CLO:0002140,C6 cell,1.0,prefix_truncated,CLO:0002140,C6 cell,1.0,prefix_truncated,CLO:0002140,C6 cell,1.0,prefix_truncated
+THP-1,THP-1 cell,CLO:0009348,CLO:0009348,THP-1 cell,1.0,exact_pref,CLO:0009348,THP-1 cell,1.0,exact_pref,CLO:0009348,THP-1 cell,1.0,exact_pref
+HLE B3 cells,HLE cell,CLO:0009986,CLO:0009986,HLE cell,1.0,prefix_truncated,CLO:0009986,HLE cell,1.0,prefix_truncated,CLO:0009986,HLE cell,1.0,prefix_truncated
+4T1,4T1 cell,CLO:0001401,CLO:0001401,4T1 cell,1.0,exact_pref,CLO:0001401,4T1 cell,1.0,exact_pref,CLO:0001401,4T1 cell,1.0,exact_pref
+HUVECs,HUV-EC-C cell,CLO:0004307,,,0.0,NIL,CLO:0002881,ECV304 cell,0.784,dense_nn,CLO:0000780,immortal human umbilical vein-derived endothelial cell line cell,0.7683,rag_selected
+CHO-pgsA745 cells,pgsA-745 cell,CLO:0008434,,,0.0,NIL,CLO:0008434,pgsA-745 cell,0.8452,dense_nn,CLO:0008434,pgsA-745 cell,0.8452,rag_selected
+CHO pgsD677 cells,pgsD-677 cell,CLO:0008438,CLO:0002421,CHO cell,1.0,prefix_truncated,CLO:0002421,CHO cell,1.0,prefix_truncated,CLO:0002421,CHO cell,1.0,prefix_truncated
+Beas-2B,BEAS-2B cell,CLO:0001925,CLO:0001925,BEAS-2B cell,1.0,exact_pref,CLO:0001925,BEAS-2B cell,1.0,exact_pref,CLO:0001925,BEAS-2B cell,1.0,exact_pref
+AGS cells,AGS cell,CLO:0001686,CLO:0001686,AGS cell,1.0,prefix_truncated,CLO:0001686,AGS cell,1.0,prefix_truncated,CLO:0001686,AGS cell,1.0,prefix_truncated
+Caco-2 cells,Caco-2 cell,CLO:0002172,CLO:0002172,Caco-2 cell,1.0,prefix_truncated,CLO:0002172,Caco-2 cell,1.0,prefix_truncated,CLO:0002172,Caco-2 cell,1.0,prefix_truncated
+AGS,AGS cell,CLO:0001686,CLO:0001686,AGS cell,1.0,exact_pref,CLO:0001686,AGS cell,1.0,exact_pref,CLO:0001686,AGS cell,1.0,exact_pref
+Caco-2,Caco-2 cell,CLO:0002172,CLO:0002172,Caco-2 cell,1.0,exact_pref,CLO:0002172,Caco-2 cell,1.0,exact_pref,CLO:0002172,Caco-2 cell,1.0,exact_pref
+HEK 293,HEK293,CLO:0001230,,,0.0,NIL,CLO:0001230,HEK293,0.8972,dense_nn,CLO:0001230,HEK293,0.8972,rag_selected
+U87 MG,U-87 MG cell,CLO:0009464,CLO:0009464,U-87 MG cell,0.9231,fuzzy,CLO:0009463,obsolete: U87 MG cell,0.9213,dense_nn,CLO:0009463,obsolete: U87 MG cell,0.9213,rag_selected
+293T,HEK293T cell,CLO:0037372,,,0.0,NIL,CLO:0001235,293T/17 cell,0.8441,dense_nn,CLO:0001235,293T/17 cell,0.8441,rag_selected
+EL-4 cells,EL4 cell,CLO:0002913,,,0.0,NIL,CLO:0002913,EL4 cell,0.9568,dense_nn,CLO:0002913,EL4 cell,0.9568,rag_selected
+human cervical cancer HeLa,HeLa cell,CLO:0003684,,,0.0,NIL,CLO:0003684,HeLa cell,0.9053,dense_nn,CLO:0003684,HeLa cell,0.9053,rag_selected
+HT-1080,HT-1080 cell,CLO:0004276,CLO:0004276,HT-1080 cell,1.0,exact_pref,CLO:0004276,HT-1080 cell,1.0,exact_pref,CLO:0004276,HT-1080 cell,1.0,exact_pref
+brain capillary endothelial cell bEnd.3 cell line,bEnd.3 cell,CLO:0001928,,,0.0,NIL,CLO:0001928,bEnd.3 cell,0.899,dense_nn,CLO:0001928,bEnd.3 cell,0.899,rag_selected
+J774A.1,J774A.1 cell,CLO:0007005,CLO:0007005,J774A.1 cell,1.0,exact_pref,CLO:0007005,J774A.1 cell,1.0,exact_pref,CLO:0007005,J774A.1 cell,1.0,exact_pref
+pgsD-677,pgsD-677 cell,CLO:0008438,CLO:0008438,pgsD-677 cell,1.0,exact_pref,CLO:0008438,pgsD-677 cell,1.0,exact_pref,CLO:0008438,pgsD-677 cell,1.0,exact_pref
+The glycosamino- glycan mutant pgsA-745,pgsA-745 cell,CLO:0008434,,,0.0,NIL,CLO:0008434,pgsA-745 cell,0.7106,dense_nn,CLO:0008434,pgsA-745 cell,0.7106,rag_selected
+Caco-2 cell line,Caco-2 cell,CLO:0002172,CLO:0002172,Caco-2 cell,1.0,prefix_truncated,CLO:0002172,Caco-2 cell,1.0,prefix_truncated,CLO:0002172,Caco-2 cell,1.0,prefix_truncated
+MIA PaCa-2 cells,MIA PaCa-2 cell,CLO:0007726,CLO:0007726,MIA PaCa-2 cell,1.0,prefix_truncated,CLO:0007726,MIA PaCa-2 cell,1.0,prefix_truncated,CLO:0007726,MIA PaCa-2 cell,1.0,prefix_truncated
+HeLa 654 cells,HeLa cell,CLO:0003684,CLO:0003684,HeLa cell,1.0,prefix_truncated,CLO:0003684,HeLa cell,1.0,prefix_truncated,CLO:0003684,HeLa cell,1.0,prefix_truncated
+SKOV3 cells,SK-OV-3 cell,CLO:0009063,,,0.0,NIL,CLO:0008279,OVCAR-3 cell,0.8339,dense_nn,CLO:0008279,OVCAR-3 cell,0.8339,rag_unconfident
+A431 cells,A431 cell,CLO:0001591,CLO:0001591,A431 cell,1.0,prefix_truncated,CLO:0001591,A431 cell,1.0,prefix_truncated,CLO:0001591,A431 cell,1.0,prefix_truncated

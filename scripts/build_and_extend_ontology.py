@@ -1161,9 +1161,6 @@ def extend_ontology_with_annotations(ontology: str,
         cpp_iri   = row["CPP_ID"]
         chebi_obo = chebi_ind_map[row["RAG_curie_CheBI"]]
 
-        cpp_local   = cpp_iri.split("/")[-1]             # e.g. CPP_001104
-        chebi_local = row["RAG_curie_CheBI"].replace(":", "_")  # e.g. CHEBI_38161
-
         complex_ind = factory.getOWLNamedIndividual(
             IRI.create(CPP_DATASET_NS + f"cpp_complex_{role_idx:04d}"))
         cpp_ind   = factory.getOWLNamedIndividual(IRI.create(cpp_iri))
@@ -1287,7 +1284,7 @@ def extend_ontology_with_annotations(ontology: str,
                 manager.applyChange(AddAxiom(onto,
                     factory.getOWLObjectPropertyAssertionAxiom(is_proper_part, mech_ind, exp_ind)))
 
-        # 3. CPP-Complex and cell line are participants of the UptakeMechanism
+        # 3. CPP-Complex and cell line are participants of the Experiment
         participant_iris = [complex_iri]
         if pd.notna(row["RAG_curie_CLO"]) and str(row["RAG_curie_CLO"]).strip():
             RAG_curie_CLO  = str(row["RAG_curie_CLO"]).strip()
@@ -1299,11 +1296,12 @@ def extend_ontology_with_annotations(ontology: str,
 
         for p_iri in participant_iris:
             p_ind = factory.getOWLNamedIndividual(IRI.create(p_iri))
-            for mech_ind in mech_inds:
-                manager.applyChange(AddAxiom(onto,
-                    factory.getOWLObjectPropertyAssertionAxiom(has_participant, mech_ind, p_ind)))
-                manager.applyChange(AddAxiom(onto,
-                    factory.getOWLObjectPropertyAssertionAxiom(is_part_in, p_ind, mech_ind)))
+            # CPP-Complex / CellLine  is_participant_in (SIO:000062)  Experiment
+            # Experiment              has_participant   (SIO:000132)  CPP-Complex / CellLine
+            manager.applyChange(AddAxiom(onto,
+                factory.getOWLObjectPropertyAssertionAxiom(is_part_in, p_ind, exp_ind)))
+            manager.applyChange(AddAxiom(onto,
+                factory.getOWLObjectPropertyAssertionAxiom(has_participant, exp_ind, p_ind)))
 
         # 4. Subcellular delivery — CPP-Complex is_located_in SubcellularEntity
         sub_del = row["Subcellular Delivery ID"]

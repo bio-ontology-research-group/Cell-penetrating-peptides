@@ -1,121 +1,121 @@
 Cargo,Cargo_CHEBI_label,Cargo_CHEBI_id,exact_curie,exact_label,exact_score,exact_match_type,biosyn_curie,biosyn_label,biosyn_score,biosyn_match_type,rag_curie,rag_label,rag_score,rag_match_type
-2-aminoethyl dihydrogen phosphate (2-AEH2P),dihydrogen,CHEBI:18276,CHEBI:17553,O-phosphoethanolamine,1,prefix_truncated,CHEBI:17553,O-phosphoethanolamine,0.9628,dense_nn,CHEBI:17553,O-phosphoethanolamine,0.9628,rag_selected
-3-nitro-2-pyridinesulfenyl (Npys),nitro group,CHEBI:29785,,,0,NIL,CHEBI:111295,3-nitro-N-(pyridin-4-ylmethyl)benzenesulfonamide,0.8858,dense_nn,CHEBI:111295,3-nitro-N-(pyridin-4-ylmethyl)benzenesulfonamide,0.8858,rag_unconfident
-4-kDa dextran and BCS class III drug naloxone.,naloxone,CHEBI:7459,,,0,NIL,CHEBI:190029,Naltrexone-3-glucuronide,0.8,dense_nn,CHEBI:52071,dextran,0.7829,rag_selected
-5-carboxyfluorescein (5-FAM),5-carboxyfluorescein,CHEBI:51617,CHEBI:51617,5-carboxyfluorescein,1,prefix_truncated,CHEBI:51617,5-carboxyfluorescein,0.9686,dense_nn,CHEBI:51617,5-carboxyfluorescein,0.9686,rag_selected
-5-carboxyfluorescein (FAM) conjugated,5-carboxyfluorescein,CHEBI:51617,CHEBI:51617,5-carboxyfluorescein,1,prefix_truncated,CHEBI:51617,5-carboxyfluorescein,0.9268,dense_nn,CHEBI:51617,5-carboxyfluorescein,0.9268,rag_selected
-5-FAM at C terminal,5-carboxyfluorescein,CHEBI:51617,CHEBI:51617,5-carboxyfluorescein,1,prefix_truncated,CHEBI:51617,5-carboxyfluorescein,0.8843,dense_nn,CHEBI:51617,5-carboxyfluorescein,0.8843,rag_selected
-5-FAM at N terminal,5-carboxyfluorescein,CHEBI:51617,CHEBI:51617,5-carboxyfluorescein,1,prefix_truncated,CHEBI:51617,5-carboxyfluorescein,0.8851,dense_nn,CHEBI:51617,5-carboxyfluorescein,0.8851,rag_selected
-"5,6-carboxyfluorescein (FAM)",5(6)-carboxyfluorescein,CHEBI:138465,,,0,NIL,CHEBI:138465,5(6)-carboxyfluorescein,0.9579,dense_nn,CHEBI:138465,5(6)-carboxyfluorescein,0.9579,rag_selected
-5(6)-carboxyfluorescein (CF),5(6)-carboxyfluorescein,CHEBI:138465,CHEBI:138465,5(6)-carboxyfluorescein,1,prefix_truncated,CHEBI:138465,5(6)-carboxyfluorescein,0.9815,dense_nn,CHEBI:138465,5(6)-carboxyfluorescein,0.9815,rag_selected
-7-Amino-4-Methylcoumarin Fluorescent dye,dye,CHEBI:37958,CHEBI:51771,coumarin 120,1,prefix_truncated,CHEBI:51771,coumarin 120,0.913,dense_nn,CHEBI:51771,coumarin 120,0.913,rag_unconfident
-7-mer cyclic lactam,lactam,CHEBI:24995,,,0,NIL,CHEBI:145565,macrolide lactam,0.8357,dense_nn,CHEBI:145565,macrolide lactam,0.8357,rag_selected
-Adriamycin (ADR) and FITC-labeled,doxorubicin,CHEBI:28748,CHEBI:28748,doxorubicin,1,prefix_truncated,CHEBI:75810,N-(deoxyguanosin-8-yl)-2-acetylaminofluorene,0.7915,dense_nn,CHEBI:75810,N-(deoxyguanosin-8-yl)-2-acetylaminofluorene,0.7915,rag_unconfident
-AFC [7-Amino-4-trifluoromethylcoumarin] dye,dye,CHEBI:37958,,,0,NIL,CHEBI:51772,7-amino-4-(trifluoromethyl)coumarin,0.9213,dense_nn,CHEBI:51772,7-amino-4-(trifluoromethyl)coumarin,0.9213,rag_selected
-alexa 488,Alexa Fluor 488,CHEBI:52661,,,0,NIL,CHEBI:52661,Alexa Fluor 488,0.9607,dense_nn,CHEBI:52661,Alexa Fluor 488,0.9607,rag_selected
-alexa 488,Alexa Fluor 488,CHEBI:52661,,,0,NIL,CHEBI:52661,Alexa Fluor 488,0.9607,dense_nn,CHEBI:52661,Alexa Fluor 488,0.9607,rag_selected
-Alexa 488 dye,Alexa Fluor 488,CHEBI:52661,,,0,NIL,CHEBI:52661,Alexa Fluor 488,0.9567,dense_nn,CHEBI:52661,Alexa Fluor 488,0.9567,rag_selected
-Alexa 488 labelled nanoparticles (nanoSABER probe) loaded with alkyne and legumain substrate AAN,Alexa Fluor 488,CHEBI:52661,,,0,NIL,CHEBI:53741,N-acetyltyrosine-4-azobenzenearsonic acid,0.8,dense_nn,CHEBI:52661,Alexa Fluor 488,0,rag_graph_selected
-Alexa 488-labelled,Alexa Fluor 488,CHEBI:52661,,,0,NIL,CHEBI:52661,Alexa Fluor 488,0.958,dense_nn,CHEBI:52661,Alexa Fluor 488,0.958,rag_selected
-Alexa647 dye,Alexa Fluor 647,CHEBI:137394,,,0,NIL,CHEBI:137394,Alexa Fluor 647,0.9191,dense_nn,CHEBI:137394,Alexa Fluor 647,0.9191,rag_selected
-aminoglycoside tobramycin at N terminal,aminoglycoside,CHEBI:47779,CHEBI:47779,aminoglycoside,1,prefix_truncated,CHEBI:28864,tobramycin,0.8572,dense_nn,CHEBI:28864,tobramycin,0.8572,rag_selected
-Amiodarone,amiodarone,CHEBI:2663,CHEBI:2663,amiodarone,1,exact_pref,CHEBI:2663,amiodarone,1,dense_nn,CHEBI:2663,amiodarone,1,rag_selected
-Amiodarone,Amiodarone,CHEBI:2663,CHEBI:2663,amiodarone,1,exact_pref,CHEBI:2663,amiodarone,1,dense_nn,CHEBI:2663,amiodarone,1,rag_selected
-anti-MicF 12-1( PNA),peptide nucleic acid,CHEBI:48021,,,0,NIL,CHEBI:174705,Avenanthramide 1p,0.7428,dense_nn,CHEBI:76720,antisense oligonucleotide,0,rag_graph_selected
-Anti-miR-199a oligonucleotide,oligonucleotide,CHEBI:7754,,,0,NIL,CHEBI:133021,venetoclax,0.8226,dense_nn,CHEBI:76720,antisense oligonucleotide,0.7276,rag_selected
-Biotin,biotin,CHEBI:15956,CHEBI:15956,biotin,1,exact_pref,CHEBI:57586,biotinate,1,dense_nn,CHEBI:15956,biotin,1,rag_selected
-Biotin-gly4,biotin,CHEBI:15956,,,0,NIL,CHEBI:22885,biotinyl group,0.8313,dense_nn,CHEBI:22885,biotinyl group,0.8313,rag_selected
-Biotin-labeled,biotin,CHEBI:15956,,,0,NIL,CHEBI:22885,biotinyl group,0.9111,dense_nn,CHEBI:22885,biotinyl group,0.9111,rag_selected
-Biotin-tagged,biotin,CHEBI:15956,,,0,NIL,CHEBI:81472,Biotinyl-[protein],0.909,dense_nn,CHEBI:22885,biotinyl group,0.9036,rag_selected
-Cabazitaxel (CBT),cabazitaxel,CHEBI:63584,CHEBI:63584,cabazitaxel,1,prefix_truncated,CHEBI:63584,cabazitaxel,0.9634,dense_nn,CHEBI:63584,cabazitaxel,0.9634,rag_selected
-Cabazitaxel (CTX),cabazitaxel,CHEBI:63584,CHEBI:63584,cabazitaxel,1,prefix_truncated,CHEBI:63584,cabazitaxel,0.9661,dense_nn,CHEBI:63584,cabazitaxel,0.9661,rag_selected
-Camptothecin (CPT),camptothecin,CHEBI:27656,CHEBI:27656,camptothecin,1,prefix_truncated,CHEBI:27656,camptothecin,0.9467,dense_nn,CHEBI:27656,camptothecin,0.9467,rag_selected
-Camptothecin (CPT) at N terminus,camptothecin,CHEBI:27656,CHEBI:27656,camptothecin,1,prefix_truncated,CHEBI:90225,rubitecan,0.8466,dense_nn,CHEBI:27656,camptothecin,0.8322,rag_selected
-Cantharidin (CTD),cantharidin,CHEBI:64213,CHEBI:64213,cantharidin,1,prefix_truncated,CHEBI:64213,cantharidin,0.9126,dense_nn,CHEBI:64213,cantharidin,0.9126,rag_selected
-Carboxyfluorescein (CF),5-carboxyfluorescein,CHEBI:51617,,,0,NIL,CHEBI:51617,5-carboxyfluorescein,0.9354,dense_nn,CHEBI:51617,5-carboxyfluorescein,0.9354,rag_selected
-Carboxyfluorescein dye,5-carboxyfluorescein,CHEBI:51617,,,0,NIL,CHEBI:51617,5-carboxyfluorescein,0.9491,dense_nn,CHEBI:51617,5-carboxyfluorescein,0.9491,rag_selected
-Cas9 ribonucleoprotein (RNP).,CRISPR RNA,CHEBI:134528,,,0,NIL,CHEBI:134528,CRISPR RNA,0.8467,dense_nn,CHEBI:134528,CRISPR RNA,0.8467,rag_selected
-Cas9-sgPlk-1 plasmids (Cy3-labeled CP),Cy3 dye,CHEBI:37987,,,0,NIL,CHEBI:137358,1-(5-O-phosphono-beta-D-ribofuranosyl)-5-(sulfanylcarbonyl)pyridinium-3-carbonyl adenylate(3-),0.7875,dense_nn,CHEBI:137358,1-(5-O-phosphono-beta-D-ribofuranosyl)-5-(sulfanylcarbonyl)pyridinium-3-carbonyl adenylate(3-),0.7875,rag_unconfident
-Celecoxib (CXB),celecoxib,CHEBI:41423,CHEBI:41423,celecoxib,1,prefix_truncated,CHEBI:41423,celecoxib,0.9036,dense_nn,CHEBI:41423,celecoxib,0.9036,rag_selected
-Concanavalin-A,concanavalin A,CHEBI:232423,,,0,NIL,CHEBI:232423,concanavalin A,0.9947,dense_nn,CHEBI:232423,concanavalin A,0.9947,rag_selected
-Curcumin-loaded lipid nanoemulsions (CmLN),curcumin,CHEBI:3962,,,0,NIL,CHEBI:81314,Curcumin monoglucoside,0.8057,dense_nn,CHEBI:81314,Curcumin monoglucoside,0.8057,rag_selected
-Cy3 on lysine,Cy3 dye,CHEBI:37987,CHEBI:37987,Cy3 dye,1,prefix_truncated,CHEBI:37987,Cy3 dye,0.8681,dense_nn,CHEBI:37987,Cy3 dye,0.8681,rag_selected
-cy3-conjugated Cas9/sgRNA complex ribonucleoprotein (RNP),Cy3 dye,CHEBI:37987,,,0,NIL,CHEBI:74764,Cys-tRNA(Sec) polyanion,0.7978,dense_nn,CHEBI:37987,Cy3 dye,0,rag_graph_selected
-Cy5 labeled SCO,Cy5 dye,CHEBI:52003,CHEBI:37989,Cy5 dye,1,prefix_truncated,CHEBI:52004,Cy3B dye NHS ester,0.7987,dense_nn,CHEBI:37989,Cy5 dye,0.7954,rag_selected
-Naphthofluorescein (NF)-labeled 10-kDa dextran (DextranNF),Naphthofluorescein,CHEBI:187610,CHEBI:187610,Naphthofluorescein,1,prefix_truncated,CHEBI:72498,fluorescein-DNP hapten,0.8251,dense_nn,CHEBI:187610,Naphthofluorescein,0.791,rag_selected
-Cy5.5 dye,Cy5 dye,CHEBI:52003,CHEBI:52003,Cy5.5 dye,1,exact_pref,CHEBI:52003,Cy5.5 dye,1,dense_nn,CHEBI:52003,Cy5.5 dye,1,rag_selected
-Cytochrome C,cytochrome c,CHEBI:18070,CHEBI:18070,cytochrome c,1,exact_pref,CHEBI:18070,cytochrome c,1,dense_nn,CHEBI:18070,cytochrome c,1,rag_selected
-D-pentapeptide sequences(ynaVl),pentapeptide,CHEBI:48545,,,0,NIL,CHEBI:141452,Tyr-Asn,0.8175,dense_nn,CHEBI:48545,pentapeptide,0.7917,rag_selected
-Dansyl chloride conjugated,dansyl chloride,CHEBI:51907,CHEBI:51907,dansyl chloride,1,prefix_truncated,CHEBI:51907,dansyl chloride,0.9552,dense_nn,CHEBI:51907,dansyl chloride,0.9552,rag_selected
-Daunorubicin liposomes,daunorubicin,CHEBI:41977,CHEBI:41977,daunorubicin,1,prefix_truncated,CHEBI:31059,13-dihydrodaunorubicin,0.8405,dense_nn,CHEBI:41977,daunorubicin,0.8177,rag_selected
-Desferrioxamine (DFO),desferrioxamine B,CHEBI:4356,CHEBI:50453,desferrioxamine,1,prefix_truncated,CHEBI:50453,desferrioxamine,0.9647,dense_nn,CHEBI:50453,desferrioxamine,0.9647,rag_selected
-Dexamethasone,dexamethasone,CHEBI:41879,CHEBI:41879,dexamethasone,1,exact_pref,CHEBI:41879,dexamethasone,1,dense_nn,CHEBI:41879,dexamethasone,1,rag_selected
-10-hydroxycamptothecin (HCPT),10-Hydroxycamptothecin,CHEBI:81395,CHEBI:81395,10-Hydroxycamptothecin,1,prefix_truncated,CHEBI:81395,10-Hydroxycamptothecin,0.9563,dense_nn,CHEBI:81395,10-Hydroxycamptothecin,0.9563,rag_selected
-Luciferin,luciferin,CHEBI:25078,CHEBI:25078,luciferin,1,exact_pref,CHEBI:25078,luciferin,1,dense_nn,CHEBI:25078,luciferin,1,rag_selected
-Dioscin liposomes,dioscin,CHEBI:74023,CHEBI:74023,dioscin,1,prefix_truncated,CHEBI:74023,dioscin,0.832,dense_nn,CHEBI:74023,dioscin,0.832,rag_selected
-DOCK2-inhibitory peptide (DCpep-2),peptide,CHEBI:16670,,,0,NIL,CHEBI:60216,DKATIGFEVQEE,0.8139,dense_nn,CHEBI:60216,DKATIGFEVQEE,0.8139,rag_selected
-Doxorubicin,doxorubicin,CHEBI:28748,CHEBI:28748,doxorubicin,1,exact_pref,CHEBI:64816,doxorubicin(1+),1,dense_nn,CHEBI:28748,doxorubicin,1,rag_selected
-Doxorubicin encapsulated PEGylated liposomes,doxorubicin,CHEBI:28748,CHEBI:28748,doxorubicin,1,prefix_truncated,CHEBI:167626,2-hydroxyethyl octadecanoate,0.8114,dense_nn,CHEBI:28748,doxorubicin,0,rag_graph_selected
-DTX cyclodextrin,cyclodextrin,cyclodextrin,,,0,NIL,CHEBI:79171,dTDP-beta-L-rhodosamine,0.8453,dense_nn,CHEBI:23456,cyclodextrin,0.8202,rag_selected
-Ellipticine (EPT),ellipticine,CHEBI:4776,CHEBI:4776,ellipticine,1,prefix_truncated,CHEBI:4776,ellipticine,0.9044,dense_nn,CHEBI:4776,ellipticine,0.9044,rag_selected
-Epirubicin (EPR),4'-epidoxorubicin,CHEBI:47898,CHEBI:47898,4'-epidoxorubicin,1,prefix_truncated,CHEBI:47898,4'-epidoxorubicin,0.9367,dense_nn,CHEBI:47898,4'-epidoxorubicin,0.9367,rag_selected
-FITC-CDDP(cisplatin ),cisplatin,CHEBI:27899,,,0,NIL,CHEBI:52202,"palladium(II)-5,10,15,20-tetrakis-(2,3,4,5,6-pentafluorphenyl)-porphyrin",0.7822,dense_nn,CHEBI:37926,fluorescein isothiocyanate,0.7625,rag_selected
-Fluorescein dye,fluorescein (lactone form),CHEBI:31624,CHEBI:51121,fluorescent dye,0.9333,fuzzy,CHEBI:31624,fluorescein (lactone form),0.9487,dense_nn,CHEBI:31624,fluorescein (lactone form),0.9487,rag_selected
-Fluorophor (TMR),fluorescence quencher,CHEBI:76648,,,0,NIL,CHEBI:134757,fluroxene,0.8584,dense_nn,CHEBI:134757,fluroxene,0.8584,rag_selected
-Fluorophore (Cy5),Cy5 dye,CHEBI:52003,,,0,NIL,CHEBI:37989,Cy5 dye,0.9562,dense_nn,CHEBI:37989,Cy5 dye,0.9562,rag_selected
-Fluorophore (fluorescein),fluorescein (lactone form),CHEBI:31624,,,0,NIL,CHEBI:31624,fluorescein (lactone form),0.9375,dense_nn,CHEBI:31624,fluorescein (lactone form),0.9375,rag_selected
-Phosphorodiamidate morpholino oligomer (PMO),oligomer,CHEBI:132554,,,0,NIL,CHEBI:78777,polyoxorim,0.8344,dense_nn,CHEBI:78777,polyoxorim,0.8344,rag_unconfident
-Fluorophore [5-carboxyfluorescein (FAM)],5-carboxyfluorescein,CHEBI:51617,,,0,NIL,CHEBI:51617,5-carboxyfluorescein,0.9388,dense_nn,CHEBI:51617,5-carboxyfluorescein,0.9388,rag_selected
-Fluorophore [5(6)-carboxyfluorescein],5(6)-carboxyfluorescein,CHEBI:138465,,,0,NIL,CHEBI:138465,5(6)-carboxyfluorescein,0.9687,dense_nn,CHEBI:138465,5(6)-carboxyfluorescein,0.9687,rag_selected
-Glutaredoxin-1 (GRX-1) enzyme,glutaredoxin,CHEBI:48465,,,0,NIL,CHEBI:48465,glutaredoxin,0.8855,dense_nn,CHEBI:48465,glutaredoxin,0.8855,rag_selected
-Gold Nanoparticles,gold nanoparticle,CHEBI:50825,CHEBI:29287,gold atom,1,prefix_truncated,CHEBI:50825,gold nanoparticle,0.9954,dense_nn,CHEBI:50825,gold nanoparticle,0.9954,rag_selected
-"Green fluorescent protein (GFP) and proapoptotic peptide, KLA",protein,CHEBI:36080,,,0,NIL,CHEBI:62389,Gly-Hle-Ala-Gly-Phe(4-F)-Lys(5-GalO)-Gly-Glu-Gln-Gly-Pro-Lys-Gly-Glu-Thr,0.7622,dense_nn,CHEBI:62389,Gly-Hle-Ala-Gly-Phe(4-F)-Lys(5-GalO)-Gly-Glu-Gln-Gly-Pro-Lys-Gly-Glu-Thr,0.7622,rag_unconfident
-Human single-chain antibody (HuscFv),antigen,CHEBI:59132,,,0,NIL,CHEBI:36967,carbonotrithioic acid,0.7515,dense_nn,CHEBI:36967,carbonotrithioic acid,0.7515,rag_unconfident
-IgG4 antibody,antigen,CHEBI:59132,,,0,NIL,CHEBI:175944,MAB 4,0.7634,dense_nn,CHEBI:175944,MAB 4,0.7634,rag_unconfident
-Insulin,insulin,CHEBI:145810,CHEBI:145810,insulin,1,exact_pref,CHEBI:5931,insulin (human),1,dense_nn,CHEBI:5931,insulin (human),1,rag_selected
-Lipoic acid (LA),lipoic acid,CHEBI:16494,CHEBI:16494,lipoic acid,1,prefix_truncated,CHEBI:43796,(S)-lipoic acid,0.9475,dense_nn,CHEBI:43796,(S)-lipoic acid,0.9475,rag_selected
-lipopeptide-based vaccine (LCP-1),lipopeptide,CHEBI:46895,,,0,NIL,CHEBI:46895,lipopeptide,0.8352,dense_nn,CHEBI:46895,lipopeptide,0.8352,rag_selected
-Lornoxicam (LN),lornoxicam,CHEBI:31783,CHEBI:31783,lornoxicam,1,prefix_truncated,CHEBI:31783,lornoxicam,0.9435,dense_nn,CHEBI:31783,lornoxicam,0.9435,rag_selected
-Methotrexate,methotrexate,CHEBI:44185,CHEBI:44185,methotrexate,1,exact_pref,CHEBI:50681,methotrexate(2-),1,dense_nn,CHEBI:44185,methotrexate,1,rag_selected
-Methylene blue (MB),methylene blue,CHEBI:6872,CHEBI:6872,methylene blue,1,prefix_truncated,CHEBI:6872,methylene blue,0.9693,dense_nn,CHEBI:6872,methylene blue,0.9693,rag_selected
-Morpholino (MO),morpholino(quinolin-6-yl)methanone,CHEBI:183719,,,0,NIL,CHEBI:37775,molybdenum oxide,0.8461,dense_nn,CHEBI:37775,molybdenum oxide,0.8461,rag_unconfident
-Nanoparticle,nanoparticle,CHEBI:50803,CHEBI:50803,nanoparticle,1,exact_pref,CHEBI:50803,nanoparticle,1,dense_nn,CHEBI:50803,nanoparticle,1,rag_selected
-Nanoparticle (Gold),nanoparticle,CHEBI:50803,CHEBI:50803,nanoparticle,1,prefix_truncated,CHEBI:50825,gold nanoparticle,0.9925,dense_nn,CHEBI:50825,gold nanoparticle,0.9925,rag_selected
-Nanoparticle (Silver),silver nanoparticle,CHEBI:50826,CHEBI:50803,nanoparticle,1,prefix_truncated,CHEBI:50826,silver nanoparticle,0.991,dense_nn,CHEBI:50826,silver nanoparticle,0.991,rag_selected
-Nanosilver Nanoparticles,silver nanoparticle,CHEBI:50826,,,0,NIL,CHEBI:50804,nanoshell,0.8934,dense_nn,CHEBI:50826,silver nanoparticle,0,rag_graph_selected
-Photoluminescent multi-shelled quantum dot (QD),quantum dot,CHEBI:50853,,,0,NIL,CHEBI:50853,quantum dot,0.9077,dense_nn,CHEBI:50853,quantum dot,0.9077,rag_selected
-Naringenin (NAR),naringenin,CHEBI:50202,CHEBI:50202,naringenin,1,prefix_truncated,CHEBI:50202,naringenin,0.9756,dense_nn,CHEBI:50202,naringenin,0.9756,rag_selected
-Natamycin at C terminus,natamycin,CHEBI:7488,CHEBI:7488,natamycin,1,prefix_truncated,CHEBI:7488,natamycin,0.8743,dense_nn,CHEBI:7488,natamycin,0.8743,rag_selected
-Nucleic acid (Plasmid DNA and siRNA),nucleic acid,CHEBI:33696,CHEBI:33696,nucleic acid,1,prefix_truncated,CHEBI:48021,peptide nucleic acid,0.8349,dense_nn,CHEBI:33696,nucleic acid,0.83,rag_selected
-nucleoside analog,nucleoside analogue,CHEBI:60783,CHEBI:33838,nucleoside,1,prefix_truncated,CHEBI:60783,nucleoside analogue,0.982,dense_nn,CHEBI:60783,nucleoside analogue,0.982,rag_selected
-Olsalazine (Olsa),olsalazine,CHEBI:7770,CHEBI:7770,olsalazine,1,prefix_truncated,CHEBI:7770,olsalazine,0.951,dense_nn,CHEBI:7770,olsalazine,0.951,rag_selected
-p53 protein,protein,CHEBI:36080,,,0,NIL,CHEBI:232442,p53 inhibitor,0.8379,dense_nn,CHEBI:232442,p53 inhibitor,0.8379,rag_unconfident
-Paclitaxel (PTX),paclitaxel,CHEBI:45863,CHEBI:45863,paclitaxel,1,prefix_truncated,CHEBI:146207,palytoxin,0.9236,dense_nn,CHEBI:45863,paclitaxel,0.9213,rag_selected
-Paclitaxel (PTX),paclitaxel,CHEBI:45863,CHEBI:45863,paclitaxel,1,prefix_truncated,CHEBI:146207,palytoxin,0.9236,dense_nn,CHEBI:45863,paclitaxel,0.9213,rag_selected
-Palbociclib (PBC),palbociclib,CHEBI:85993,CHEBI:85993,palbociclib,1,prefix_truncated,CHEBI:85993,palbociclib,0.924,dense_nn,CHEBI:85993,palbociclib,0.924,rag_selected
-pDNA,nucleic acid,CHEBI:33696,,,0,NIL,CHEBI:52853,palladium nanoparticle,0.8487,dense_nn,CHEBI:33696,nucleic acid,0,rag_graph_selected
-Pentaglutamylated derivative of Methotrexate (MTX-Glu5),methotrexate disodium,CHEBI:50679,,,0,NIL,CHEBI:60473,"5,10-methylenetetrahydrofolate polyglutamate macromolecule",0.8386,dense_nn,CHEBI:60473,"5,10-methylenetetrahydrofolate polyglutamate macromolecule",0.8386,rag_unconfident
-Peptide (KLA),peptide,CHEBI:16670,CHEBI:16670,peptide,1,prefix_truncated,CHEBI:7999,Peptide(-Lys),0.82,dense_nn,CHEBI:61872,Lys-Ala,0.8028,rag_selected
-Phosphoglycerate mutase 1 (PGAM1) enzyme,phosphoglycerate,CHEBI:61304,CHEBI:61304,phosphoglycerate,1,prefix_truncated,CHEBI:15545,prostaglandin A1,0.7926,dense_nn,CHEBI:15545,prostaglandin A1,0.7926,rag_unconfident
-PLGA Nanoparticles,nanoparticle,CHEBI:50803,CHEBI:53374,gamma-poly(L-glutamic acid) macromolecule,1,prefix_truncated,CHEBI:60533,gamma-poly(L-glutamic acid) polymer,0.9357,dense_nn,CHEBI:53493,"poly(D,L-lactic acid-co-glycolic acid)",0.8142,rag_selected
-Pirarubicin (Pir),pirarubicin,CHEBI:94770,CHEBI:94770,pirarubicin,1,prefix_truncated,CHEBI:94770,pirarubicin,0.9762,dense_nn,CHEBI:94770,pirarubicin,0.9762,rag_selected
-Polymer(pVGF-pGFP),polymer,CHEBI:60027,,,0,NIL,CHEBI:61444,gamma-poly(glutamate) polymer,0.823,dense_nn,CHEBI:61444,gamma-poly(glutamate) polymer,0.823,rag_selected
-Primaquine (PQ),primaquine,CHEBI:8405,CHEBI:8405,primaquine,1,prefix_truncated,CHEBI:8405,primaquine,0.9648,dense_nn,CHEBI:8405,primaquine,0.9648,rag_selected
-Proapoptotic peptide (KLA),peptide,CHEBI:16670,,,0,NIL,CHEBI:160215,Lys-Pro-Ala,0.782,dense_nn,CHEBI:160215,Lys-Pro-Ala,0.782,rag_unconfident
-Protein (eGFP),protein,CHEBI:36080,CHEBI:36080,protein,1,prefix_truncated,CHEBI:52053,eosin YS dye,0.7568,dense_nn,CHEBI:52053,eosin YS dye,0.7568,rag_unconfident
-pVGF/chitosan complex,chitosan,CHEBI:16261,,,0,NIL,CHEBI:53524,"poly(m-phenylenevinylene-co-2,5-dioctyloxy-p-phenylenevinylene)",0.7905,dense_nn,CHEBI:53524,"poly(m-phenylenevinylene-co-2,5-dioctyloxy-p-phenylenevinylene)",0.7905,rag_unconfident
-Rasagiline (RAS),rasagiline,CHEBI:63620,CHEBI:63620,rasagiline,1,prefix_truncated,CHEBI:63620,rasagiline,0.9417,dense_nn,CHEBI:63620,rasagiline,0.9417,rag_selected
-Rebamipide,Rebamipide,CHEBI:32090,CHEBI:32090,Rebamipide,1,exact_pref,CHEBI:32090,Rebamipide,1,dense_nn,CHEBI:32090,Rebamipide,1,rag_selected
-Rhodamine dye,rhodamine B,CHEBI:52334,,,0,NIL,CHEBI:52764,rhodamine green,0.9114,dense_nn,CHEBI:52764,rhodamine green,0.9114,rag_selected
-siRNA,small nuclear RNA,CHEBI:74035,,,0,NIL,CHEBI:67208,double-stranded RNA,0.8157,dense_nn,CHEBI:67208,double-stranded RNA,0.8157,rag_selected
-Sulpiride (SUL),sulpiride,CHEBI:32168,CHEBI:32168,sulpiride,1,prefix_truncated,CHEBI:32168,sulpiride,0.9779,dense_nn,CHEBI:32168,sulpiride,0.9779,rag_selected
-Superoxide dismutase (SOD),superoxide,CHEBI:18421,CHEBI:18421,superoxide,1,prefix_truncated,CHEBI:134084,EC 1.15.1.1 (superoxide dismutase) inhibitor,0.8522,dense_nn,CHEBI:134084,EC 1.15.1.1 (superoxide dismutase) inhibitor,0.8522,rag_unconfident
-TAMRA dye,tetramethylrhodamine,CHEBI:52282,CHEBI:52282,tetramethylrhodamine,1,prefix_truncated,CHEBI:52282,tetramethylrhodamine,0.8534,dense_nn,CHEBI:52282,tetramethylrhodamine,0.8534,rag_selected
-TAMRA-conjugated,tetramethylrhodamine,CHEBI:52282,,,0,NIL,CHEBI:52282,tetramethylrhodamine,0.8449,dense_nn,CHEBI:52282,tetramethylrhodamine,0.8449,rag_selected
-Thioredoxin (Trx) form Cyanea capillata (CcTrx1),thioredoxin,CHEBI:15033,CHEBI:15033,thioredoxin,1,prefix_truncated,CHEBI:51639,5-carboxy-X-rhodamine triethylammonium salt,0.7945,dense_nn,CHEBI:51639,5-carboxy-X-rhodamine triethylammonium salt,0.7945,rag_unconfident
-Triptolide (TP),triptolide ,CHEBI:9747,CHEBI:9747,Triptolide,1,prefix_truncated,CHEBI:9747,Triptolide,0.9398,dense_nn,CHEBI:9747,Triptolide,0.9398,rag_selected
-Vancomycin (Van) via linker (CDI),vancomycin,CHEBI:28001,CHEBI:28001,vancomycin,1,prefix_truncated,CHEBI:76842,vancomycin(1+),0.8049,dense_nn,CHEBI:28001,vancomycin,0.8049,rag_selected
-VDAC1 peptide,peptide,CHEBI:16670,,,0,NIL,CHEBI:173100,voltage-dependent anion channel inhibitor,0.8539,dense_nn,CHEBI:173100,voltage-dependent anion channel inhibitor,0.8539,rag_unconfident
-Verteporfin (Ver),verteporfin,CHEBI:32293,CHEBI:32293,verteporfin,1,prefix_truncated,CHEBI:32293,verteporfin,0.9601,dense_nn,CHEBI:32293,verteporfin,0.9601,rag_selected
-Yellow fluorescent protein (Citrine),protein,CHEBI:36080,,,0,NIL,CHEBI:37926,fluorescein isothiocyanate,0.8237,dense_nn,CHEBI:37926,fluorescein isothiocyanate,0.8237,rag_unconfident
-YOYO-1 labeled pDNA,YoYo-1,CHEBI:51224,,,0,NIL,CHEBI:52936,Yo-Pro-1(2+),0.8306,dense_nn,CHEBI:52936,Yo-Pro-1(2+),0.8306,rag_unconfident
+2-aminoethyl dihydrogen phosphate (2-AEH2P),dihydrogen,CHEBI:18276,CHEBI:17553,O-phosphoethanolamine,1.0,prefix_truncated,CHEBI:17553,O-phosphoethanolamine,1.0,prefix_truncated,CHEBI:17553,O-phosphoethanolamine,1.0,prefix_truncated
+3-nitro-2-pyridinesulfenyl (Npys),nitro group,CHEBI:29785,,,0.0,NIL,CHEBI:111295,3-nitro-N-(pyridin-4-ylmethyl)benzenesulfonamide,0.8858,dense_nn,CHEBI:111295,3-nitro-N-(pyridin-4-ylmethyl)benzenesulfonamide,0.8858,rag_unconfident
+4-kDa dextran and BCS class III drug naloxone.,naloxone,CHEBI:7459,,,0.0,NIL,CHEBI:190029,Naltrexone-3-glucuronide,0.8,dense_nn,CHEBI:52071,dextran,0.7829,rag_selected
+5-carboxyfluorescein (5-FAM),5-carboxyfluorescein,CHEBI:51617,CHEBI:51617,5-carboxyfluorescein,1.0,prefix_truncated,CHEBI:51617,5-carboxyfluorescein,1.0,prefix_truncated,CHEBI:51617,5-carboxyfluorescein,1.0,prefix_truncated
+5-carboxyfluorescein (FAM) conjugated,5-carboxyfluorescein,CHEBI:51617,CHEBI:51617,5-carboxyfluorescein,1.0,prefix_truncated,CHEBI:51617,5-carboxyfluorescein,1.0,prefix_truncated,CHEBI:51617,5-carboxyfluorescein,1.0,prefix_truncated
+5-FAM at C terminal,5-carboxyfluorescein,CHEBI:51617,CHEBI:51617,5-carboxyfluorescein,1.0,prefix_truncated,CHEBI:51617,5-carboxyfluorescein,1.0,prefix_truncated,CHEBI:51617,5-carboxyfluorescein,1.0,prefix_truncated
+5-FAM at N terminal,5-carboxyfluorescein,CHEBI:51617,CHEBI:51617,5-carboxyfluorescein,1.0,prefix_truncated,CHEBI:51617,5-carboxyfluorescein,1.0,prefix_truncated,CHEBI:51617,5-carboxyfluorescein,1.0,prefix_truncated
+"5,6-carboxyfluorescein (FAM)",6-carboxyfluorescein,CHEBI:39073,,,0.0,NIL,CHEBI:138465,5(6)-carboxyfluorescein,0.9579,dense_nn,CHEBI:138465,5(6)-carboxyfluorescein,0.9579,rag_selected
+5(6)-carboxyfluorescein (CF),5(6)-carboxyfluorescein,CHEBI:138465,CHEBI:138465,5(6)-carboxyfluorescein,1.0,prefix_truncated,CHEBI:138465,5(6)-carboxyfluorescein,1.0,prefix_truncated,CHEBI:138465,5(6)-carboxyfluorescein,1.0,prefix_truncated
+7-Amino-4-Methylcoumarin Fluorescent dye,dye,CHEBI:37958,CHEBI:51771,coumarin 120,1.0,prefix_truncated,CHEBI:51771,coumarin 120,1.0,prefix_truncated,CHEBI:51771,coumarin 120,1.0,prefix_truncated
+7-mer cyclic lactam,lactam,CHEBI:24995,,,0.0,NIL,CHEBI:145565,macrolide lactam,0.8357,dense_nn,CHEBI:24995,lactam,0.8024,rag_selected
+Adriamycin (ADR) and FITC-labeled,doxorubicin,CHEBI:28748,CHEBI:28748,doxorubicin,1.0,prefix_truncated,CHEBI:28748,doxorubicin,1.0,prefix_truncated,CHEBI:28748,doxorubicin,1.0,prefix_truncated
+AFC [7-Amino-4-trifluoromethylcoumarin] dye,dye,CHEBI:37958,,,0.0,NIL,CHEBI:51772,7-amino-4-(trifluoromethyl)coumarin,0.9213,dense_nn,CHEBI:51772,7-amino-4-(trifluoromethyl)coumarin,0.9213,rag_selected
+alexa 488,Alexa Fluor 488,CHEBI:52661,,,0.0,NIL,CHEBI:52661,Alexa Fluor 488,0.9607,dense_nn,CHEBI:52661,Alexa Fluor 488,0.9607,rag_selected
+alexa 488,Alexa Fluor 488,CHEBI:52661,,,0.0,NIL,CHEBI:52661,Alexa Fluor 488,0.9607,dense_nn,CHEBI:52661,Alexa Fluor 488,0.9607,rag_selected
+Alexa 488 dye,Alexa Fluor 488,CHEBI:52661,,,0.0,NIL,CHEBI:52661,Alexa Fluor 488,0.9567,dense_nn,CHEBI:52661,Alexa Fluor 488,0.9567,rag_selected
+Alexa 488 labelled nanoparticles (nanoSABER probe) loaded with alkyne and legumain substrate AAN,Alexa Fluor 488,CHEBI:52661,,,0.0,NIL,CHEBI:53741,N-acetyltyrosine-4-azobenzenearsonic acid,0.8,dense_nn,CHEBI:52661,Alexa Fluor 488,0.0,rag_graph_selected
+Alexa 488-labelled,Alexa Fluor 488,CHEBI:52661,,,0.0,NIL,CHEBI:52661,Alexa Fluor 488,0.958,dense_nn,CHEBI:52661,Alexa Fluor 488,0.958,rag_selected
+Alexa647 dye,Alexa Fluor 647,CHEBI:137394,,,0.0,NIL,CHEBI:137394,Alexa Fluor 647,0.9191,dense_nn,CHEBI:137394,Alexa Fluor 647,0.9191,rag_selected
+aminoglycoside tobramycin at N terminal,aminoglycoside,CHEBI:47779,CHEBI:47779,aminoglycoside,1.0,prefix_truncated,CHEBI:47779,aminoglycoside,1.0,prefix_truncated,CHEBI:47779,aminoglycoside,1.0,prefix_truncated
+Amiodarone,amiodarone,CHEBI:2663,CHEBI:2663,amiodarone,1.0,exact_pref,CHEBI:2663,amiodarone,1.0,exact_pref,CHEBI:2663,amiodarone,1.0,exact_pref
+Amiodarone,Amiodarone,CHEBI:2663,CHEBI:2663,amiodarone,1.0,exact_pref,CHEBI:2663,amiodarone,1.0,exact_pref,CHEBI:2663,amiodarone,1.0,exact_pref
+anti-MicF 12-1( PNA),peptide nucleic acid,CHEBI:48021,,,0.0,NIL,CHEBI:174705,Avenanthramide 1p,0.7428,dense_nn,CHEBI:76720,antisense oligonucleotide,0.0,rag_graph_selected
+Anti-miR-199a oligonucleotide,oligonucleotide,CHEBI:7754,,,0.0,NIL,CHEBI:133021,venetoclax,0.8226,dense_nn,CHEBI:76720,antisense oligonucleotide,0.7276,rag_selected
+Biotin,biotin,CHEBI:15956,CHEBI:15956,biotin,1.0,exact_pref,CHEBI:15956,biotin,1.0,exact_pref,CHEBI:15956,biotin,1.0,exact_pref
+Biotin-gly4,biotin,CHEBI:15956,,,0.0,NIL,CHEBI:22885,biotinyl group,0.8313,dense_nn,CHEBI:22885,biotinyl group,0.8313,rag_selected
+Biotin-labeled,biotin,CHEBI:15956,,,0.0,NIL,CHEBI:22885,biotinyl group,0.9111,dense_nn,CHEBI:22885,biotinyl group,0.9111,rag_selected
+Biotin-tagged,biotin,CHEBI:15956,,,0.0,NIL,CHEBI:81472,Biotinyl-[protein],0.909,dense_nn,CHEBI:22885,biotinyl group,0.9036,rag_selected
+Cabazitaxel (CBT),cabazitaxel,CHEBI:63584,CHEBI:63584,cabazitaxel,1.0,prefix_truncated,CHEBI:63584,cabazitaxel,1.0,prefix_truncated,CHEBI:63584,cabazitaxel,1.0,prefix_truncated
+Cabazitaxel (CTX),cabazitaxel,CHEBI:63584,CHEBI:63584,cabazitaxel,1.0,prefix_truncated,CHEBI:63584,cabazitaxel,1.0,prefix_truncated,CHEBI:63584,cabazitaxel,1.0,prefix_truncated
+Camptothecin (CPT),camptothecin,CHEBI:27656,CHEBI:27656,camptothecin,1.0,prefix_truncated,CHEBI:27656,camptothecin,1.0,prefix_truncated,CHEBI:27656,camptothecin,1.0,prefix_truncated
+Camptothecin (CPT) at N terminus,camptothecin,CHEBI:27656,CHEBI:27656,camptothecin,1.0,prefix_truncated,CHEBI:27656,camptothecin,1.0,prefix_truncated,CHEBI:27656,camptothecin,1.0,prefix_truncated
+Cantharidin (CTD),cantharidin,CHEBI:64213,CHEBI:64213,cantharidin,1.0,prefix_truncated,CHEBI:64213,cantharidin,1.0,prefix_truncated,CHEBI:64213,cantharidin,1.0,prefix_truncated
+Carboxyfluorescein (CF),5-carboxyfluorescein,CHEBI:51617,,,0.0,NIL,CHEBI:51617,5-carboxyfluorescein,0.9354,dense_nn,CHEBI:51617,5-carboxyfluorescein,0.9354,rag_selected
+Carboxyfluorescein dye,5-carboxyfluorescein,CHEBI:51617,,,0.0,NIL,CHEBI:51617,5-carboxyfluorescein,0.9491,dense_nn,CHEBI:51617,5-carboxyfluorescein,0.9491,rag_selected
+Cas9 ribonucleoprotein (RNP).,CRISPR RNA,CHEBI:134528,,,0.0,NIL,CHEBI:134528,CRISPR RNA,0.8467,dense_nn,CHEBI:134528,CRISPR RNA,0.8467,rag_selected
+Cas9-sgPlk-1 plasmids (Cy3-labeled CP),Cy3 dye,CHEBI:37987,,,0.0,NIL,CHEBI:137358,1-(5-O-phosphono-beta-D-ribofuranosyl)-5-(sulfanylcarbonyl)pyridinium-3-carbonyl adenylate(3-),0.7875,dense_nn,CHEBI:37987,Cy3 dye,0.0,rag_graph_selected
+Celecoxib (CXB),celecoxib,CHEBI:41423,CHEBI:41423,celecoxib,1.0,prefix_truncated,CHEBI:41423,celecoxib,1.0,prefix_truncated,CHEBI:41423,celecoxib,1.0,prefix_truncated
+Concanavalin-A,concanavalin A,CHEBI:232423,,,0.0,NIL,CHEBI:232423,concanavalin A,0.9947,dense_nn,CHEBI:232423,concanavalin A,0.9947,rag_selected
+Curcumin-loaded lipid nanoemulsions (CmLN),curcumin,CHEBI:3962,,,0.0,NIL,CHEBI:81314,Curcumin monoglucoside,0.8057,dense_nn,CHEBI:15409,curcumin,0.0,rag_graph_selected
+Cy3 on lysine,Cy3 dye,CHEBI:37987,CHEBI:37987,Cy3 dye,1.0,prefix_truncated,CHEBI:37987,Cy3 dye,1.0,prefix_truncated,CHEBI:37987,Cy3 dye,1.0,prefix_truncated
+cy3-conjugated Cas9/sgRNA complex ribonucleoprotein (RNP),Cy3 dye,CHEBI:37987,,,0.0,NIL,CHEBI:74764,Cys-tRNA(Sec) polyanion,0.7978,dense_nn,CHEBI:37987,Cy3 dye,0.0,rag_graph_selected
+Cy5 labeled SCO,Cy5 dye,CHEBI:52003,CHEBI:37989,Cy5 dye,1.0,prefix_truncated,CHEBI:37989,Cy5 dye,1.0,prefix_truncated,CHEBI:37989,Cy5 dye,1.0,prefix_truncated
+Naphthofluorescein (NF)-labeled 10-kDa dextran (DextranNF),Naphthofluorescein,CHEBI:187610,CHEBI:187610,Naphthofluorescein,1.0,prefix_truncated,CHEBI:187610,Naphthofluorescein,1.0,prefix_truncated,CHEBI:187610,Naphthofluorescein,1.0,prefix_truncated
+Cy5.5 dye,Cy5 dye,CHEBI:52003,CHEBI:52003,Cy5.5 dye,1.0,exact_pref,CHEBI:52003,Cy5.5 dye,1.0,exact_pref,CHEBI:52003,Cy5.5 dye,1.0,exact_pref
+Cytochrome C,cytochrome c,CHEBI:18070,CHEBI:18070,cytochrome c,1.0,exact_pref,CHEBI:18070,cytochrome c,1.0,exact_pref,CHEBI:18070,cytochrome c,1.0,exact_pref
+D-pentapeptide sequences(ynaVl),pentapeptide,CHEBI:48545,,,0.0,NIL,CHEBI:141452,Tyr-Asn,0.8175,dense_nn,CHEBI:48545,pentapeptide,0.7917,rag_selected
+Dansyl chloride conjugated,dansyl chloride,CHEBI:51907,CHEBI:51907,dansyl chloride,1.0,prefix_truncated,CHEBI:51907,dansyl chloride,1.0,prefix_truncated,CHEBI:51907,dansyl chloride,1.0,prefix_truncated
+Daunorubicin liposomes,daunorubicin,CHEBI:41977,CHEBI:41977,daunorubicin,1.0,prefix_truncated,CHEBI:41977,daunorubicin,1.0,prefix_truncated,CHEBI:41977,daunorubicin,1.0,prefix_truncated
+Desferrioxamine (DFO),desferrioxamine,CHEBI:50453,CHEBI:50453,desferrioxamine,1.0,prefix_truncated,CHEBI:50453,desferrioxamine,1.0,prefix_truncated,CHEBI:50453,desferrioxamine,1.0,prefix_truncated
+Dexamethasone,dexamethasone,CHEBI:41879,CHEBI:41879,dexamethasone,1.0,exact_pref,CHEBI:41879,dexamethasone,1.0,exact_pref,CHEBI:41879,dexamethasone,1.0,exact_pref
+10-hydroxycamptothecin (HCPT),10-Hydroxycamptothecin,CHEBI:81395,CHEBI:81395,10-Hydroxycamptothecin,1.0,prefix_truncated,CHEBI:81395,10-Hydroxycamptothecin,1.0,prefix_truncated,CHEBI:81395,10-Hydroxycamptothecin,1.0,prefix_truncated
+Luciferin,luciferin,CHEBI:25078,CHEBI:25078,luciferin,1.0,exact_pref,CHEBI:25078,luciferin,1.0,exact_pref,CHEBI:25078,luciferin,1.0,exact_pref
+Dioscin liposomes,dioscin,CHEBI:74023,CHEBI:74023,dioscin,1.0,prefix_truncated,CHEBI:74023,dioscin,1.0,prefix_truncated,CHEBI:74023,dioscin,1.0,prefix_truncated
+DOCK2-inhibitory peptide (DCpep-2),peptide,CHEBI:16670,,,0.0,NIL,CHEBI:60216,DKATIGFEVQEE,0.8139,dense_nn,CHEBI:60216,DKATIGFEVQEE,0.8139,rag_selected
+Doxorubicin,doxorubicin,CHEBI:28748,CHEBI:28748,doxorubicin,1.0,exact_pref,CHEBI:28748,doxorubicin,1.0,exact_pref,CHEBI:28748,doxorubicin,1.0,exact_pref
+Doxorubicin encapsulated PEGylated liposomes,doxorubicin,CHEBI:28748,CHEBI:28748,doxorubicin,1.0,prefix_truncated,CHEBI:28748,doxorubicin,1.0,prefix_truncated,CHEBI:28748,doxorubicin,1.0,prefix_truncated
+DTX cyclodextrin,cyclodextrin,cyclodextrin,,,0.0,NIL,CHEBI:79171,dTDP-beta-L-rhodosamine,0.8453,dense_nn,CHEBI:23456,cyclodextrin,0.8202,rag_selected
+Ellipticine (EPT),ellipticine,CHEBI:4776,CHEBI:4776,ellipticine,1.0,prefix_truncated,CHEBI:4776,ellipticine,1.0,prefix_truncated,CHEBI:4776,ellipticine,1.0,prefix_truncated
+Epirubicin (EPR),4'-epidoxorubicin,CHEBI:47898,CHEBI:47898,4'-epidoxorubicin,1.0,prefix_truncated,CHEBI:47898,4'-epidoxorubicin,1.0,prefix_truncated,CHEBI:47898,4'-epidoxorubicin,1.0,prefix_truncated
+FITC-CDDP(cisplatin ),cisplatin,CHEBI:27899,,,0.0,NIL,CHEBI:52202,"palladium(II)-5,10,15,20-tetrakis-(2,3,4,5,6-pentafluorphenyl)-porphyrin",0.7822,dense_nn,CHEBI:37926,fluorescein isothiocyanate,0.7625,rag_selected
+Fluorescein dye,fluorescent dye,CHEBI:51121,CHEBI:51121,fluorescent dye,0.9333,fuzzy,CHEBI:31624,fluorescein (lactone form),0.9487,dense_nn,CHEBI:31624,fluorescein (lactone form),0.9487,rag_selected
+Fluorophor (TMR),fluorescence quencher,CHEBI:76648,,,0.0,NIL,CHEBI:134757,fluroxene,0.8584,dense_nn,CHEBI:134757,fluroxene,0.8584,rag_unconfident
+Fluorophore (Cy5),Cy5 dye,CHEBI:52003,,,0.0,NIL,CHEBI:37989,Cy5 dye,0.9562,dense_nn,CHEBI:37989,Cy5 dye,0.9562,rag_selected
+Fluorophore (fluorescein),fluorescein (lactone form),CHEBI:31624,,,0.0,NIL,CHEBI:31624,fluorescein (lactone form),0.9375,dense_nn,CHEBI:31624,fluorescein (lactone form),0.9375,rag_selected
+Phosphorodiamidate morpholino oligomer (PMO),oligomer,CHEBI:132554,,,0.0,NIL,CHEBI:78777,polyoxorim,0.8344,dense_nn,CHEBI:78777,polyoxorim,0.8344,rag_unconfident
+Fluorophore [5-carboxyfluorescein (FAM)],5-carboxyfluorescein,CHEBI:51617,,,0.0,NIL,CHEBI:51617,5-carboxyfluorescein,0.9388,dense_nn,CHEBI:51617,5-carboxyfluorescein,0.9388,rag_selected
+Fluorophore [5(6)-carboxyfluorescein],5(6)-carboxyfluorescein,CHEBI:138465,,,0.0,NIL,CHEBI:138465,5(6)-carboxyfluorescein,0.9687,dense_nn,CHEBI:138465,5(6)-carboxyfluorescein,0.9687,rag_selected
+Glutaredoxin-1 (GRX-1) enzyme,glutaredoxin,CHEBI:48465,,,0.0,NIL,CHEBI:48465,glutaredoxin,0.8855,dense_nn,CHEBI:48465,glutaredoxin,0.8855,rag_selected
+Gold Nanoparticles,gold nanoparticle,CHEBI:50825,CHEBI:29287,gold atom,1.0,prefix_truncated,CHEBI:29287,gold atom,1.0,prefix_truncated,CHEBI:29287,gold atom,1.0,prefix_truncated
+"Green fluorescent protein (GFP) and proapoptotic peptide, KLA",protein,CHEBI:36080,,,0.0,NIL,CHEBI:62389,Gly-Hle-Ala-Gly-Phe(4-F)-Lys(5-GalO)-Gly-Glu-Gln-Gly-Pro-Lys-Gly-Glu-Thr,0.7622,dense_nn,CHEBI:62389,Gly-Hle-Ala-Gly-Phe(4-F)-Lys(5-GalO)-Gly-Glu-Gln-Gly-Pro-Lys-Gly-Glu-Thr,0.7622,rag_unconfident
+Human single-chain antibody (HuscFv),antigen,CHEBI:59132,,,0.0,NIL,CHEBI:36967,carbonotrithioic acid,0.7515,dense_nn,CHEBI:36967,carbonotrithioic acid,0.7515,rag_unconfident
+IgG4 antibody,antigen,CHEBI:59132,,,0.0,NIL,CHEBI:175944,MAB 4,0.7634,dense_nn,CHEBI:175944,MAB 4,0.7634,rag_unconfident
+Insulin,insulin (human),CHEBI:5931,CHEBI:145810,insulin,1.0,exact_pref,CHEBI:145810,insulin,1.0,exact_pref,CHEBI:145810,insulin,1.0,exact_pref
+Lipoic acid (LA),lipoic acid,CHEBI:16494,CHEBI:16494,lipoic acid,1.0,prefix_truncated,CHEBI:16494,lipoic acid,1.0,prefix_truncated,CHEBI:16494,lipoic acid,1.0,prefix_truncated
+lipopeptide-based vaccine (LCP-1),lipopeptide,CHEBI:46895,,,0.0,NIL,CHEBI:46895,lipopeptide,0.8352,dense_nn,CHEBI:46895,lipopeptide,0.8352,rag_selected
+Lornoxicam (LN),lornoxicam,CHEBI:31783,CHEBI:31783,lornoxicam,1.0,prefix_truncated,CHEBI:31783,lornoxicam,1.0,prefix_truncated,CHEBI:31783,lornoxicam,1.0,prefix_truncated
+Methotrexate,methotrexate,CHEBI:44185,CHEBI:44185,methotrexate,1.0,exact_pref,CHEBI:44185,methotrexate,1.0,exact_pref,CHEBI:44185,methotrexate,1.0,exact_pref
+Methylene blue (MB),methylene blue,CHEBI:6872,CHEBI:6872,methylene blue,1.0,prefix_truncated,CHEBI:6872,methylene blue,1.0,prefix_truncated,CHEBI:6872,methylene blue,1.0,prefix_truncated
+Morpholino (MO),morpholino(quinolin-6-yl)methanone,CHEBI:183719,,,0.0,NIL,CHEBI:37775,molybdenum oxide,0.8461,dense_nn,CHEBI:37775,molybdenum oxide,0.8461,rag_unconfident
+Nanoparticle,nanoparticle,CHEBI:50803,CHEBI:50803,nanoparticle,1.0,exact_pref,CHEBI:50803,nanoparticle,1.0,exact_pref,CHEBI:50803,nanoparticle,1.0,exact_pref
+Nanoparticle (Gold),nanoparticle,CHEBI:50803,CHEBI:50803,nanoparticle,1.0,prefix_truncated,CHEBI:50803,nanoparticle,1.0,prefix_truncated,CHEBI:50803,nanoparticle,1.0,prefix_truncated
+Nanoparticle (Silver),silver nanoparticle,CHEBI:50826,CHEBI:50803,nanoparticle,1.0,prefix_truncated,CHEBI:50803,nanoparticle,1.0,prefix_truncated,CHEBI:50803,nanoparticle,1.0,prefix_truncated
+Nanosilver Nanoparticles,silver nanoparticle,CHEBI:50826,,,0.0,NIL,CHEBI:50804,nanoshell,0.8934,dense_nn,CHEBI:50826,silver nanoparticle,0.0,rag_graph_selected
+Photoluminescent multi-shelled quantum dot (QD),quantum dot,CHEBI:50853,,,0.0,NIL,CHEBI:50853,quantum dot,0.9077,dense_nn,CHEBI:50853,quantum dot,0.9077,rag_selected
+Naringenin (NAR),naringenin,CHEBI:50202,CHEBI:50202,naringenin,1.0,prefix_truncated,CHEBI:50202,naringenin,1.0,prefix_truncated,CHEBI:50202,naringenin,1.0,prefix_truncated
+Natamycin at C terminus,natamycin,CHEBI:7488,CHEBI:7488,natamycin,1.0,prefix_truncated,CHEBI:7488,natamycin,1.0,prefix_truncated,CHEBI:7488,natamycin,1.0,prefix_truncated
+Nucleic acid (Plasmid DNA and siRNA),nucleic acid,CHEBI:33696,CHEBI:33696,nucleic acid,1.0,prefix_truncated,CHEBI:33696,nucleic acid,1.0,prefix_truncated,CHEBI:33696,nucleic acid,1.0,prefix_truncated
+nucleoside analog,nucleoside analogue,CHEBI:60783,CHEBI:33838,nucleoside,1.0,prefix_truncated,CHEBI:33838,nucleoside,1.0,prefix_truncated,CHEBI:33838,nucleoside,1.0,prefix_truncated
+Olsalazine (Olsa),olsalazine,CHEBI:7770,CHEBI:7770,olsalazine,1.0,prefix_truncated,CHEBI:7770,olsalazine,1.0,prefix_truncated,CHEBI:7770,olsalazine,1.0,prefix_truncated
+p53 protein,protein,CHEBI:36080,,,0.0,NIL,CHEBI:232442,p53 inhibitor,0.8379,dense_nn,CHEBI:232442,p53 inhibitor,0.8379,rag_unconfident
+Paclitaxel (PTX),paclitaxel,CHEBI:45863,CHEBI:45863,paclitaxel,1.0,prefix_truncated,CHEBI:45863,paclitaxel,1.0,prefix_truncated,CHEBI:45863,paclitaxel,1.0,prefix_truncated
+Paclitaxel (PTX),paclitaxel,CHEBI:45863,CHEBI:45863,paclitaxel,1.0,prefix_truncated,CHEBI:45863,paclitaxel,1.0,prefix_truncated,CHEBI:45863,paclitaxel,1.0,prefix_truncated
+Palbociclib (PBC),palbociclib,CHEBI:85993,CHEBI:85993,palbociclib,1.0,prefix_truncated,CHEBI:85993,palbociclib,1.0,prefix_truncated,CHEBI:85993,palbociclib,1.0,prefix_truncated
+pDNA,nucleic acid,CHEBI:33696,,,0.0,NIL,CHEBI:52853,palladium nanoparticle,0.8487,dense_nn,CHEBI:33696,nucleic acid,0.0,rag_graph_selected
+Pentaglutamylated derivative of Methotrexate (MTX-Glu5),methotrexate disodium,CHEBI:50679,,,0.0,NIL,CHEBI:60473,"5,10-methylenetetrahydrofolate polyglutamate macromolecule",0.8386,dense_nn,CHEBI:140748,pentaglutamyl folate,0.8349,rag_selected
+Peptide (KLA),peptide,CHEBI:16670,CHEBI:16670,peptide,1.0,prefix_truncated,CHEBI:16670,peptide,1.0,prefix_truncated,CHEBI:16670,peptide,1.0,prefix_truncated
+Phosphoglycerate mutase 1 (PGAM1) enzyme,phosphoglycerate,CHEBI:61304,CHEBI:61304,phosphoglycerate,1.0,prefix_truncated,CHEBI:61304,phosphoglycerate,1.0,prefix_truncated,CHEBI:61304,phosphoglycerate,1.0,prefix_truncated
+PLGA Nanoparticles,nanoparticle,CHEBI:50803,CHEBI:53374,gamma-poly(L-glutamic acid) macromolecule,1.0,prefix_truncated,CHEBI:53374,gamma-poly(L-glutamic acid) macromolecule,1.0,prefix_truncated,CHEBI:53374,gamma-poly(L-glutamic acid) macromolecule,1.0,prefix_truncated
+Pirarubicin (Pir),pirarubicin,CHEBI:94770,CHEBI:94770,pirarubicin,1.0,prefix_truncated,CHEBI:94770,pirarubicin,1.0,prefix_truncated,CHEBI:94770,pirarubicin,1.0,prefix_truncated
+Polymer(pVGF-pGFP),polymer,CHEBI:60027,,,0.0,NIL,CHEBI:61444,gamma-poly(glutamate) polymer,0.823,dense_nn,CHEBI:61444,gamma-poly(glutamate) polymer,0.823,rag_selected
+Primaquine (PQ),primaquine,CHEBI:8405,CHEBI:8405,primaquine,1.0,prefix_truncated,CHEBI:8405,primaquine,1.0,prefix_truncated,CHEBI:8405,primaquine,1.0,prefix_truncated
+Proapoptotic peptide (KLA),peptide,CHEBI:16670,,,0.0,NIL,CHEBI:160215,Lys-Pro-Ala,0.782,dense_nn,CHEBI:7999,Peptide(-Lys),0.0,rag_graph_selected
+Protein (eGFP),protein,CHEBI:36080,CHEBI:36080,protein,1.0,prefix_truncated,CHEBI:36080,protein,1.0,prefix_truncated,CHEBI:36080,protein,1.0,prefix_truncated
+pVGF/chitosan complex,chitosan,CHEBI:16261,,,0.0,NIL,CHEBI:53524,"poly(m-phenylenevinylene-co-2,5-dioctyloxy-p-phenylenevinylene)",0.7905,dense_nn,CHEBI:53524,"poly(m-phenylenevinylene-co-2,5-dioctyloxy-p-phenylenevinylene)",0.7905,rag_unconfident
+Rasagiline (RAS),rasagiline,CHEBI:63620,CHEBI:63620,rasagiline,1.0,prefix_truncated,CHEBI:63620,rasagiline,1.0,prefix_truncated,CHEBI:63620,rasagiline,1.0,prefix_truncated
+Rebamipide,Rebamipide,CHEBI:32090,CHEBI:32090,Rebamipide,1.0,exact_pref,CHEBI:32090,Rebamipide,1.0,exact_pref,CHEBI:32090,Rebamipide,1.0,exact_pref
+Rhodamine dye,rhodamine B,CHEBI:52334,,,0.0,NIL,CHEBI:52764,rhodamine green,0.9114,dense_nn,CHEBI:52764,rhodamine green,0.9114,rag_selected
+siRNA,small nuclear RNA,CHEBI:74035,,,0.0,NIL,CHEBI:67208,double-stranded RNA,0.8157,dense_nn,CHEBI:67208,double-stranded RNA,0.8157,rag_selected
+Sulpiride (SUL),sulpiride,CHEBI:32168,CHEBI:32168,sulpiride,1.0,prefix_truncated,CHEBI:32168,sulpiride,1.0,prefix_truncated,CHEBI:32168,sulpiride,1.0,prefix_truncated
+Superoxide dismutase (SOD),superoxide,CHEBI:18421,CHEBI:18421,superoxide,1.0,prefix_truncated,CHEBI:18421,superoxide,1.0,prefix_truncated,CHEBI:18421,superoxide,1.0,prefix_truncated
+TAMRA dye,tetramethylrhodamine,CHEBI:52282,CHEBI:52282,tetramethylrhodamine,1.0,prefix_truncated,CHEBI:52282,tetramethylrhodamine,1.0,prefix_truncated,CHEBI:52282,tetramethylrhodamine,1.0,prefix_truncated
+TAMRA-conjugated,tetramethylrhodamine,CHEBI:52282,,,0.0,NIL,CHEBI:52282,tetramethylrhodamine,0.8449,dense_nn,CHEBI:52282,tetramethylrhodamine,0.8449,rag_selected
+Thioredoxin (Trx) form Cyanea capillata (CcTrx1),thioredoxin,CHEBI:15033,CHEBI:15033,thioredoxin,1.0,prefix_truncated,CHEBI:15033,thioredoxin,1.0,prefix_truncated,CHEBI:15033,thioredoxin,1.0,prefix_truncated
+Triptolide (TP),triptolide ,CHEBI:9747,CHEBI:9747,Triptolide,1.0,prefix_truncated,CHEBI:9747,Triptolide,1.0,prefix_truncated,CHEBI:9747,Triptolide,1.0,prefix_truncated
+Vancomycin (Van) via linker (CDI),vancomycin,CHEBI:28001,CHEBI:28001,vancomycin,1.0,prefix_truncated,CHEBI:28001,vancomycin,1.0,prefix_truncated,CHEBI:28001,vancomycin,1.0,prefix_truncated
+VDAC1 peptide,peptide,CHEBI:16670,,,0.0,NIL,CHEBI:173100,voltage-dependent anion channel inhibitor,0.8539,dense_nn,CHEBI:173100,voltage-dependent anion channel inhibitor,0.8539,rag_unconfident
+Verteporfin (Ver),verteporfin,CHEBI:32293,CHEBI:32293,verteporfin,1.0,prefix_truncated,CHEBI:32293,verteporfin,1.0,prefix_truncated,CHEBI:32293,verteporfin,1.0,prefix_truncated
+Yellow fluorescent protein (Citrine),protein,CHEBI:36080,,,0.0,NIL,CHEBI:37926,fluorescein isothiocyanate,0.8237,dense_nn,CHEBI:37926,fluorescein isothiocyanate,0.8237,rag_unconfident
+YOYO-1 labeled pDNA,YoYo-1,CHEBI:51224,,,0.0,NIL,CHEBI:52936,Yo-Pro-1(2+),0.8306,dense_nn,CHEBI:52936,Yo-Pro-1(2+),0.8306,rag_unconfident
