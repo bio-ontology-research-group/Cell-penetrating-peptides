@@ -1,9 +1,9 @@
 FROM continuumio/miniconda3:latest
 
 # Install OpenJDK (required for JPype1/OWLAPI)
-RUN apt-get update && apt-get install -y openjdk-11-jdk && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y openjdk-17-jdk && rm -rf /var/lib/apt/lists/*
 
-ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-arm64
 
 WORKDIR /app
 COPY environment.yml .
