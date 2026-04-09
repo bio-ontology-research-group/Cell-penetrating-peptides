@@ -16,9 +16,11 @@ scripts/
   build_and_extend_ontology.py   Construct the OWL/RDF knowledge graph
 
 validation/
-  validate_shex.py               ShEx shape validation of the KG
   Evaluate_ontology_normalizer.py  Evaluate normalizer against ground truth
+  Competency_Questions.py        Run Competency Questions
+  validate_shex.py               ShEx shape validation of the KG
   mechanisms_shapes.shex         ShEx shape definitions
+  
 
 data/
   Natural_CPP3_download_annotated.csv                Raw annotated dataset
@@ -108,7 +110,14 @@ python validation/Evaluate_ontology_normalizer.py
 ```
 To reproduce Table 3 results. First, to reproduce the `data/Ground_Truth_CHEBI_Ontology_Normalization.csv`, `data/Ground_Truth_CLO_Ontology_Normalization.csv`, `data/CRAFT.csv` and `data/biosamples.csv`, run `scripts/Ontology_normalizer.py` on `data/Ground_Truth_CHEBI.csv`, `data/Ground_Truth_CLO.csv`, `data/CRAFT.csv` and `data/biosamples.csv`. Results will be saved in `data/evaluation_report.csv`.
 
-### 6. Verify all numerical claims in the paper
+### 6. Run Competency Questions
+
+```bash
+python validation/Competency_Questions.py --federated
+```
+To reproduce the results in Table 4, it runs 3 local and 3 federated SPARQL Queries against the knowledge graph. 
+
+### 7. Verify all numerical claims in the paper
 
 ```bash
 python scripts/verify_paper_numbers.py
