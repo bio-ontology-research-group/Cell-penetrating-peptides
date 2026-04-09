@@ -429,19 +429,34 @@
         <div class="col-12 col-md-6 col-lg-3 d-flex align-items-end gap-2">
           <button id="search-btn" class="btn btn-primary w-100" disabled onclick="doSearch()"><i class="bi bi-search me-1"></i>Search</button>
           <button id="search-clear-all" class="btn btn-outline-secondary" onclick="clearSearch()">Clear all</button>
+          <button id="preview-btn" class="btn btn-outline-info" disabled onclick="toggleSparqlPreview()" title="Preview generated SPARQL"><i class="bi bi-braces"></i></button>
         </div>
       </div>
     </div>
     <div id="active-filters" class="mb-2" aria-live="polite"></div>
+
+    <!-- SPARQL Preview Panel -->
+    <div id="sparql-preview-wrap" style="display:none; margin-bottom:12px;">
+      <div style="background:#1e1e2e;border-radius:8px;padding:12px;">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span style="font-size:.82rem;color:#cba6f7;font-weight:600;"><i class="bi bi-braces me-1"></i>SPARQL Preview — Step 1: Candidate Query</span>
+          <button class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="document.getElementById('sparql-preview-wrap').style.display='none'" style="font-size:.75rem;">hide</button>
+        </div>
+        <pre id="sparql-preview-candidate" style="font-family:'Courier New',monospace;font-size:.8rem;color:#cdd6f4;white-space:pre-wrap;word-break:break-all;margin:0;"></pre>
+        <p style="font-size:.78rem;color:#a6e3a1;margin-top:8px;margin-bottom:0;"><i class="bi bi-info-circle me-1"></i>After running Search, a small basics query fetches peptide name &amp; sequence for matched URIs.</p>
+      </div>
+    </div>
+
     <div id="search-status"></div>
     <div id="search-results-wrap" style="display:none;">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <span class="results-info" id="search-results-info"></span>
-        <button class="btn btn-sm btn-outline-success" onclick="downloadCSV('search')"><i class="bi bi-download me-1"></i>CSV</button>
       </div>
       <div class="table-wrapper">
         <table class="table table-sm table-hover mb-0">
-          <thead class="table-light" id="search-thead"></thead>
+          <thead class="table-light">
+            <tr><th>CPP ID</th><th>Name &amp; Sequence</th><th class="d-none d-md-table-cell">URI</th><th>Detail</th></tr>
+          </thead>
           <tbody id="search-tbody"></tbody>
         </table>
       </div>
@@ -453,14 +468,8 @@
         <i class="bi bi-braces me-1"></i>Debug info
       </button>
       <div class="collapse mt-2" id="search-debug-panel">
-        <p class="text-muted mb-1" style="font-size:.82rem;"><strong>Step 1 — Candidate query</strong> (finds matching peptide URIs)</p>
+        <p class="text-muted mb-1" style="font-size:.82rem;"><strong>Candidate query</strong></p>
         <pre id="search-debug-candidate" style="font-family:'Courier New',monospace;font-size:.8rem;background:#1e1e2e;color:#cdd6f4;border-radius:8px;padding:12px;white-space:pre-wrap;word-break:break-all;"></pre>
-        <p class="text-muted mb-1 mt-2" style="font-size:.82rem;"><strong>Step 1 result — matched peptide URIs</strong></p>
-        <pre id="search-debug-peptides" style="font-family:'Courier New',monospace;font-size:.8rem;background:#1e1e2e;color:#a6e3a1;border-radius:8px;padding:12px;white-space:pre-wrap;word-break:break-all;"></pre>
-        <p class="text-muted mb-1 mt-3" style="font-size:.82rem;"><strong>Step 2 — Details query</strong> (fetches all associations for matched peptides)</p>
-        <pre id="search-debug-details" style="font-family:'Courier New',monospace;font-size:.8rem;background:#1e1e2e;color:#cdd6f4;border-radius:8px;padding:12px;white-space:pre-wrap;word-break:break-all;"></pre>
-        <p class="text-muted mb-1 mt-2" style="font-size:.82rem;"><strong>Step 2 result — total rows &amp; first row (which fields were bound?)</strong></p>
-        <pre id="search-debug-sample" style="font-family:'Courier New',monospace;font-size:.8rem;background:#1e1e2e;color:#a6e3a1;border-radius:8px;padding:12px;white-space:pre-wrap;word-break:break-all;"></pre>
       </div>
     </div>
   </div>
@@ -473,7 +482,7 @@
     <div class="section-card">
       <h6>Quick Examples</h6>
       <div class="d-flex flex-wrap gap-2 mb-3" id="example-btns"></div>
-      <h6>Competency Questions</h6>
+      <h6>Example Questions</h6>
       <div class="d-flex flex-wrap gap-2 mb-3" id="cq-btns"></div>
       <hr/>
       <label class="form-label fw-semibold">SPARQL Query</label>
@@ -532,16 +541,16 @@
           <thead class="table-light"><tr><th>Property</th><th>URI</th><th>Meaning</th></tr></thead>
           <tbody>
             <tr><td>Is component part of</td><td><span class="ns-badge">sio:SIO_000313</span></td><td>CPP is a component part of a CPP-Complex.</td></tr>
-            <tr><td>Is participant in</td><td><span class="ns-badge">sio:SIO_000062</span></td><td>CPP-Complex or Cell Line participates in an Uptake Mechanism.</td></tr>
-            <tr><td>Has role / cargo</td><td><span class="ns-badge">sio:SIO_000369</span></td><td>CPP-Complex has an associated Cargo entity.</td></tr>
-            <tr><td>Has location</td><td><span class="ns-badge">sio:SIO_000061</span></td><td>CPP-Complex is delivered to a Subcellular Entity.</td></tr>
+            <tr><td>Is participant in</td><td><span class="ns-badge">sio:SIO_000062</span></td><td>CPP-Complex or Cell Line participates in an Experiment.</td></tr>
+            <tr><td>Has component part </td><td><span class="ns-badge">sio:SIO_000369</span></td><td>CPP-Complex has component part Cargo and Cell Penetrating Peptide.</td></tr>
+            <tr><td>Is located in</td><td><span class="ns-badge">sio:SIO_000061</span></td><td>CPP-Complex is located in a Subcellular Entity.</td></tr>
             <tr><td>Positively regulates</td><td><span class="ns-badge">sio:SIO_001401</span></td><td>Gene positively regulates an Uptake Mechanism.</td></tr>
             <tr><td>Negatively regulates</td><td><span class="ns-badge">sio:SIO_001402</span></td><td>Inhibitor negatively regulates an Uptake Mechanism.</td></tr>
             <tr><td>Is realized in</td><td><span class="ns-badge">sio:SIO_000356</span></td><td>A CPP or Cargo role is realized in an Uptake Mechanism.</td></tr>
             <tr><td>Is described by</td><td><span class="ns-badge">sio:SIO_000557</span></td><td>An Experiment is described by a Document (PubMed/patent).</td></tr>
             <tr><td>sequence</td><td><span class="ns-badge">cppS:sequence</span></td><td>Amino acid sequence of the CPP (one-letter code).</td></tr>
             <tr><td>peptideName</td><td><span class="ns-badge">cppS:peptideName</span></td><td>Common name of the CPP (e.g., Penetratin, TAT).</td></tr>
-            <tr><td>cargoType</td><td><span class="ns-badge">cppS:cargoType</span></td><td>Categorical type of cargo (e.g., protein, nucleic acid).</td></tr>
+            <tr><td>cargoType</td><td><span class="ns-badge">cppS:cargoType</span></td><td>Annotated type of cargo given in the source experiment.</td></tr>
             <tr><td>uptakeEfficiency</td><td><span class="ns-badge">cppS:uptakeEfficiency</span></td><td>Qualitative or quantitative uptake efficiency from the experiment.</td></tr>
           </tbody>
         </table>
@@ -573,9 +582,9 @@
     <div class="section-card">
       <h5>How to Cite</h5>
       <div class="bibtex-block">@dataset{castillo_cpp_mechanisms_kg,
-  title   = {CPP Mechanisms Knowledge Graph},
-  author  = {Castillo, Maria},
-  year    = {2024},
+  title   = {A knowledge graph and dataset of natural cell-penetrating peptides},
+  author  = {Castillo, Maria and Dominik, Renn and Magnus, Rueping and Robert, Hoehndorf},
+  year    = {2026},
   url     = {https://github.com/bio-ontology-research-group/Cell-penetrating-peptides},
   license = {CC-BY 4.0}
 }</div>
@@ -656,6 +665,7 @@
 // ============================================================
 let classChart = null, assocChart = null;
 let searchData = { columns: [], rows: [] };
+let _searchAbortCtrl = null;
 let sparqlData = { columns: [], rows: [] };
 let cytoscapeLoaded = false;
 let cyInstance = null;
@@ -695,6 +705,23 @@ function copyToClipboard(text, btn) {
 }
 
 function isUri(s) { return s && (s.startsWith('http://') || s.startsWith('https://')); }
+
+/* Return a direct external URL for PubMed, patent, and Ensembl URIs;
+   null for everything else (falls back to internal #entity/ navigation). */
+function externalHref(uri) {
+  var m;
+  // PubMed — identifiers.org style or direct ncbi.nlm.nih.gov
+  m = uri.match(/[\/:]pubmed[\/:](\d+)/i);
+  if (m) return 'https://pubmed.ncbi.nlm.nih.gov/' + m[1] + '/';
+  // Patents — URI itself is already a valid link (e.g. patents.google.com/…)
+  if (uri.indexOf('patents.google.com') !== -1 || uri.indexOf('lens.org/patent') !== -1) return uri;
+  // Ensembl genes
+  m = uri.match(/(ENSG\d+)/);
+  if (m) return 'http://purl.uniprot.org/agora/' + m[1];
+  // SIO ontology terms — URI itself is the canonical dereferenceable link
+  if (uri.indexOf('semanticscience.org/resource/SIO_') !== -1) return uri;
+  return null;
+}
 
 function uriFragment(uri) {
   var i = uri.lastIndexOf('#');
@@ -1071,18 +1098,19 @@ function renderEntityDetail(d) {
 
   // Type badge
   var typeRow = outRows.find(function(row){ return row[0].includes('22-rdf-syntax-ns#type') || row[0].endsWith('/type'); });
-  document.getElementById('entity-type-badge').textContent = typeRow ? uriFragment(typeRow[1]) : '';
+  document.getElementById('entity-type-badge').textContent = typeRow ? uriFragment(typeRow[2]) : '';
 
   // Split into literals vs URI links
-  var literals  = outRows.filter(function(row){ return !isUri(row[1]); });
-  var uriLinks  = outRows.filter(function(row){ return  isUri(row[1]); });
+  var literals  = outRows.filter(function(row){ return !isUri(row[2]); });
+  var uriLinks  = outRows.filter(function(row){ return  isUri(row[2]); });
 
   // Properties
   document.getElementById('entity-props-count').textContent = literals.length;
   var propsTbody = document.getElementById('entity-props-tbody');
   if (literals.length) {
     propsTbody.innerHTML = literals.map(function(row){
-      return '<tr><td>' + escHtml(uriFragment(row[0])) + '</td><td>' + escHtml(row[1]) + '</td></tr>';
+      var predLabel = row[1] || uriFragment(row[0]);
+      return '<tr><td>' + escHtml(predLabel) + '</td><td>' + escHtml(row[2]) + '</td></tr>';
     }).join('');
   } else {
     propsTbody.innerHTML = '<tr><td colspan="2" class="text-muted">No literal properties.</td></tr>';
@@ -1093,13 +1121,15 @@ function renderEntityDetail(d) {
   var outTbody = document.getElementById('entity-out-tbody');
   if (uriLinks.length) {
     outTbody.innerHTML = uriLinks.map(function(row){
-      var predLabel = uriFragment(row[0]);
-      var objUri    = row[1];
-      var objLabel  = row[2] || uriFragment(objUri);
-      var objFrag   = uriFragment(objUri);
+      var predLabel = row[1] || uriFragment(row[0]);
+      var objUri    = row[2];
+      var objLabel  = row[3] || uriFragment(objUri);
+      var extHref   = externalHref(objUri);
+      var href      = extHref ? escHtml(extHref) : '#entity/' + encodeURIComponent(objUri);
+      var target    = extHref ? ' target="_blank" rel="noopener"' : '';
       return '<tr>' +
         '<td><small class="text-muted">' + escHtml(predLabel) + '</small></td>' +
-        '<td><a href="#entity/' + encodeURIComponent(objUri) + '" title="' + escHtml(objUri) + '">' + escHtml(objLabel) + '</a></td>' +
+        '<td><a href="' + href + '" title="' + escHtml(objUri) + '"' + target + '>' + escHtml(objLabel) + '</a></td>' +
         '</tr>';
     }).join('');
   } else {
@@ -1113,10 +1143,12 @@ function renderEntityDetail(d) {
     inTbody.innerHTML = inRows.map(function(row){
       var subjUri   = row[0];
       var subjLabel = row[1] || uriFragment(subjUri);
-      var predLabel = uriFragment(row[2]);
-      var subjFrag  = uriFragment(subjUri);
+      var predLabel = row[3] || uriFragment(row[2]);
+      var extHref   = externalHref(subjUri);
+      var href      = extHref ? escHtml(extHref) : '#entity/' + encodeURIComponent(subjUri);
+      var target    = extHref ? ' target="_blank" rel="noopener"' : '';
       return '<tr>' +
-        '<td><a href="#entity/' + encodeURIComponent(subjUri) + '" title="' + escHtml(subjUri) + '">' + escHtml(subjLabel) + '</a></td>' +
+        '<td><a href="' + href + '" title="' + escHtml(subjUri) + '"' + target + '>' + escHtml(subjLabel) + '</a></td>' +
         '<td><small class="text-muted">' + escHtml(predLabel) + '</small></td>' +
         '</tr>';
     }).join('');
@@ -1224,14 +1256,36 @@ function renderActiveFilters(filters) {
 
 function updateSearchControls() {
   var filters = getSearchFilters();
+  var hasFilters = Object.keys(filters).length > 0;
   var btn = document.getElementById('search-btn');
-  if (btn) btn.disabled = Object.keys(filters).length === 0;
+  if (btn) btn.disabled = !hasFilters;
+  var prevBtn = document.getElementById('preview-btn');
+  if (prevBtn) prevBtn.disabled = !hasFilters;
+  // hide stale preview when filters change
+  if (!hasFilters) document.getElementById('sparql-preview-wrap').style.display = 'none';
   renderActiveFilters(filters);
   // update location hash for deep-linking
   var qs = new URLSearchParams();
   Object.entries(filters).forEach(function(kv){ qs.set(kv[0], kv[1]); });
-  if (Object.keys(filters).length) history.replaceState(null, '', '#search?' + qs.toString());
+  if (hasFilters) history.replaceState(null, '', '#search?' + qs.toString());
   else history.replaceState(null, '', '#search');
+}
+
+async function toggleSparqlPreview() {
+  var wrap = document.getElementById('sparql-preview-wrap');
+  if (wrap.style.display !== 'none') { wrap.style.display = 'none'; return; }
+  var filters = getSearchFilters();
+  if (!Object.keys(filters).length) return;
+  try {
+    var r = await fetch('/api/search/preview', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filters: filters })
+    });
+    var d = await r.json();
+    if (d.error) { showMsg('search-status','error','Preview error: ' + d.error); return; }
+    document.getElementById('sparql-preview-candidate').textContent = d.candidate_query || '';
+    wrap.style.display = 'block';
+  } catch(e) { showMsg('search-status','error','Preview network error: ' + e.message); }
 }
 
 async function doSearch() {
@@ -1239,49 +1293,61 @@ async function doSearch() {
   if (!Object.keys(filters).length) { showMsg('search-status','warning','Please enter at least one filter.'); return; }
   clearMsg('search-status');
   document.getElementById('search-results-wrap').style.display = 'none';
+  document.getElementById('search-debug-wrap').style.display = 'none';
   showMsg('search-status','success','Searching the Knowledge Graph\u2026');
+
+  if (_searchAbortCtrl) _searchAbortCtrl.abort();
+  _searchAbortCtrl = new AbortController();
 
   try {
     var r = await fetch('/api/search', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ filters: filters })
+      body: JSON.stringify({ filters: filters }),
+      signal: _searchAbortCtrl.signal,
     });
     var d = await r.json();
     clearMsg('search-status');
     if (d.error) { showMsg('search-status','error','Search Error: ' + d.error); return; }
-    if (!d.rows.length) { showMsg('search-status','warning','No results found for the applied filters.'); return; }
+    if (!d.items || !d.items.length) { showMsg('search-status','warning','No results found for the applied filters.'); return; }
     (d.warnings || []).forEach(function(w){ document.getElementById('search-status').innerHTML += '<div class="warning-box">' + escHtml(w) + '</div>'; });
-    searchData = { columns: d.columns, rows: d.rows };
-    renderTable('search-thead','search-tbody', d.columns, d.rows);
-    document.getElementById('search-results-info').textContent = 'Found ' + fmt(d.rows.length) + ' association(s) \u2014 matched ' + fmt(d.matched_peptides) + ' peptide(s).';
+
+    document.getElementById('search-results-info').textContent =
+      'Found ' + fmt(d.matched_peptides) + ' peptide(s).';
+
+    var tbody = document.getElementById('search-tbody');
+    tbody.innerHTML = d.items.map(function(item) {
+      var extra = item.extra
+        ? '<br/><small class="text-muted font-monospace">' + escHtml(item.extra.slice(0,32)) + (item.extra.length > 32 ? '&hellip;' : '') + '</small>'
+        : '';
+      var uriEsc = escHtml(item.uri).replace(/'/g,"&#39;");
+      return '<tr>' +
+        '<td><code style="font-size:.8rem;">' + escHtml(item.local_id) + '</code></td>' +
+        '<td>' + escHtml(item.label) + extra + '</td>' +
+        '<td class="d-none d-md-table-cell text-muted" style="font-size:.75rem;word-break:break-all;">' +
+          escHtml(item.uri) +
+          ' <button class="btn btn-outline-secondary copy-btn" onclick="copyToClipboard(\'' + uriEsc + '\',this)" title="Copy URI"><i class="bi bi-clipboard"></i></button>' +
+        '</td>' +
+        '<td><a href="#entity/' + encodeURIComponent(item.uri) + '" class="btn btn-sm btn-outline-primary">Detail</a></td>' +
+        '</tr>';
+    }).join('');
+
     document.getElementById('search-results-wrap').style.display = 'block';
+
     if (d.debug) {
-      var dbg = d.debug;
-      document.getElementById('search-debug-candidate').textContent = dbg.candidate_query || '';
-      var pepList = (dbg.step1_matched_peptides || []);
-      document.getElementById('search-debug-peptides').textContent =
-        pepList.length ? pepList.join('\n') + '\n(' + pepList.length + ' peptide(s) matched)' : '(none)';
-      document.getElementById('search-debug-details').textContent = dbg.details_query || '(not executed — 0 peptides matched)';
-      var sampleLines = ['Total detail rows: ' + (dbg.step3_total_detail_rows || 0), ''];
-      var sample = dbg.step3_sample_first_row || {};
-      if (Object.keys(sample).length) {
-        sampleLines.push('First row fields:');
-        Object.entries(sample).forEach(function([k, v]) {
-          sampleLines.push('  ' + k + ': ' + (v === '' ? '(empty string)' : v === null ? '(null/unbound)' : v));
-        });
-      }
-      document.getElementById('search-debug-sample').textContent = sampleLines.join('\n');
+      document.getElementById('search-debug-candidate').textContent = d.debug.candidate_query || '';
       document.getElementById('search-debug-wrap').style.display = 'block';
     }
-  } catch(e) { showMsg('search-status','error','Network error: ' + e.message); }
+  } catch(e) { if (e.name !== 'AbortError') showMsg('search-status','error','Network error: ' + e.message); }
 }
 
 function clearSearch() {
+  if (_searchAbortCtrl) { _searchAbortCtrl.abort(); _searchAbortCtrl = null; }
   var keys = ['sequence','cpp_id','mechanism','subcell','cell_line','cargo','doc_id'];
   keys.forEach(function(k){ var el = document.getElementById('filter-' + k); if (el) el.value = ''; });
   clearMsg('search-status');
   document.getElementById('search-results-wrap').style.display = 'none';
   document.getElementById('search-debug-wrap').style.display = 'none';
+  document.getElementById('sparql-preview-wrap').style.display = 'none';
   document.getElementById('active-filters').innerHTML = '';
   history.replaceState(null, '', '#search');
   updateSearchControls();
@@ -1309,12 +1375,12 @@ var EXAMPLE_QUERIES = {
   'Object properties': 'PREFIX owl: <http://www.w3.org/2002/07/owl#>\nSELECT DISTINCT ?property WHERE {\n  ?property a owl:ObjectProperty .\n}\nORDER BY ?property',
 };
 
-var EVAL_PFX = 'PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX owl:   <http://www.w3.org/2002/07/owl#>\nPREFIX sio:   <http://semanticscience.org/resource/>\nPREFIX obo:   <http://purl.obolibrary.org/obo/>\nPREFIX cppm:  <https://cppkg.bio2vec.net/dataset/>\nPREFIX cppi:  <https://w3id.org/cpp/dataset/individuals/>\nPREFIX cpps:  <https://cppkg.bio2vec.net/schema#>\n';
+var EVAL_PFX = 'PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX owl:   <http://www.w3.org/2002/07/owl#>\nPREFIX sio:   <http://semanticscience.org/resource/>\nPREFIX obo:   <http://purl.obolibrary.org/obo/>\nPREFIX cppm:  <https://cppkg.bio2vec.net/dataset/>\nPREFIX cppS:  <https://w3id.org/cpp/schema#>\n';
 
 var COMPETENCY_QUERIES = {
-  'CPP-Complex \u2229 Endocytosis': EVAL_PFX + 'SELECT DISTINCT ?peptide ?mechanism\nWHERE {\n  ?peptide a cppm:CPP-Complex ; sio:SIO_000062 ?mechanism .\n  ?mechanism rdfs:subClassOf* obo:GO_0006897 .\n}\nORDER BY ?peptide LIMIT 30',
-  'Genes \u2192 macropinocytosis': EVAL_PFX + 'SELECT DISTINCT ?gene ?geneLabel\nWHERE {\n  ?gene a sio:SIO_010035 .\n  ?gene (sio:SIO_000008 / sio:SIO_000356 / sio:SIO_001401) obo:GO_0044351 .\n  OPTIONAL { ?gene rdfs:label ?geneLabel . }\n}\nORDER BY ?geneLabel',
-  'CPP-Complex \u2192 Nucleus': EVAL_PFX + 'SELECT DISTINCT ?complex ?mechanismLabel\nWHERE {\n  ?complex a cppm:CPP-Complex .\n  ?complex sio:SIO_000061+ obo:GO_0005634 .\n  OPTIONAL {\n    ?complex sio:SIO_000062 ?mechanism .\n    ?mechanism a cpps:UptakeMechanism .\n    OPTIONAL { ?mechanism rdfs:label ?mechanismLabel . }\n  }\n}\nORDER BY ?mechanismLabel ?complex LIMIT 40',
+  'CPP \u2229 Endocytosis': EVAL_PFX + 'SELECT DISTINCT ?peptide\nWHERE {\n  ?peptide a cppm:CellPenetratingPeptide ;\n           sio:SIO_000008 ?cpp_role .\n  ?cpp_role sio:SIO_000356 ?mechanism .\n  ?mechanism rdfs:subClassOf* obo:GO_0006897 .\n}\nORDER BY ?peptide',
+  'Genes \u2192 macropinocytosis': EVAL_PFX + 'SELECT DISTINCT ?gene ?geneLabel ?activatorRole ?upregulation\nWHERE {\n  ?gene a sio:SIO_010035 .\n  ?gene (sio:SIO_000008 / sio:SIO_000356 / sio:SIO_001401) obo:GO_0044351 .\n  ?gene sio:SIO_000008 ?activatorRole .\n  ?activatorRole sio:SIO_000356 ?upregulation .\n  ?upregulation sio:SIO_001401 obo:GO_0044351 .\n  OPTIONAL { ?gene rdfs:label ?geneLabel . }\n}\nORDER BY ?geneLabel',
+  'CPP-Complex \u2192 Nucleus': EVAL_PFX + 'SELECT DISTINCT ?complex ?location ?locationLabel ?mechanism\nWHERE {\n  ?complex a cppm:CPP-Complex .\n  ?complex sio:SIO_000061+ obo:GO_0005634 .\n  BIND(obo:GO_0005634 AS ?location)\n  OPTIONAL { obo:GO_0005634 rdfs:label ?locationLabel . }\n  OPTIONAL {\n    ?complex sio:SIO_000062 ?mechanism .\n    ?mechanism a cppS:UptakeMechanism .\n  }\n}\nORDER BY ?complex',
 };
 
 function initSparql() {
