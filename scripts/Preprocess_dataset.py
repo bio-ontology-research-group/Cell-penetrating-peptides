@@ -590,7 +590,7 @@ class SequencePreprocessor:
         if pd.isna(text):
             return pd.NA
         mapping = {
-            "Direct penetration": "http://purl.obolibrary.org/obo/GO_0022857",
+            "Direct penetration": "http://purl.obolibrary.org/obo/GO_0022857 , http://purl.obolibrary.org/obo/GO_0098739",
             "Endocytosis": "http://purl.obolibrary.org/obo/GO_0006897",
         }
         parts = [p.strip() for p in str(text).split(",") if p.strip()]
