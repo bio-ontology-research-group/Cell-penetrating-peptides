@@ -51,17 +51,27 @@ CPPSCHEMA = Namespace("https://cppkg.bio2vec.net/schema#")
 # ============================================================================
 
 SHAPE_MAP = [
-    # Class IRI                            ShEx shape name           Label                 Collect
-    (MECH["CellPenetratingPeptide"],       "CPPShape",               "CPP",                "type"),
-    (SIO["SIO_010035"],                    "GeneShape",              "Gene",               "type"),
-    (SIO["SIO_010435"],                    "InhibitorShape",         "Inhibitor",          "type"),
-    (SIO["SIO_010054"],                    "CellLineShape",          "Cell Line",          "type"),
-    (SIO["SIO_001400"],                    "SubcellularEntityShape", "Subcellular Entity", "type"),
-    (CPPSCHEMA["UptakeMechanism"],         "UptakeMechanismShape",   "Uptake Mechanism",   "type"),
-    (MECH["CPP-Complex"],                  "CPPComplexShape",        "CPP-Complex",        "type"),
-    (MECH["Cargo"],                        "CargoShape",             "Cargo",              "type"),
-    (SIO["SIO_000994"],                    "ExperimentShape",        "Experiment",         "type"),
-    (SIO["SIO_000148"],                    "DocumentShape",          "Document",           "type"),
+    # Class IRI                                    ShEx shape name           Label                 Collect
+    # ── Core molecular entities ──────────────────────────────────────────────────────────────────
+    # NOTE: CellPenetratingPeptide, CPP-Complex, Cargo, and role classes are
+    #       defined as owl:Class in the dataset namespace (MECH), not schema.
+    (MECH["CellPenetratingPeptide"],               "CPPShape",               "CPP",                "type"),
+    (MECH["CPP-Complex"],                          "CPPComplexShape",        "CPP-Complex",        "type"),
+    (MECH["Cargo"],                                "CargoShape",             "Cargo",              "type"),
+    # ── Gene / Inhibitor regulation chains ───────────────────────────────────────────────────────
+    (SIO["SIO_010035"],                            "GeneShape",              "Gene",               "type"),
+    (SIO["SIO_010435"],                            "InhibitorShape",         "Inhibitor",          "type"),
+    # ── Role individuals ─────────────────────────────────────────────────────────────────────────
+    (SIO["SIO_000804"],                            "ActivatorRoleShape",     "Activator Role",     "type"),
+    (SIO["SIO_000803"],                            "InhibitorRoleShape",     "Inhibitor Role",     "type"),
+    (MECH["CellPenetratingPeptideRole"],           "CPPRoleShape",           "CPP Role",           "type"),
+    (MECH["CargoRole"],                            "CargoRoleShape",         "Cargo Role",         "type"),
+    # ── Context / provenance ─────────────────────────────────────────────────────────────────────
+    (SIO["SIO_010054"],                            "CellLineShape",          "Cell Line",          "type"),
+    (SIO["SIO_001400"],                            "SubcellularEntityShape", "Subcellular Entity", "type"),
+    (CPPSCHEMA["UptakeMechanism"],                 "UptakeMechanismShape",   "Uptake Mechanism",   "type"),
+    (SIO["SIO_000994"],                            "ExperimentShape",        "Experiment",         "type"),
+    (SIO["SIO_000148"],                            "DocumentShape",          "Document",           "type"),
 ]
 
 
