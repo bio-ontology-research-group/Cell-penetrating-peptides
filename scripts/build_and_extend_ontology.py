@@ -21,7 +21,7 @@ import importlib.util
 import os
 if not jpype.isJVMStarted():
     import glob
-    _mowl_jars = glob.glob(os.path.expanduser('~/miniconda3/envs/cpp_kg/lib/python3.10/site-packages/mowl/lib/*.jar'))
+    _mowl_jars = glob.glob(os.path.expanduser('~/miniconda3/envs/fab_2024/lib/python3.10/site-packages/mowl/lib/*.jar'))
     jpype.startJVM(classpath=_mowl_jars)
 import jpype.imports
 import pandas as pd
@@ -31,7 +31,7 @@ from typing import List, Tuple
 
 from org.semanticweb.owlapi.apibinding import OWLManager
 from org.semanticweb.owlapi.model import (
-    IRI, AddAxiom, AddOntologyAnnotation, RemoveOntologyAnnotation,
+    IRI, AddAxiom, AddImport, AddOntologyAnnotation, RemoveOntologyAnnotation,
     OWLOntologyID, SetOntologyID
 )
 import java.io
@@ -84,6 +84,7 @@ SIO_DESCRIBES        = "http://semanticscience.org/resource/SIO_000563"  # descr
 SIO_HAS_PROPER_PART  = "http://semanticscience.org/resource/SIO_000053"  # has proper part
 SIO_IS_PROPER_PART   = "http://semanticscience.org/resource/SIO_000093"  # is proper part of
 SIO_HAS_EVIDENCE     = "http://semanticscience.org/resource/SIO_000772"  # has evidence (link to document)
+SIO_IS_ABOUT         = "http://semanticscience.org/resource/SIO_000332"  # is about (experiment → mechanism topic)
 
 # CPP namespaces
 CPP_SCHEMA_NS          = "https://cppkg.bio2vec.net/schema#"
@@ -91,6 +92,10 @@ CPP_DATASET_NS   = "https://cppkg.bio2vec.net/dataset/"
 
 # TBox: UptakeMechanism class lives in the schema namespace (not the dataset)
 UPTAKE_MECHANISM_CLASS = CPP_SCHEMA_NS + "UptakeMechanism"
+
+# Gene Ontology import IRI — declared in the output ontology header so reasoners
+# can optionally resolve the full GO hierarchy for transitive subClassOf* queries.
+GO_ONTOLOGY_IRI = "http://purl.obolibrary.org/obo/go.owl"
 
 SIO_OWL = "data/Ontology/sio.owl"
 # Intermediate files directory (triplets, downloaded SIO, metadata)
@@ -282,6 +287,18 @@ def _annotate_individual(manager, ontology, factory, subject_iri_str, label, db_
                 see_also, subj, IRI.create(db_source_iri))))
 
 
+def _annotate_go_class(manager, ontology, factory, go_iri_str, label):
+    """Add rdfs:label, rdfs:comment (= label), and rdfs:seeAlso (AmiGO) to a GO owl:Class IRI."""
+    _annotate_class(manager, ontology, factory, go_iri_str, label, label)
+    if "obolibrary" in go_iri_str:
+        go_local  = go_iri_str.split("/")[-1]
+        amigo_url = f"https://amigo.geneontology.org/amigo/term/{go_local.replace('_', ':')}"
+        see_also  = factory.getOWLAnnotationProperty(IRI.create(RDFS_NS + "seeAlso"))
+        manager.applyChange(AddAxiom(ontology,
+            factory.getOWLAnnotationAssertionAxiom(
+                see_also, IRI.create(go_iri_str), IRI.create(amigo_url))))
+
+
 # Annotation property IRIs for CPP-domain features (all under CPP_SCHEMA_NS)
 CPP_FEATURE_PROPS = {
     # CellPenetratingPeptide features
@@ -384,6 +401,14 @@ def extend_gene_regulation(gene_to_go_file: str, output_file: str):
     ontology = manager.loadOntologyFromOntologyDocument(java.io.File(SIO_OWL))
     factory  = manager.getOWLDataFactory()
 
+    # Declare owl:imports for the Gene Ontology so that reasoners and SPARQL
+    # engines can resolve the full GO class hierarchy for transitive
+    # rdfs:subClassOf* queries (e.g. ?mechanism rdfs:subClassOf* obo:GO_0006897).
+    # Actual loading is controlled by the OWLOntologyManager's loader config;
+    # disable imports in the loader config if full GO resolution is unwanted.
+    go_import_decl = factory.getOWLImportsDeclaration(IRI.create(GO_ONTOLOGY_IRI))
+    manager.applyChange(AddImport(ontology, go_import_decl))
+
     # --- TBox: UptakeMechanism subclass of SIO process ---
     sio_process_cl   = factory.getOWLClass(IRI.create(SIO_PROCESS))
     uptake_mech_cl   = factory.getOWLClass(IRI.create(UPTAKE_MECHANISM_CLASS))
@@ -423,25 +448,24 @@ def extend_gene_regulation(gene_to_go_file: str, output_file: str):
             print(f"Warning: failed to load metadata {meta_path}: {e}")
 
     # --- User-specified positive-regulation GO terms as up-regulation processes ---
-    print("Adding user-specified positive regulation GO terms as up-regulation processes...")
+    # GO positive-regulation terms are owl:Class, subClassOf SIO up-regulation.
+    # Declaring them as classes (not individuals) preserves strict Class/Individual
+    # separation and allows transitive rdfs:subClassOf* queries over the GO hierarchy.
+    print("Adding user-specified positive regulation GO terms as owl:Class subclasses of up-regulation...")
     user_pos_reg_terms = {
         'http://purl.obolibrary.org/obo/GO_2000370': 'positive regulation of clathrin-dependent endocytosis',
         'http://purl.obolibrary.org/obo/GO_2001288': 'positive regulation of caveolin-mediated endocytosis',
         'http://purl.obolibrary.org/obo/GO_1905303': 'positive regulation of macropinocytosis',
         'http://purl.obolibrary.org/obo/GO_0050766': 'positive regulation of phagocytosis',
-        CPP_DATASET_NS + 'pos_reg_clathrin_caveolae_independent_endocytosis': 'positive regulation of clathrin- and caveolae-independent endocytosis'
+        CPP_DATASET_NS + 'pos_reg_clathrin_caveolae_independent_endocytosis': 'positive regulation of clathrin- and caveolae-independent endocytosis',
+        CPP_DATASET_NS + 'pos_reg_import_across_plasma_membrane':             'positive regulation of import across plasma membrane',
     }
     for go_iri_str, go_label in user_pos_reg_terms.items():
-        go_local = go_iri_str.split("/")[-1]
-        go_ind   = factory.getOWLNamedIndividual(IRI.create(go_iri_str))
+        go_cl = factory.getOWLClass(IRI.create(go_iri_str))
+        manager.applyChange(AddAxiom(ontology, factory.getOWLDeclarationAxiom(go_cl)))
         manager.applyChange(AddAxiom(ontology,
-            factory.getOWLDeclarationAxiom(go_ind)))
-        manager.applyChange(AddAxiom(ontology,
-            factory.getOWLClassAssertionAxiom(upregulation_cl, go_ind)))
-        db_source = None
-        if "obolibrary" in go_iri_str:
-            db_source = f"https://amigo.geneontology.org/amigo/term/{go_local.replace('_', ':')}"
-        _annotate_individual(manager, ontology, factory, go_iri_str, go_label, db_source_iri=db_source)
+            factory.getOWLSubClassOfAxiom(go_cl, upregulation_cl)))
+        _annotate_go_class(manager, ontology, factory, go_iri_str, go_label)
 
     # Map uptake mechanisms to their positive-regulation process.
     # Keys match uptake GO IDs used in triplets/gene_to_go.tsv.
@@ -453,6 +477,7 @@ def extend_gene_regulation(gene_to_go_file: str, output_file: str):
         'http://purl.obolibrary.org/obo/GO_0044351': 'http://purl.obolibrary.org/obo/GO_1905303',  # macropinocytosis
         'http://purl.obolibrary.org/obo/GO_0006909': 'http://purl.obolibrary.org/obo/GO_0050766',  # phagocytosis
         'http://purl.obolibrary.org/obo/GO_0160294': CPP_DATASET_NS + 'pos_reg_clathrin_caveolae_independent_endocytosis',  # clathrin- and caveolae-independent endocytosis
+        'http://purl.obolibrary.org/obo/GO_0098739': CPP_DATASET_NS + 'pos_reg_import_across_plasma_membrane',  # import across plasma membrane
 
         # Backward-compatible aliases (if legacy uptake GO IDs appear)
         'http://purl.obolibrary.org/obo/GO_0006903': 'http://purl.obolibrary.org/obo/GO_2000370',
@@ -515,56 +540,88 @@ def extend_gene_regulation(gene_to_go_file: str, output_file: str):
                     manager.applyChange(AddAxiom(ontology,
                         factory.getOWLObjectPropertyAssertionAxiom(has_evidence, gene_ind, pub_ind)))
 
-    # --- UptakeMechanism individuals (unique GO terms) ---
+    # --- UptakeMechanism GO terms declared as owl:Class (Taxonomy Correction) ---
+    # UptakeMechanism is the parent class; each GO uptake mechanism is a subclass.
+    # This enables transitive SPARQL queries: ?m rdfs:subClassOf* obo:GO_0006897.
     go_terms = df[1].unique()
-    print(f"Adding {len(go_terms)} UptakeMechanism individuals (GO terms)...")
+    print(f"Declaring {len(go_terms)} UptakeMechanism GO terms as owl:Class subclasses...")
     for go_iri_str in go_terms:
         go_local = go_iri_str.split("/")[-1]               # e.g. GO_0006909
-        go_ind   = factory.getOWLNamedIndividual(IRI.create(go_iri_str))
+        go_cl    = factory.getOWLClass(IRI.create(go_iri_str))
+        manager.applyChange(AddAxiom(ontology, factory.getOWLDeclarationAxiom(go_cl)))
         manager.applyChange(AddAxiom(ontology,
-            factory.getOWLDeclarationAxiom(go_ind)))
-        manager.applyChange(AddAxiom(ontology,
-            factory.getOWLClassAssertionAxiom(uptake_mech_cl, go_ind)))
-        # F2 / F3: label + identifier + seeAlso → AmiGO
+            factory.getOWLSubClassOfAxiom(go_cl, uptake_mech_cl)))
         go_label = metadata.get("go_labels", {}).get(go_iri_str, go_local) if metadata else go_local
-        _annotate_individual(manager, ontology, factory, go_iri_str, go_label,
-            db_source_iri=f"https://amigo.geneontology.org/amigo/term/{go_local.replace('_', ':')}")
+        _annotate_go_class(manager, ontology, factory, go_iri_str, go_label)
 
-    # --- Shared activator role instances: one per uptake mechanism ---
-    role_for_mechanism = {}
-    for uptake_mech_iri in sorted(df_pairs[1].unique()):
-        uptake_local_id = uptake_mech_iri.split("/")[-1]
-        role_iri = CPP_DATASET_NS + uptake_local_id + "_activator_role"
-        role_ind = factory.getOWLNamedIndividual(IRI.create(role_iri))
-        upreg_proc_iri = pos_reg_map.get(uptake_mech_iri)
-        if upreg_proc_iri:
-            upreg_ind = factory.getOWLNamedIndividual(IRI.create(upreg_proc_iri))
-            uptake_mech_ind = factory.getOWLNamedIndividual(IRI.create(uptake_mech_iri))
-            role_for_mechanism[uptake_mech_iri] = role_ind
-            manager.applyChange(AddAxiom(ontology, factory.getOWLDeclarationAxiom(role_ind)))
-            manager.applyChange(AddAxiom(ontology, factory.getOWLClassAssertionAxiom(activator_role_cl, role_ind)))
-            manager.applyChange(AddAxiom(ontology,
-                factory.getOWLObjectPropertyAssertionAxiom(is_realized_in, role_ind, upreg_ind)))
-            manager.applyChange(AddAxiom(ontology,
-                factory.getOWLObjectPropertyAssertionAxiom(realizes, upreg_ind, role_ind)))
-            manager.applyChange(AddAxiom(ontology,
-                factory.getOWLObjectPropertyAssertionAxiom(gene_to_go_prop, upreg_ind, uptake_mech_ind)))
-            _annotate_individual(manager, ontology, factory, role_iri,
-                f"{uptake_local_id} activator role")
-        else:
-            print(f"Warning: No positive regulation process mapping for uptake mechanism {uptake_mech_iri}")
-
-    # --- Gene → shared ActivatorRole links (one per unique gene/mechanism pair) ---
-    print(f"Linking {len(df_pairs)} gene→shared-activator-role pairs...")
-    for _, row in df_pairs.iterrows():
-        gene_ind = factory.getOWLNamedIndividual(IRI.create(row[0]))
+    # --- SIO "Specific Role" pattern: one unique role + process per (gene, mechanism) pair ---
+    # SIO roles are NOT shared entities. Each gene gets its own role individual per
+    # mechanism, disambiguating "Gene X's activator role in mechanism M" from
+    # "Gene Y's activator role in the same mechanism M."
+    # The process individual is typed as the positive-regulation GO CLASS (owl:Class),
+    # and additionally carries an existential restriction linking it to the mechanism class.
+    print(f"Linking {len(df_pairs)} gene→mechanism pairs with specific activator roles...")
+    for pair_idx, (_, row) in enumerate(df_pairs.iterrows(), start=1):
+        gene_iri_str    = row[0]
         uptake_mech_iri = row[1]
-        role_ind = role_for_mechanism.get(uptake_mech_iri)
-        if role_ind:
-            manager.applyChange(AddAxiom(ontology,
-                factory.getOWLObjectPropertyAssertionAxiom(has_attribute, gene_ind, role_ind)))
-            manager.applyChange(AddAxiom(ontology,
-                factory.getOWLObjectPropertyAssertionAxiom(is_attribute_of, role_ind, gene_ind)))
+        gene_local      = gene_iri_str.split("/")[-1]
+        uptake_local_id = uptake_mech_iri.split("/")[-1]
+
+        upreg_proc_iri = pos_reg_map.get(uptake_mech_iri)
+        if not upreg_proc_iri:
+            print(f"Warning: No positive regulation process mapping for {uptake_mech_iri}")
+            continue
+
+        gene_ind = factory.getOWLNamedIndividual(IRI.create(gene_iri_str))
+
+        # Unique role individual for this (gene, mechanism) pair
+        role_iri = CPP_DATASET_NS + gene_local + "_" + uptake_local_id + "_activator_role"
+        role_ind = factory.getOWLNamedIndividual(IRI.create(role_iri))
+
+        # Unique process individual for this (gene, mechanism) pair
+        upreg_inst_iri = CPP_DATASET_NS + f"upreg_process_{pair_idx:04d}"
+        upreg_ind      = factory.getOWLNamedIndividual(IRI.create(upreg_inst_iri))
+
+        # The positive-regulation GO class (owl:Class, already declared above)
+        upreg_cl  = factory.getOWLClass(IRI.create(upreg_proc_iri))
+        mech_cl   = factory.getOWLClass(IRI.create(uptake_mech_iri))
+
+        manager.applyChange(AddAxiom(ontology, factory.getOWLDeclarationAxiom(role_ind)))
+        manager.applyChange(AddAxiom(ontology, factory.getOWLDeclarationAxiom(upreg_ind)))
+
+        # Role type: activator role class
+        manager.applyChange(AddAxiom(ontology,
+            factory.getOWLClassAssertionAxiom(activator_role_cl, role_ind)))
+
+        # Process individual typed as the specific positive-regulation GO class.
+        # Because upreg_cl is an owl:Class (subClassOf upregulation_cl), a reasoner
+        # can infer the process is an up-regulation process via the class hierarchy.
+        manager.applyChange(AddAxiom(ontology,
+            factory.getOWLClassAssertionAxiom(upreg_cl, upreg_ind)))
+
+        # Existential restriction: upreg_ind is of type (gene_to_go_prop some mech_cl).
+        # This binds the process individual to the mechanism CLASS without requiring
+        # the GO term to be an individual, preserving strict Class/Individual separation.
+        mech_exists = factory.getOWLObjectSomeValuesFrom(gene_to_go_prop, mech_cl)
+        manager.applyChange(AddAxiom(ontology,
+            factory.getOWLClassAssertionAxiom(mech_exists, upreg_ind)))
+
+        # Gene → role (has_attribute / is_attribute_of)
+        manager.applyChange(AddAxiom(ontology,
+            factory.getOWLObjectPropertyAssertionAxiom(has_attribute,   gene_ind, role_ind)))
+        manager.applyChange(AddAxiom(ontology,
+            factory.getOWLObjectPropertyAssertionAxiom(is_attribute_of, role_ind, gene_ind)))
+
+        # Role → process (is_realized_in / realizes)
+        manager.applyChange(AddAxiom(ontology,
+            factory.getOWLObjectPropertyAssertionAxiom(is_realized_in, role_ind,   upreg_ind)))
+        manager.applyChange(AddAxiom(ontology,
+            factory.getOWLObjectPropertyAssertionAxiom(realizes,       upreg_ind,  role_ind)))
+
+        _annotate_individual(manager, ontology, factory, role_iri,
+            f"{gene_local} activator role for {uptake_local_id}")
+        _annotate_individual(manager, ontology, factory, upreg_inst_iri,
+            f"{gene_local} up-regulation process for {uptake_local_id}")
 
     # Save result
     out_iri = IRI.create(java.io.File(output_file).getAbsoluteFile().toURI())
@@ -685,27 +742,23 @@ def extend_inhibitor_regulation(chebi_to_go_file: str, input_file: str, output_f
                     manager.applyChange(AddAxiom(ontology,
                         factory.getOWLObjectPropertyAssertionAxiom(has_evidence, chebi_ind, pub_ind)))
 
-    # --- User-specified negative regulation GO terms as down-regulation processes ---
-    print("Adding user-specified negative regulation GO terms as down-regulation processes...")
+    # GO negative-regulation terms declared as owl:Class, subClassOf SIO down-regulation.
+    print("Adding user-specified negative regulation GO terms as owl:Class subclasses of down-regulation...")
     user_go_terms = {
         'http://purl.obolibrary.org/obo/GO_1900186': 'negative regulation of clathrin-dependent endocytosis',
         'http://purl.obolibrary.org/obo/GO_2001287': 'negative regulation of caveolin-mediated endocytosis',
         'http://purl.obolibrary.org/obo/GO_1905302': 'negative regulation of macropinocytosis',
         'http://purl.obolibrary.org/obo/GO_0050765': 'negative regulation of phagocytosis',
-        CPP_DATASET_NS + 'neg_reg_clathrin_caveolae_independent_endocytosis': 'negative regulation of clathrin- and caveolae-independent endocytosis'
+        CPP_DATASET_NS + 'neg_reg_clathrin_caveolae_independent_endocytosis': 'negative regulation of clathrin- and caveolae-independent endocytosis',
+        CPP_DATASET_NS + 'neg_reg_import_across_plasma_membrane':             'negative regulation of import across plasma membrane',
     }
 
     for go_iri_str, go_label in user_go_terms.items():
-        go_local = go_iri_str.split("/")[-1]
-        go_ind   = factory.getOWLNamedIndividual(IRI.create(go_iri_str))
+        go_cl = factory.getOWLClass(IRI.create(go_iri_str))
+        manager.applyChange(AddAxiom(ontology, factory.getOWLDeclarationAxiom(go_cl)))
         manager.applyChange(AddAxiom(ontology,
-            factory.getOWLDeclarationAxiom(go_ind)))
-        manager.applyChange(AddAxiom(ontology,
-            factory.getOWLClassAssertionAxiom(downreg_cl, go_ind))) # Changed to downreg_cl
-        db_source = None
-        if "obolibrary" in go_iri_str:
-            db_source = f"https://amigo.geneontology.org/amigo/term/{go_local.replace('_', ':')}"
-        _annotate_individual(manager, ontology, factory, go_iri_str, go_label, db_source_iri=db_source)
+            factory.getOWLSubClassOfAxiom(go_cl, downreg_cl)))
+        _annotate_go_class(manager, ontology, factory, go_iri_str, go_label)
 
     # Map uptake mechanisms to their negative-regulation process.
     # The keys here must match the uptake GO IDs used in triplets/chebi_to_go.tsv.
@@ -717,6 +770,7 @@ def extend_inhibitor_regulation(chebi_to_go_file: str, input_file: str, output_f
         'http://purl.obolibrary.org/obo/GO_0044351': 'http://purl.obolibrary.org/obo/GO_1905302',  # macropinocytosis
         'http://purl.obolibrary.org/obo/GO_0006909': 'http://purl.obolibrary.org/obo/GO_0050765',  # phagocytosis
         'http://purl.obolibrary.org/obo/GO_0160294': CPP_DATASET_NS + 'neg_reg_clathrin_caveolae_independent_endocytosis',  # clathrin- and caveolae-independent endocytosis
+        'http://purl.obolibrary.org/obo/GO_0098739': CPP_DATASET_NS + 'neg_reg_import_across_plasma_membrane',  # import across plasma membrane
 
         # Backward-compatible aliases (if legacy uptake GO IDs appear)
         'http://purl.obolibrary.org/obo/GO_0006903': 'http://purl.obolibrary.org/obo/GO_1900186',
@@ -727,41 +781,65 @@ def extend_inhibitor_regulation(chebi_to_go_file: str, input_file: str, output_f
         'http://purl.obolibrary.org/obo/GO_0006908': CPP_DATASET_NS + 'neg_reg_clathrin_caveolae_independent_endocytosis',
     }
 
-    # --- Shared inhibitor role instances: one per uptake mechanism ---
-    role_for_mechanism = {}
-    for uptake_mech_iri in sorted(df_pairs[1].unique()):
-        uptake_local_id = uptake_mech_iri.split("/")[-1]
-        role_iri = CPP_DATASET_NS + uptake_local_id + "_inhibitor_role"
-        role_ind = factory.getOWLNamedIndividual(IRI.create(role_iri))
-        downreg_proc_iri = neg_reg_map.get(uptake_mech_iri)
-        if downreg_proc_iri:
-            downreg_ind = factory.getOWLNamedIndividual(IRI.create(downreg_proc_iri))
-            uptake_mech_ind = factory.getOWLNamedIndividual(IRI.create(uptake_mech_iri))
-            role_for_mechanism[uptake_mech_iri] = role_ind
-            manager.applyChange(AddAxiom(ontology, factory.getOWLDeclarationAxiom(role_ind)))
-            manager.applyChange(AddAxiom(ontology, factory.getOWLClassAssertionAxiom(inhibitor_role_cl, role_ind)))
-            manager.applyChange(AddAxiom(ontology,
-                factory.getOWLObjectPropertyAssertionAxiom(is_realized_in,  role_ind,   downreg_ind)))
-            manager.applyChange(AddAxiom(ontology,
-                factory.getOWLObjectPropertyAssertionAxiom(realizes,        downreg_ind, role_ind)))
-            manager.applyChange(AddAxiom(ontology,
-                factory.getOWLObjectPropertyAssertionAxiom(neg_regulates, downreg_ind, uptake_mech_ind)))
-            _annotate_individual(manager, ontology, factory, role_iri,
-                f"{uptake_local_id} inhibitor role")
-        else:
-             print(f"Warning: No negative regulation process mapping for uptake mechanism {uptake_mech_iri}")
-
-    # --- Inhibitor → shared InhibitorRole links (one per unique chebi/mechanism pair) ---
-    print(f"Linking {len(df_pairs)} inhibitor→shared-inhibitor-role pairs...")
-    for _, row in df_pairs.iterrows():
-        chebi_ind = factory.getOWLNamedIndividual(IRI.create(row[0]))
+    # --- SIO "Specific Role" pattern: one unique role + process per (inhibitor, mechanism) pair ---
+    print(f"Linking {len(df_pairs)} inhibitor→mechanism pairs with specific inhibitor roles...")
+    for pair_idx, (_, row) in enumerate(df_pairs.iterrows(), start=1):
+        chebi_iri_str   = row[0]
         uptake_mech_iri = row[1]
-        role_ind = role_for_mechanism.get(uptake_mech_iri)
-        if role_ind:
-            manager.applyChange(AddAxiom(ontology,
-                factory.getOWLObjectPropertyAssertionAxiom(has_attribute, chebi_ind, role_ind)))
-            manager.applyChange(AddAxiom(ontology,
-                factory.getOWLObjectPropertyAssertionAxiom(is_attribute_of, role_ind, chebi_ind)))
+        chebi_local     = chebi_iri_str.split("/")[-1]
+        uptake_local_id = uptake_mech_iri.split("/")[-1]
+
+        downreg_proc_iri = neg_reg_map.get(uptake_mech_iri)
+        if not downreg_proc_iri:
+            print(f"Warning: No negative regulation process mapping for {uptake_mech_iri}")
+            continue
+
+        chebi_ind = factory.getOWLNamedIndividual(IRI.create(chebi_iri_str))
+
+        # Unique role individual for this (inhibitor, mechanism) pair
+        role_iri = CPP_DATASET_NS + chebi_local + "_" + uptake_local_id + "_inhibitor_role"
+        role_ind = factory.getOWLNamedIndividual(IRI.create(role_iri))
+
+        # Unique process individual for this (inhibitor, mechanism) pair
+        downreg_inst_iri = CPP_DATASET_NS + f"downreg_process_{pair_idx:04d}"
+        downreg_ind      = factory.getOWLNamedIndividual(IRI.create(downreg_inst_iri))
+
+        # The negative-regulation GO class (owl:Class, already declared above)
+        downreg_proc_cl = factory.getOWLClass(IRI.create(downreg_proc_iri))
+        mech_cl         = factory.getOWLClass(IRI.create(uptake_mech_iri))
+
+        manager.applyChange(AddAxiom(ontology, factory.getOWLDeclarationAxiom(role_ind)))
+        manager.applyChange(AddAxiom(ontology, factory.getOWLDeclarationAxiom(downreg_ind)))
+
+        # Role type: inhibitor role class
+        manager.applyChange(AddAxiom(ontology,
+            factory.getOWLClassAssertionAxiom(inhibitor_role_cl, role_ind)))
+
+        # Process individual typed as the specific negative-regulation GO class
+        manager.applyChange(AddAxiom(ontology,
+            factory.getOWLClassAssertionAxiom(downreg_proc_cl, downreg_ind)))
+
+        # Existential restriction: process is of type (neg_regulates some mech_cl)
+        mech_exists = factory.getOWLObjectSomeValuesFrom(neg_regulates, mech_cl)
+        manager.applyChange(AddAxiom(ontology,
+            factory.getOWLClassAssertionAxiom(mech_exists, downreg_ind)))
+
+        # Inhibitor → role (has_attribute / is_attribute_of)
+        manager.applyChange(AddAxiom(ontology,
+            factory.getOWLObjectPropertyAssertionAxiom(has_attribute,   chebi_ind, role_ind)))
+        manager.applyChange(AddAxiom(ontology,
+            factory.getOWLObjectPropertyAssertionAxiom(is_attribute_of, role_ind,   chebi_ind)))
+
+        # Role → process (is_realized_in / realizes)
+        manager.applyChange(AddAxiom(ontology,
+            factory.getOWLObjectPropertyAssertionAxiom(is_realized_in, role_ind,    downreg_ind)))
+        manager.applyChange(AddAxiom(ontology,
+            factory.getOWLObjectPropertyAssertionAxiom(realizes,       downreg_ind, role_ind)))
+
+        _annotate_individual(manager, ontology, factory, role_iri,
+            f"{chebi_local} inhibitor role for {uptake_local_id}")
+        _annotate_individual(manager, ontology, factory, downreg_inst_iri,
+            f"{chebi_local} down-regulation process for {uptake_local_id}")
 
     # Save as OWL/RDF-XML
     out_iri = IRI.create(java.io.File(output_file).getAbsoluteFile().toURI())
@@ -886,7 +964,7 @@ def extend_ontology_with_annotations(ontology: str,
     has_attribute    = factory.getOWLObjectProperty(IRI.create(SIO_HAS_ATTRIBUTE))
     is_attribute_of  = factory.getOWLObjectProperty(IRI.create(SIO_IS_ATTRIBUTE_OF))
     is_realized_in   = factory.getOWLObjectProperty(IRI.create(SIO_IS_REALIZED_IN))
-    realizes         = factory.getOWLObjectProperty(IRI.create(SIO_REALIZES))
+    # realizes (SIO_REALIZES) is used only in Phase 1 and Phase 2; not needed here.
 
     cpp_complex_cl   = factory.getOWLClass(IRI.create(CPP_DATASET_NS + "CPP-Complex"))
     cpp_peptide_cl   = factory.getOWLClass(IRI.create(CPP_DATASET_NS + "CellPenetratingPeptide"))
@@ -1065,16 +1143,14 @@ def extend_ontology_with_annotations(ontology: str,
             if iri_str not in seen_mechs:
                 seen_mechs[iri_str] = label
 
-    print(f"  Asserting {len(seen_mechs)} UptakeMechanism individuals from CSV ...")
+    # GO uptake mechanism terms from CSV are declared as owl:Class, subClassOf UptakeMechanism.
+    print(f"  Declaring {len(seen_mechs)} UptakeMechanism GO terms as owl:Class subclasses from CSV ...")
     for mech_iri, mech_label in seen_mechs.items():
-        mech_ind = factory.getOWLNamedIndividual(IRI.create(mech_iri))
+        go_cl = factory.getOWLClass(IRI.create(mech_iri))
+        manager.applyChange(AddAxiom(onto, factory.getOWLDeclarationAxiom(go_cl)))
         manager.applyChange(AddAxiom(onto,
-            factory.getOWLDeclarationAxiom(mech_ind)))
-        manager.applyChange(AddAxiom(onto,
-            factory.getOWLClassAssertionAxiom(uptake_mech_cl, mech_ind)))
-        go_local = mech_iri.split("/")[-1]
-        _annotate_individual(manager, onto, factory, mech_iri, mech_label,
-            db_source_iri=f"https://amigo.geneontology.org/amigo/term/{go_local.replace('_', ':')}")
+            factory.getOWLSubClassOfAxiom(go_cl, uptake_mech_cl)))
+        _annotate_go_class(manager, onto, factory, mech_iri, mech_label)
 
     # --- Cell line individuals (SIO_010054) from RAG_curie_CLO column ---
     cell_line_cl = factory.getOWLClass(IRI.create(SIO_CELL_LINE))
@@ -1108,15 +1184,14 @@ def extend_ontology_with_annotations(ontology: str,
             if iri_str not in seen_subcell:
                 seen_subcell[iri_str] = label
 
-    print(f"  Asserting {len(seen_subcell)} subcellular entity individuals (SIO_001400) ...")
+    # GO subcellular component terms declared as owl:Class, subClassOf SIO_001400.
+    print(f"  Declaring {len(seen_subcell)} subcellular GO terms as owl:Class subclasses (SIO_001400) ...")
     for sub_iri, sub_label in seen_subcell.items():
-        sub_ind = factory.getOWLNamedIndividual(IRI.create(sub_iri))
-        manager.applyChange(AddAxiom(onto, factory.getOWLDeclarationAxiom(sub_ind)))
+        sub_cl = factory.getOWLClass(IRI.create(sub_iri))
+        manager.applyChange(AddAxiom(onto, factory.getOWLDeclarationAxiom(sub_cl)))
         manager.applyChange(AddAxiom(onto,
-            factory.getOWLClassAssertionAxiom(subcell_cl, sub_ind)))
-        go_local = sub_iri.split("/")[-1]
-        _annotate_individual(manager, onto, factory, sub_iri, sub_label,
-            db_source_iri=f"https://amigo.geneontology.org/amigo/term/{go_local.replace('_', ':')}")
+            factory.getOWLSubClassOfAxiom(sub_cl, subcell_cl)))
+        _annotate_go_class(manager, onto, factory, sub_iri, sub_label)
 
     # Each unique RAG_curie_CheBI → named individual rdf:type cpp:Cargo
     chebi_ind_map = {}
@@ -1172,16 +1247,14 @@ def extend_ontology_with_annotations(ontology: str,
         cargo_role_ind = factory.getOWLNamedIndividual(
             IRI.create(CPP_DATASET_NS + f"cargo_role_{role_idx:04d}"))
 
-        # Resolve uptake mechanism IRI(s) for this pair (subcategory-first)
+        # Resolve uptake mechanism IRI(s) for this pair (subcategory-first).
+        # Mechanisms are owl:Class; collect IRIs rather than individual objects.
         sub_id  = row["Subcategory Uptake Mechanism ID"]
         main_id = row["Main Uptake Mechanism ID"]
         chosen  = sub_id if pd.notna(sub_id) and str(sub_id).strip() else main_id
-        mech_inds_for_role = []
+        mech_iris_for_role = []
         if pd.notna(chosen) and str(chosen).strip():
-            mech_inds_for_role = [
-                factory.getOWLNamedIndividual(IRI.create(m.strip()))
-                for m in str(chosen).split(",") if m.strip()
-            ]
+            mech_iris_for_role = [m.strip() for m in str(chosen).split(",") if m.strip()]
 
         for ind_to_declare in [complex_ind, cpp_role_ind, cargo_role_ind]:
             manager.applyChange(AddAxiom(onto, factory.getOWLDeclarationAxiom(ind_to_declare)))
@@ -1219,13 +1292,15 @@ def extend_ontology_with_annotations(ontology: str,
                         rdfs_label, ind.getIRI(),
                         factory.getOWLLiteral(label))))
 
-        # Roles are realized in the uptake mechanism instance(s) for this pair
-        for mech_ind in mech_inds_for_role:
+        # Roles are realized in the uptake mechanism CLASS(es) for this pair.
+        # Use existential restrictions (is_realized_in some MechClass) instead of
+        # property assertions to individuals, preserving Class/Individual separation.
+        for mech_iri_str in mech_iris_for_role:
+            mech_cl    = factory.getOWLClass(IRI.create(mech_iri_str))
+            real_exist = factory.getOWLObjectSomeValuesFrom(is_realized_in, mech_cl)
             for role_ind in [cpp_role_ind, cargo_role_ind]:
                 manager.applyChange(AddAxiom(onto,
-                    factory.getOWLObjectPropertyAssertionAxiom(is_realized_in, role_ind, mech_ind)))
-                manager.applyChange(AddAxiom(onto,
-                    factory.getOWLObjectPropertyAssertionAxiom(realizes, mech_ind, role_ind)))
+                    factory.getOWLClassAssertionAxiom(real_exist, role_ind)))
 
     # --- Experiment individuals (SIO_000994) ---
     # One experiment per CSV row; links CPP-Complex, UptakeMechanism,
@@ -1234,12 +1309,13 @@ def extend_ontology_with_annotations(ontology: str,
     has_participant = factory.getOWLObjectProperty(IRI.create(SIO_HAS_PARTICIPANT))
     is_part_in      = factory.getOWLObjectProperty(IRI.create(SIO_IS_PART_IN))
     is_located_in   = factory.getOWLObjectProperty(IRI.create(SIO_IS_LOCATED_IN))
-    is_location_of  = factory.getOWLObjectProperty(IRI.create(SIO_IS_LOCATION_OF))
     document_cl     = factory.getOWLClass(IRI.create(SIO_DOCUMENT))
     is_described_by = factory.getOWLObjectProperty(IRI.create(SIO_IS_DESCRIBED_BY))
     describes       = factory.getOWLObjectProperty(IRI.create(SIO_DESCRIBES))
-    has_proper_part = factory.getOWLObjectProperty(IRI.create(SIO_HAS_PROPER_PART))
-    is_proper_part  = factory.getOWLObjectProperty(IRI.create(SIO_IS_PROPER_PART))
+    # sio:is_about (SIO:000332) — Experiment is_about the Mechanism it investigates.
+    # A mechanism is the TOPIC of an experiment, not a structural part of it.
+    # has_proper_part (SIO:000053) is intentionally NOT used here.
+    is_about        = factory.getOWLObjectProperty(IRI.create(SIO_IS_ABOUT))
 
     df_exp = pd.read_csv(cpp_csv_file, usecols=[
         "id", "CPP_ID", "RAG_curie_CheBI",
@@ -1269,20 +1345,19 @@ def extend_ontology_with_annotations(ontology: str,
         _add_features(manager, onto, factory, exp_iri,
                       ((col, row[col]) for col in EXP_FEAT_COLS))
 
-        # 2. UptakeMechanism — subcategory-first, split by comma
-        #    experiment has_proper_part mechanism / mechanism is_proper_part_of experiment
+        # 2. UptakeMechanism — subcategory-first, split by comma.
+        #    Mechanism is the TOPIC of the experiment (sio:is_about, SIO:000332),
+        #    not a structural part. Use existential restriction since mechanisms
+        #    are owl:Class (not individuals): exp_ind rdf:type (is_about some MechClass).
         sub_id    = row["Subcategory Uptake Mechanism ID"]
         main_id   = row["Main Uptake Mechanism ID"]
         chosen_id = sub_id if pd.notna(sub_id) and str(sub_id).strip() else main_id
-        mech_inds = []
         if pd.notna(chosen_id) and str(chosen_id).strip():
             for mech_iri in [s.strip() for s in str(chosen_id).split(",") if s.strip()]:
-                mech_ind = factory.getOWLNamedIndividual(IRI.create(mech_iri))
-                mech_inds.append(mech_ind)
+                mech_cl      = factory.getOWLClass(IRI.create(mech_iri))
+                about_exists = factory.getOWLObjectSomeValuesFrom(is_about, mech_cl)
                 manager.applyChange(AddAxiom(onto,
-                    factory.getOWLObjectPropertyAssertionAxiom(has_proper_part, exp_ind, mech_ind)))
-                manager.applyChange(AddAxiom(onto,
-                    factory.getOWLObjectPropertyAssertionAxiom(is_proper_part, mech_ind, exp_ind)))
+                    factory.getOWLClassAssertionAxiom(about_exists, exp_ind)))
 
         # 3. CPP-Complex and cell line are participants of the Experiment
         participant_iris = [complex_iri]
@@ -1303,16 +1378,17 @@ def extend_ontology_with_annotations(ontology: str,
             manager.applyChange(AddAxiom(onto,
                 factory.getOWLObjectPropertyAssertionAxiom(has_participant, exp_ind, p_ind)))
 
-        # 4. Subcellular delivery — CPP-Complex is_located_in SubcellularEntity
+        # 4. Subcellular delivery — CPP-Complex is_located_in SubcellularEntity.
+        #    Subcellular GO terms are owl:Class; use existential restriction:
+        #    complex_ind rdf:type (sio:is_located_in some GO_subcell_class).
         sub_del = row["Subcellular Delivery ID"]
         if pd.notna(sub_del) and str(sub_del).strip():
             complex_ind = factory.getOWLNamedIndividual(IRI.create(complex_iri))
             for loc_iri in [s.strip() for s in str(sub_del).split(",") if s.strip()]:
-                loc_ind = factory.getOWLNamedIndividual(IRI.create(loc_iri))
+                loc_cl      = factory.getOWLClass(IRI.create(loc_iri))
+                loc_exists  = factory.getOWLObjectSomeValuesFrom(is_located_in, loc_cl)
                 manager.applyChange(AddAxiom(onto,
-                    factory.getOWLObjectPropertyAssertionAxiom(is_located_in, complex_ind, loc_ind)))
-                manager.applyChange(AddAxiom(onto,
-                    factory.getOWLObjectPropertyAssertionAxiom(is_location_of, loc_ind, complex_ind)))
+                    factory.getOWLClassAssertionAxiom(loc_exists, complex_ind)))
 
         # 5. Publication: is_described_by PubMed IRI; fallback to Patent if PubMed == 0 or empty
         pubmed_val  = row["Pubmed ID"]
