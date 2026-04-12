@@ -20,14 +20,3 @@ dependencies:
   - jpype1
   # HuggingFace
   - conda-forge::transformers
-  # pip-only packages
-  - pip:
-    - torch
-    - mowl-borg
-    - pyshex
-    - pronto
-    - rapidfuzz
-    - faiss-cpu
-    - pyld
-    - pydantic
-    - ollama
