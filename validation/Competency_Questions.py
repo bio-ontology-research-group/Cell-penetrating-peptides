@@ -57,20 +57,20 @@ WIKIDATA_ENDPOINT = "https://query.wikidata.org/sparql"
 # ---------------------------------------------------------------------------
 
 PREFIXES = """\
-PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX owl:   <http://www.w3.org/2002/07/owl#>
-PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#>
-PREFIX skos:  <http://www.w3.org/2004/02/skos/core#>
-PREFIX dct:   <http://purl.org/dc/terms/>
-PREFIX sio:   <http://semanticscience.org/resource/>
-PREFIX obo:   <http://purl.obolibrary.org/obo/>
-PREFIX up:    <http://purl.uniprot.org/core/>
-PREFIX taxon: <http://purl.uniprot.org/taxonomy/>
-PREFIX wdt:   <http://www.wikidata.org/prop/direct/>
-PREFIX wd:    <http://www.wikidata.org/entity/>
-PREFIX cpp:   <https://cppkg.bio2vec.net/dataset/>
-PREFIX cppS:  <https://w3id.org/cpp/schema#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:     <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:      <http://www.w3.org/2002/07/owl#>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+PREFIX skos:     <http://www.w3.org/2004/02/skos/core#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX sio:      <http://semanticscience.org/resource/>
+PREFIX obo:      <http://purl.obolibrary.org/obo/>
+PREFIX up:       <http://purl.uniprot.org/core/>
+PREFIX taxon:    <http://purl.uniprot.org/taxonomy/>
+PREFIX wdt:      <http://www.wikidata.org/prop/direct/>
+PREFIX wd:       <http://www.wikidata.org/entity/>
+PREFIX cppS:      <https://cppkg.bio2vec.net/schema#>
+PREFIX cpp:  <https://cppkg.bio2vec.net/dataset/>
 """
 
 # ===========================================================================
@@ -87,7 +87,11 @@ SELECT DISTINCT ?peptide
 WHERE {
   ?peptide a cpp:CellPenetratingPeptide ;
            sio:SIO_000008 ?cpp_role .
-  ?cpp_role sio:SIO_000356 ?mechanism .
+  # Role carries its mechanism via an OWL someValuesFrom restriction
+  ?cpp_role rdf:type ?restriction .
+  ?restriction owl:onProperty sio:SIO_000356 ;
+               owl:someValuesFrom ?mechanism .
+  # Hierarchical subsumption: any subclass of endocytosis GO:0006897
   ?mechanism rdfs:subClassOf* obo:GO_0006897 .
 }
 
@@ -104,18 +108,21 @@ CQ2 = (
     + """
 SELECT DISTINCT ?gene ?geneLabel ?activatorRole ?upregulation
 WHERE {
-  # ── Compound property path (transitive role-realization chain) ──────────
-  # Gene → (has attribute) → ActivatorRole
-  #      → (is realized in) → UpregulationProcess
-  #      → (positively regulates) → GO:0044351 (macropinocytosis)
+  # ── Role-realization chain ──────────────────────────────────────────────
+  # Gene → (has_attribute) → ActivatorRole
+  #      → (is_realized_in) → UpregulationProcess
+  #      which positively-regulates GO:0044351 (macropinocytosis)
+  #      encoded as OWL someValuesFrom restriction on the process type
   ?gene a sio:SIO_010035 .
-  ?gene (sio:SIO_000008 / sio:SIO_000356 / sio:SIO_001401) obo:GO_0044351 .
-
-  # ── Retrieve intermediate nodes for inspection ──────────────────────────
   ?gene sio:SIO_000008 ?activatorRole .
   ?activatorRole sio:SIO_000356 ?upregulation .
-  # Filter: only upregulation processes that target GO:0044351
-  ?upregulation sio:SIO_001401 obo:GO_0044351 .
+
+  # Positively-regulates link expressed as OWL restriction on process type
+  ?upregulation rdf:type ?restr .
+  ?restr owl:onProperty sio:SIO_001401 ;
+         owl:someValuesFrom ?target .
+  # Hierarchical: any subclass of macropinocytosis GO:0044351
+  ?target rdfs:subClassOf* obo:GO_0044351 .
 
   OPTIONAL { ?gene rdfs:label ?geneLabel . }
 }
@@ -130,22 +137,19 @@ CQ3 = (
     PREFIXES
     + """
 SELECT DISTINCT ?complex ?location ?locationLabel
-                ?mechanism 
+
 WHERE {
     ?complex a cpp:CPP-Complex .
 
-    # ── Transitive Closure: is-located-in (SIO_000061, owl:TransitiveProperty) ──
-    # Anchoring at obo:GO_0005634 (nucleus) retrieves every complex that
-    # reaches the nucleus through any chain of subcellular location steps.
-    ?complex sio:SIO_000061+ obo:GO_0005634 .
-    BIND(obo:GO_0005634 AS ?location)
-    OPTIONAL { obo:GO_0005634 rdfs:label ?locationLabel . }
+    # ── Delivery location encoded as OWL someValuesFrom restriction ────────
+    # Anchoring at obo:GO_0005634 (nucleus); rdfs:subClassOf* also catches
+    # sub-compartments (nucleoplasm, nuclear envelope, etc.).
+    ?complex rdf:type ?locRestr .
+    ?locRestr owl:onProperty sio:SIO_000061 ;
+              owl:someValuesFrom ?location .
+    ?location rdfs:subClassOf* obo:GO_0005634 .
+    OPTIONAL { ?location rdfs:label ?locationLabel . }
 
-    # ── Uptake mechanism (optional context) ────────────────────────────────
-    OPTIONAL {
-        ?complex sio:SIO_000062 ?mechanism .
-        ?mechanism a cppS:UptakeMechanism .
-    }
 }
 ORDER BY ?complex
 
@@ -173,11 +177,16 @@ FQ1_LOCAL = (
     + """
 SELECT DISTINCT ?gene ?agoraURI
 WHERE {
-    # CQ2 property-path: Gene -[has attribute]-> ActivatorRole
-    #                        -[is realized in]-> UpregulationProcess
-    #                        -[positively regulates]-> GO:0044351 (macropinocytosis)
+    # CQ2 chain: Gene -[has_attribute]-> ActivatorRole
+    #                 -[is_realized_in]-> UpregulationProcess
+    # whose positively-regulates link is encoded as an OWL someValuesFrom restriction
     ?gene a sio:SIO_010035 .
-    ?gene (sio:SIO_000008 / sio:SIO_000356 / sio:SIO_001401) obo:GO_0044351 .
+    ?gene sio:SIO_000008 ?activatorRole .
+    ?activatorRole sio:SIO_000356 ?upregulation .
+    ?upregulation rdf:type ?restr .
+    ?restr owl:onProperty sio:SIO_001401 ;
+           owl:someValuesFrom ?target .
+    ?target rdfs:subClassOf* obo:GO_0044351 .
 
     # Build the UniProt agora cross-reference IRI from the Ensembl accession
     BIND(REPLACE(STR(?gene), "http://identifiers.org/ensembl/", "") AS ?ensemblAcc)
@@ -276,7 +285,10 @@ FQ3_LOCAL = (
 SELECT DISTINCT ?location
 WHERE {
     ?complex a cpp:CPP-Complex .
-    ?complex sio:SIO_000061 ?location .
+    # Location encoded as OWL someValuesFrom restriction on complex type
+    ?complex rdf:type ?restr .
+    ?restr owl:onProperty sio:SIO_000061 ;
+           owl:someValuesFrom ?location .
     FILTER(STRSTARTS(STR(?location), "http://purl.obolibrary.org/obo/GO_"))
 }
 ORDER BY ?location
