@@ -114,6 +114,23 @@
     /* ---- Search / SPARQL ---- */
     .search-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
     .search-bar select, .search-bar input { height: 42px; border-radius: 8px; }
+
+    /* ---- Autocomplete dropdown ---- */
+    .ac-wrap { position: relative; }
+    .ac-dropdown {
+      position: absolute; top: 100%; left: 0; right: 0;
+      background: #2a2a3e; border: 1px solid #45475a;
+      border-radius: 0 0 8px 8px; max-height: 210px; overflow-y: auto;
+      z-index: 9999; list-style: none; padding: 0; margin: 0;
+      display: none; box-shadow: 0 4px 14px rgba(0,0,0,.4);
+    }
+    .ac-dropdown li {
+      padding: 7px 12px; cursor: pointer; font-size: .84rem; color: #cdd6f4;
+      border-bottom: 1px solid #313244;
+    }
+    .ac-dropdown li:last-child { border-bottom: none; }
+    .ac-dropdown li:hover, .ac-dropdown li.ac-active { background: #313244; }
+    .ac-id-badge { font-size: .72rem; color: #89b4fa; margin-left: 6px; font-family: monospace; }
     #sparql-editor {
       font-family: 'Courier New', monospace; font-size: .85rem;
       border-radius: 8px; border: 1px solid #ced4da;
@@ -403,28 +420,34 @@
           <input id="filter-sequence" class="form-control" placeholder="e.g. RQIKIWFQ" />
         </div>
         <div class="col-12 col-md-6 col-lg-3">
-          <label class="form-label">CPP ID</label>
-          <input id="filter-cpp_id" class="form-control" placeholder="e.g. CPP_000002" />
-        </div>
-        <div class="col-12 col-md-6 col-lg-3">
           <label class="form-label">Uptake Mechanism</label>
-          <input id="filter-mechanism" class="form-control" placeholder="e.g. Endocytosis" />
+          <select id="filter-mechanism" class="form-select">
+            <option value="">All available options</option>
+          </select>
         </div>
         <div class="col-12 col-md-6 col-lg-3">
           <label class="form-label">Subcellular Delivery</label>
-          <input id="filter-subcell" class="form-control" placeholder="e.g. Nucleus" />
+          <select id="filter-subcell" class="form-select">
+            <option value="">All available options</option>
+          </select>
         </div>
         <div class="col-12 col-md-6 col-lg-3">
           <label class="form-label">Cell Line</label>
-          <input id="filter-cell_line" class="form-control" placeholder="e.g. HeLa" />
+          <input id="filter-text-cell_line" class="form-control mb-2" placeholder="Type to filter options" />
+          <select id="filter-cell_line" class="form-select">
+            <option value="">All available options</option>
+          </select>
         </div>
         <div class="col-12 col-md-6 col-lg-3">
           <label class="form-label">Cargo</label>
-          <input id="filter-cargo" class="form-control" placeholder="e.g. DNA" />
+          <input id="filter-text-cargo" class="form-control mb-2" placeholder="Type to filter options" />
+          <select id="filter-cargo" class="form-select">
+            <option value="">All available options</option>
+          </select>
         </div>
         <div class="col-12 col-md-6 col-lg-3">
           <label class="form-label">PubMed / Patent ID</label>
-          <input id="filter-doc_id" class="form-control" placeholder="e.g. pubmed:9188504" />
+          <input id="filter-doc_id" class="form-control" placeholder="e.g. 9188504" />
         </div>
         <div class="col-12 col-md-6 col-lg-3 d-flex align-items-end gap-2">
           <button id="search-btn" class="btn btn-primary w-100" disabled onclick="doSearch()"><i class="bi bi-search me-1"></i>Search</button>
@@ -798,9 +821,16 @@ function route() {
   } else if (tab === 'entity' && sub) {
     loadEntity(decodeURIComponent(sub));
   } else if (tab === 'search') {
-    var keys = ['sequence','cpp_id','mechanism','subcell','cell_line','cargo','doc_id'];
     var any = false;
-    keys.forEach(function(k){ if (params[k]) { var el = document.getElementById('filter-' + k); if (el) { el.value = params[k]; any = true; } } });
+    ['sequence','doc_id','cell_line','cargo'].forEach(function(k){
+      if (params[k]) { var el = document.getElementById('filter-' + k); if (el) { el.value = params[k]; any = true; } }
+    });
+    ['mechanism','subcell'].forEach(function(k){
+      if (params[k]) {
+        setSelectValue(k, params[k]);
+        any = true;
+      }
+    });
     updateSearchControls();
     if (any) doSearch();
   }
@@ -891,19 +921,25 @@ async function loadClasses() {
 }
 
 async function loadAssociations() {
+  var tbody = document.getElementById('assoc-tbody');
   try {
     var r = await fetch('/api/associations');
     var data = await r.json();
-    if (!Array.isArray(data)) return;
+    if (!Array.isArray(data)) {
+      tbody.innerHTML = '<tr><td colspan="3" class="text-center text-danger py-3">Failed to load associations' +
+        (data.error ? ': ' + escHtml(data.error) : '') + '</td></tr>';
+      return;
+    }
     var sorted = data.slice().sort(function(a,b){ return b.count - a.count; });
-    var tbody = document.getElementById('assoc-tbody');
     tbody.innerHTML = sorted.map(function(d){
       return '<tr><td><strong>' + escHtml(d.name) + '</strong></td>' +
         '<td class="text-muted">' + escHtml(d.description) + '</td>' +
         '<td class="text-end"><span class="badge bg-success badge-pill">' + fmt(d.count) + '</span></td></tr>';
     }).join('');
     assocChart = drawBarChart('assoc-chart', sorted.map(function(d){return d.name;}), sorted.map(function(d){return d.count;}), assocChart);
-  } catch(_) {}
+  } catch(e) {
+    if (tbody) tbody.innerHTML = '<tr><td colspan="3" class="text-center text-danger py-3">Error: ' + escHtml(String(e)) + '</td></tr>';
+  }
 }
 
 // ============================================================
@@ -1224,12 +1260,18 @@ function copyEntityUri(evt) {
 //  Search
 // ============================================================
 function getSearchFilters() {
-  var keys = ['sequence','cpp_id','mechanism','subcell','cell_line','cargo','doc_id'];
   var out = {};
-  keys.forEach(function(k){
+  // Plain-text fields — read directly from the visible input
+  ['sequence','doc_id'].forEach(function(k){
     var el = document.getElementById('filter-' + k);
     if (!el) return;
     var v = (el.value || '').trim();
+    if (v) out[k] = v;
+  });
+  // Fixed dropdown fields
+  ['mechanism','subcell','cell_line','cargo'].forEach(function(k){
+    var selectEl = document.getElementById('filter-' + k);
+    var v = (selectEl && selectEl.value.trim()) || '';
     if (v) out[k] = v;
   });
   return out;
@@ -1237,19 +1279,33 @@ function getSearchFilters() {
 
 function renderActiveFilters(filters) {
   var map = {
-    sequence: 'Sequence', cpp_id: 'CPP ID', mechanism: 'Uptake Mechanism', subcell: 'Subcellular Delivery',
+    sequence: 'Sequence', mechanism: 'Uptake Mechanism', subcell: 'Subcellular Delivery',
     cell_line: 'Cell Line', cargo: 'Cargo', doc_id: 'PubMed / Patent ID'
   };
   var wrap = document.getElementById('active-filters');
   wrap.innerHTML = '';
   Object.entries(filters).forEach(function(kv){
     var k = kv[0], v = kv[1];
+    var isSelectField = (k === 'mechanism' || k === 'subcell' || k === 'cell_line' || k === 'cargo');
+    var displayVal = (isSelectField && (v.startsWith('http://') || v.startsWith('https://')))
+      ? (getSelectedOptionLabel(k) || v)
+      : v;
     var span = document.createElement('span');
     span.className = 'badge bg-primary me-2';
     span.style.cursor = 'pointer';
-    span.innerHTML = escHtml(map[k] || k) + ': ' + escHtml(v) + ' \u00D7';
+    span.innerHTML = escHtml(map[k] || k) + ': ' + escHtml(displayVal) + ' \u00D7';
     span.title = 'Click to remove filter and re-run search';
-    span.onclick = function(){ document.getElementById('filter-' + k).value = ''; updateSearchControls(); if (Object.keys(getSearchFilters()).length) doSearch(); else clearSearch(); };
+    span.onclick = function(){
+      if (k === 'mechanism' || k === 'subcell' || k === 'cell_line' || k === 'cargo') {
+        var selectEl = document.getElementById('filter-' + k);
+        if (selectEl) selectEl.value = '';
+      } else {
+        var el = document.getElementById('filter-' + k);
+        if (el) el.value = '';
+      }
+      updateSearchControls();
+      if (Object.keys(getSearchFilters()).length) doSearch(); else clearSearch();
+    };
     wrap.appendChild(span);
   });
 }
@@ -1342,8 +1398,17 @@ async function doSearch() {
 
 function clearSearch() {
   if (_searchAbortCtrl) { _searchAbortCtrl.abort(); _searchAbortCtrl = null; }
-  var keys = ['sequence','cpp_id','mechanism','subcell','cell_line','cargo','doc_id'];
-  keys.forEach(function(k){ var el = document.getElementById('filter-' + k); if (el) el.value = ''; });
+  ['sequence','doc_id'].forEach(function(k){
+    var el = document.getElementById('filter-' + k); if (el) el.value = '';
+  });
+  ['mechanism','subcell','cell_line','cargo'].forEach(function(k){
+    var el = document.getElementById('filter-' + k); if (el) el.value = '';
+  });
+  ['cell_line','cargo'].forEach(function(k){
+    var textEl = document.getElementById('filter-text-' + k);
+    if (textEl) textEl.value = '';
+    renderSelectOptions(k, '');
+  });
   clearMsg('search-status');
   document.getElementById('search-results-wrap').style.display = 'none';
   document.getElementById('search-debug-wrap').style.display = 'none';
@@ -1354,13 +1419,120 @@ function clearSearch() {
 }
 
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && e.target && /filter-/.test(e.target.id)) doSearch();
+  if (e.key === 'Enter' && e.target) {
+    var id = e.target.id || '';
+    if (/filter-/.test(id)) doSearch();
+  }
 });
 
 // Wire up reactive control updates
-['sequence','cpp_id','mechanism','subcell','cell_line','cargo','doc_id'].forEach(function(k){
-  var el = document.getElementById('filter-' + k); if (el) el.addEventListener('input', updateSearchControls);
+['sequence','doc_id','cell_line','cargo','mechanism','subcell'].forEach(function(k){
+  var el = document.getElementById('filter-' + k);
+  if (el) el.addEventListener('input', updateSearchControls);
+  if (el) el.addEventListener('change', updateSearchControls);
 });
+
+// ============================================================
+//  Fixed Selects
+// ============================================================
+var _selectOptionCache = {};
+
+function getSelectedOptionLabel(field) {
+  var el = document.getElementById('filter-' + field);
+  if (!el || el.selectedIndex < 0) return '';
+  var opt = el.options[el.selectedIndex];
+  return (opt && opt.value) ? (opt.textContent || '').trim() : '';
+}
+
+function setSelectValue(field, value) {
+  var el = document.getElementById('filter-' + field);
+  if (!el) return;
+  var exists = Array.prototype.some.call(el.options, function(opt){ return opt.value === value; });
+  if (!exists && _selectOptionCache[field]) {
+    var filtered = _getFilteredSelectItems(field, getSelectFilterText(field));
+    var inCache = filtered.some(function(item){ return item.uri === value; });
+    if (!inCache) renderSelectOptions(field, getSelectFilterText(field), value);
+    exists = Array.prototype.some.call(el.options, function(opt){ return opt.value === value; });
+  }
+  if (!exists && value) {
+    var opt = document.createElement('option');
+    opt.value = value;
+    opt.textContent = value;
+    el.appendChild(opt);
+  }
+  el.value = value || '';
+}
+
+function getSelectFilterText(field) {
+  var textEl = document.getElementById('filter-text-' + field);
+  return textEl ? (textEl.value || '').trim() : '';
+}
+
+function _getFilteredSelectItems(field, query) {
+  var q = (query || '').trim().toLowerCase();
+  var items = _selectOptionCache[field] || [];
+  if (!q) return items;
+  return items.filter(function(item) {
+    return (item.label && item.label.toLowerCase().includes(q))
+      || (item.id && item.id.toLowerCase().includes(q));
+  });
+}
+
+function renderSelectOptions(field, query, preserveValue) {
+  var el = document.getElementById('filter-' + field);
+  if (!el) return;
+  var placeholder = el.options.length ? el.options[0].cloneNode(true) : null;
+  var currentValue = preserveValue !== undefined ? preserveValue : el.value;
+  var items = _getFilteredSelectItems(field, query);
+  el.innerHTML = '';
+  if (placeholder) el.appendChild(placeholder);
+  items.forEach(function(item){
+    if (!item || !item.uri || !item.label) return;
+    var opt = document.createElement('option');
+    opt.value = item.uri;
+    opt.textContent = item.label;
+    el.appendChild(opt);
+  });
+  if (currentValue && items.some(function(item){ return item.uri === currentValue; })) {
+    el.value = currentValue;
+  } else if (preserveValue !== undefined && preserveValue) {
+    var extra = document.createElement('option');
+    extra.value = preserveValue;
+    extra.textContent = preserveValue;
+    el.appendChild(extra);
+    el.value = preserveValue;
+  } else {
+    el.value = '';
+  }
+}
+
+async function loadSelectOptions(field) {
+  var el = document.getElementById('filter-' + field);
+  if (!el) return;
+  var previous = el.value;
+  try {
+    var r = await fetch('/api/autocomplete/' + field);
+    var items = await r.json();
+    _selectOptionCache[field] = Array.isArray(items) ? items : [];
+    renderSelectOptions(field, getSelectFilterText(field), previous);
+    if (previous) setSelectValue(field, previous);
+  } catch (_) {}
+}
+
+function initSelectFilters() {
+  ['cell_line', 'cargo'].forEach(function(field) {
+    var textEl = document.getElementById('filter-text-' + field);
+    if (!textEl) return;
+    textEl.addEventListener('input', function() {
+      renderSelectOptions(field, textEl.value);
+      updateSearchControls();
+    });
+  });
+}
+
+async function initFixedSelects() {
+  await Promise.all(['mechanism', 'subcell', 'cell_line', 'cargo'].map(loadSelectOptions));
+}
 
 // Initialize controls state on load
 updateSearchControls();
@@ -1470,8 +1642,10 @@ async function pollStatus() {
   } catch(_) { setTimeout(pollStatus, 3000); }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
   initSparql();
+  initSelectFilters();
+  await initFixedSelects();
   pollStatus();
   var iv = setInterval(async function() {
     try { var r = await fetch('/api/status'); var d = await r.json(); if (d.status==='ready') clearInterval(iv); } catch(_) {}

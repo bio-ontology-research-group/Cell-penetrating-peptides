@@ -46,6 +46,98 @@ _graph_error: Optional[str] = None
 _graph_lock = threading.Lock()
 _sparql_lock = threading.Lock()
 
+# ---------------------------------------------------------------------------
+# Query result cache  (single-flight + background pre-warm)
+# ---------------------------------------------------------------------------
+# The graph is immutable after loading, so results never change.
+# We cache the serialisable Python payload; jsonify() wraps it at call-time.
+#
+# Single-flight guarantee: if two requests race on a cold key, only one
+# thread runs fn(); the other waits on a threading.Event and reads the
+# stored value.  This prevents redundant SPARQL query storms on startup.
+
+_cache: dict = {}
+_cache_lock   = threading.Lock()
+_cache_events: dict = {}          # key → Event, set when value is ready
+
+# Disk-persistence for the query cache so restarts are instant.
+_CACHE_FILE = _HERE / ".query_cache.pkl"
+
+
+def _load_cache_from_disk() -> bool:
+    """Load a previously saved cache from disk into _cache.
+
+    Returns True if any entries were loaded, False otherwise.
+    """
+    import pickle
+    if not _CACHE_FILE.exists():
+        return False
+    try:
+        with open(_CACHE_FILE, "rb") as fh:
+            data = pickle.load(fh)
+        if not isinstance(data, dict):
+            return False
+        with _cache_lock:
+            _cache.update(data)
+        print(f"[Cache] Loaded {len(data)} entries from disk.")
+        return True
+    except Exception as exc:
+        print(f"[Cache] Disk cache unreadable ({exc}), will recompute.")
+        return False
+
+
+def _save_cache_to_disk() -> None:
+    """Persist the current in-memory cache to disk."""
+    import pickle
+    with _cache_lock:
+        snapshot = dict(_cache)
+    try:
+        with open(_CACHE_FILE, "wb") as fh:
+            pickle.dump(snapshot, fh, protocol=pickle.HIGHEST_PROTOCOL)
+        print(f"[Cache] Saved {len(snapshot)} entries to disk.")
+    except Exception as exc:
+        print(f"[Cache] Failed to save cache to disk: {exc}")
+
+
+def _get_cached(key, fn):
+    """Return the cached payload for *key*, computing via *fn* on a miss.
+
+    Concurrent callers for the same cold key will block until the first
+    caller finishes and stores the result — no duplicate computation.
+    """
+    # Fast path — no lock needed for a hit after the entry is stored.
+    with _cache_lock:
+        if key in _cache:
+            return _cache[key]
+        if key in _cache_events:
+            event    = _cache_events[key]
+            is_owner = False
+        else:
+            event              = threading.Event()
+            _cache_events[key] = event
+            is_owner           = True
+
+    if not is_owner:
+        # Wait for the owning thread to finish (2-minute safety timeout).
+        event.wait(timeout=120)
+        with _cache_lock:
+            if key in _cache:
+                return _cache[key]
+        # Timeout or owner failed — fall through and compute ourselves.
+        return fn()
+
+    # This thread owns the computation.
+    try:
+        result = fn()
+        with _cache_lock:
+            _cache[key] = result
+        return result
+    finally:
+        # Always unblock waiters, even if fn() raised.
+        with _cache_lock:
+            _cache_events.pop(key, None)
+        event.set()
+
 
 def _load_graph() -> Graph:
     g = Graph()
@@ -106,6 +198,12 @@ def get_graph() -> Graph:
             try:
                 _graph = _load_graph()
                 _graph_error = None
+                # Restore persisted cache first; missing keys will be filled
+                # by the warmer (which skips keys already present).
+                _load_cache_from_disk()
+                t = threading.Thread(target=_warm_cache, args=(_graph,),
+                                     daemon=True, name="cache-warmer")
+                t.start()
             except Exception as exc:
                 _graph_error = str(exc)
                 raise
@@ -139,6 +237,18 @@ def _escape_sparql_literal(value: str) -> str:
     )
 
 
+def _is_uri(val: str) -> bool:
+    """Return True if val is a safe absolute URI suitable for SPARQL angle-bracket syntax."""
+    return (
+        (val.startswith("http://") or val.startswith("https://"))
+        and ">" not in val
+        and "<" not in val
+        and " " not in val
+        and "\n" not in val
+        and "\r" not in val
+    )
+
+
 def _uri_fragment(uri: str) -> str:
     """Extract the local name from any URI."""
     for sep in ("#", "/"):
@@ -164,41 +274,105 @@ GROUP BY ?class
 ORDER BY DESC(?count)
 """
 
+_SIO   = "http://semanticscience.org/resource/"
+_CPP   = "https://cppkg.bio2vec.net/dataset/"
+_OWL   = "http://www.w3.org/2002/07/owl#"
+_RDF   = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+
 ASSOCIATION_CATALOG = [
     {
         "name": "Positively Regulates",
         "description": "Gene interaction with the Uptake mechanism.",
-        "query": "PREFIX sio: <http://semanticscience.org/resource/> SELECT (COUNT(*) AS ?count) WHERE { ?s sio:SIO_001401 ?o . }",
+        "query": (
+            "PREFIX rdf: <{rdf}> "
+            "PREFIX sio: <{sio}> "
+            "SELECT (COUNT(DISTINCT ?role) AS ?count) WHERE {{ "
+            "  ?gene rdf:type <{sio}SIO_010035> . "
+            "  ?gene <{sio}SIO_000008> ?role . "
+            "  ?role rdf:type <{sio}SIO_000804> . "
+            "  ?role <{sio}SIO_000356> ?proc . "
+            "}}"
+        ).format(rdf=_RDF, sio=_SIO),
     },
     {
         "name": "Negatively Regulates",
         "description": "Inhibitor interaction with the Uptake mechanism.",
-        "query": "PREFIX sio: <http://semanticscience.org/resource/> SELECT (COUNT(*) AS ?count) WHERE { ?s sio:SIO_001402 ?o . }",
+        "query": (
+            "PREFIX rdf: <{rdf}> "
+            "PREFIX sio: <{sio}> "
+            "SELECT (COUNT(DISTINCT ?role) AS ?count) WHERE {{ "
+            "  ?inhibitor rdf:type <{sio}SIO_010435> . "
+            "  ?inhibitor <{sio}SIO_000008> ?role . "
+            "  ?role rdf:type <{sio}SIO_000803> . "
+            "  ?role <{sio}SIO_000356> ?proc . "
+            "}}"
+        ).format(rdf=_RDF, sio=_SIO),
     },
     {
         "name": "Cargo Role: Is Realized In",
         "description": "Functional role of the Cargo realized in the Uptake Mechanism.",
-        "query": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX sio: <http://semanticscience.org/resource/> PREFIX cpp: <https://cppkg.bio2vec.net/dataset/> SELECT (COUNT(*) AS ?count) WHERE { ?s rdf:type cpp:CargoRole . ?s sio:SIO_000356 ?o . }",
+        # Cargo roles linked to an uptake mechanism carry an OWL restriction typed on the
+        # individual: ?role rdf:type [ owl:onProperty SIO_000356 ; ... ].  We match the
+        # blank-node restriction via a named variable to avoid rdflib prefix-name issues.
+        "query": (
+            "PREFIX rdf: <{rdf}> "
+            "PREFIX owl: <{owl}> "
+            "SELECT (COUNT(DISTINCT ?role) AS ?count) WHERE {{ "
+            "  ?role rdf:type <{cpp}CargoRole> . "
+            "  ?role rdf:type ?restriction . "
+            "  ?restriction <{owl}onProperty> <{sio}SIO_000356> . "
+            "}}"
+        ).format(rdf=_RDF, owl=_OWL, cpp=_CPP, sio=_SIO),
     },
     {
         "name": "CPP Role: Is Realized In",
         "description": "Functional role of the Cell-penetrating peptide realized in the Uptake Mechanism.",
-        "query": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX sio: <http://semanticscience.org/resource/> PREFIX cpp: <https://cppkg.bio2vec.net/dataset/> SELECT (COUNT(*) AS ?count) WHERE { ?s rdf:type cpp:CellPenetratingPeptideRole . ?s sio:SIO_000356 ?o . }",
+        "query": (
+            "PREFIX rdf: <{rdf}> "
+            "PREFIX owl: <{owl}> "
+            "SELECT (COUNT(DISTINCT ?role) AS ?count) WHERE {{ "
+            "  ?role rdf:type <{cpp}CellPenetratingPeptideRole> . "
+            "  ?role rdf:type ?restriction . "
+            "  ?restriction <{owl}onProperty> <{sio}SIO_000356> . "
+            "}}"
+        ).format(rdf=_RDF, owl=_OWL, cpp=_CPP, sio=_SIO),
     },
     {
         "name": "CPP-Complex: Is Participant In",
         "description": "CPP-Complex interaction with a specific the uptake mechanism.",
-        "query": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX sio: <http://semanticscience.org/resource/> PREFIX cpp: <https://cppkg.bio2vec.net/dataset/> SELECT (COUNT(*) AS ?count) WHERE { ?s rdf:type cpp:CPP-Complex . ?s sio:SIO_000062 ?o . }",
+        # Uses full URI for CPP-Complex to avoid rdflib SPARQL lexer issues with hyphens.
+        "query": (
+            "PREFIX rdf: <{rdf}> "
+            "SELECT (COUNT(DISTINCT ?s) AS ?count) WHERE {{ "
+            "  ?s rdf:type <{cpp}CPP-Complex> . "
+            "  ?s <{sio}SIO_000062> ?o . "
+            "}}"
+        ).format(rdf=_RDF, cpp=_CPP, sio=_SIO),
     },
     {
         "name": "Cell Line: Is Participant In",
         "description": "Cell Line interaction with a specific the uptake mechanism.",
-        "query": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX sio: <http://semanticscience.org/resource/> SELECT (COUNT(*) AS ?count) WHERE { ?s rdf:type sio:SIO_010054 . ?s sio:SIO_000062 ?o . }",
+        "query": (
+            "PREFIX rdf: <{rdf}> "
+            "SELECT (COUNT(DISTINCT ?s) AS ?count) WHERE {{ "
+            "  ?s rdf:type <{sio}SIO_010054> . "
+            "  ?s <{sio}SIO_000062> ?o . "
+            "}}"
+        ).format(rdf=_RDF, sio=_SIO),
     },
     {
         "name": "Subcellular Delivery Localization",
         "description": "CPP-Complex interaction with Subcellular Entity.",
-        "query": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX sio: <http://semanticscience.org/resource/> PREFIX cpp: <https://cppkg.bio2vec.net/dataset/> SELECT (COUNT(*) AS ?count) WHERE { ?s rdf:type cpp:CPP-Complex . ?s sio:SIO_000061 ?o . }",
+        # Uses full URI for CPP-Complex; blank-node restriction matched via named variable.
+        "query": (
+            "PREFIX rdf: <{rdf}> "
+            "PREFIX owl: <{owl}> "
+            "SELECT (COUNT(DISTINCT ?s) AS ?count) WHERE {{ "
+            "  ?s rdf:type <{cpp}CPP-Complex> . "
+            "  ?s rdf:type ?restriction . "
+            "  ?restriction <{owl}onProperty> <{sio}SIO_000061> . "
+            "}}"
+        ).format(rdf=_RDF, owl=_OWL, cpp=_CPP, sio=_SIO),
     },
 ]
 
@@ -251,70 +425,268 @@ CLASS_CATALOG = {
 # with unique variable names (no regex rewriting required).
 # ---------------------------------------------------------------------------
 
-def _pattern_sequence(esc: str) -> str:
+def _pattern_sequence(val: str) -> str:
+    # Sequence lives directly on the peptide — filter immediately after binding it.
+    esc = _escape_sparql_literal(val)
     return (
         f'    ?peptide cppS:sequence ?seq_sq .\n'
         f'    FILTER(CONTAINS(LCASE(STR(?seq_sq)), LCASE("{esc}")))\n'
     )
 
-def _pattern_cpp_id(esc: str) -> str:
-    return (
-        f'    BIND(REPLACE(STR(?peptide), ".*/(.*)$", "$1") AS ?cppId_cid)\n'
-        f'    FILTER(LCASE(STR(?cppId_cid)) = LCASE("{esc}"))\n'
-    )
 
-def _pattern_mechanism(esc: str) -> str:
+def _pattern_mechanism(val: str) -> str:
+    # URI path: anchor on the single blank-node restriction that names the mechanism,
+    # then walk forward to the peptide (object-first traversal).
+    if _is_uri(val):
+        return (
+            f'    ?mechRestr_mec owl:someValuesFrom <{val}> ;\n'
+            f'                   owl:onProperty sio:SIO_000356 .\n'
+            f'    ?cppRole_mec rdf:type ?mechRestr_mec ;\n'
+            f'                 rdf:type cpp:CellPenetratingPeptideRole .\n'
+            f'    ?peptide sio:SIO_000008 ?cppRole_mec .\n'
+        )
+    # Text path: filter on the mechanism label first, then walk to the peptide.
+    esc = _escape_sparql_literal(val)
     return (
-        f'    ?peptide sio:SIO_000008 ?CellPenetratingPeptideRole .\n'
-        f'    ?CellPenetratingPeptideRole sio:SIO_000356 ?mech_mec .\n'
         f'    ?mech_mec rdfs:label ?mechLbl_mec .\n'
         f'    FILTER(CONTAINS(LCASE(STR(?mechLbl_mec)), LCASE("{esc}")))\n'
+        f'    ?mechRestr_mec owl:someValuesFrom ?mech_mec ;\n'
+        f'                   owl:onProperty sio:SIO_000356 .\n'
+        f'    ?cppRole_mec rdf:type ?mechRestr_mec .\n'
+        f'    ?peptide sio:SIO_000008 ?cppRole_mec .\n'
     )
 
-def _pattern_subcell(esc: str) -> str:
+
+def _pattern_subcell(val: str) -> str:
+    # URI path: start from the restriction blank node (most selective), walk to peptide.
+    if _is_uri(val):
+        return (
+            f'    ?locRestr_sub owl:someValuesFrom <{val}> ;\n'
+            f'                  owl:onProperty sio:SIO_000061 .\n'
+            f'    ?cplx_sub rdf:type ?locRestr_sub .\n'
+            f'    ?peptide sio:SIO_000313 ?cplx_sub .\n'
+        )
+    # Text path: filter the label of the subcellular node first.
+    esc = _escape_sparql_literal(val)
     return (
-        f'    ?peptide sio:SIO_000313 ?cplx_sub .\n'
-        f'    ?cplx_sub sio:SIO_000061 ?subcellNode_sub .\n'
         f'    ?subcellNode_sub rdfs:label ?subcellLbl_sub .\n'
         f'    FILTER(CONTAINS(LCASE(STR(?subcellLbl_sub)), LCASE("{esc}")))\n'
-    )
-
-def _pattern_cell_line(esc: str) -> str:
-    return (
-    f'    ?peptide sio:SIO_000313 ?cplx_sub .\n'
-    f'    ?cplx_sub sio:SIO_000062 ?experiment .\n'
-    f'    ?experiment sio:SIO_000132 ?cell_line .\n'
-    f'    ?cell_line rdfs:label ?cell_line_label .\n'
-    f'    FILTER(CONTAINS(LCASE(STR(?cell_line_label)), LCASE("{esc}")))\n'
-)
-
-def _pattern_cargo(esc: str) -> str:
-    return (
-
-        f'    ?peptide rdf:type cpp:CellPenetratingPeptide .\n'
-        f'    ?peptide sio:SIO_000313 ?cplx_cg .\n'
-        f'    ?cplx_cg sio:SIO_000369 ?cargoNode_cg .\n'
-        f'    OPTIONAL {{ ?cargoNode_cg cppS:cargoType ?cargoType_cg . }}\n'
-        f'    FILTER(CONTAINS(LCASE(STR(?cargoType_cg)), LCASE("{esc}")))\n'
-    )
-
-def _pattern_doc_id(esc: str) -> str:
-    return (
+        f'    ?locRestr_sub owl:someValuesFrom ?subcellNode_sub ;\n'
+        f'                  owl:onProperty sio:SIO_000061 .\n'
+        f'    ?cplx_sub rdf:type ?locRestr_sub .\n'
         f'    ?peptide sio:SIO_000313 ?cplx_sub .\n'
-        f'    ?cplx_sub sio:SIO_000062 ?experiment .\n'
-        f'    ?experiment sio:SIO_000557 ?document .\n'
-        f'    FILTER(CONTAINS(LCASE(STR(?document)), LCASE("{esc}")))\n'
+    )
+
+
+def _pattern_cell_line(val: str) -> str:
+    # URI path: anchor on the known cell-line URI inside the experiment, walk to peptide.
+    if _is_uri(val):
+        return (
+            f'    ?experiment_cl sio:SIO_000132 <{val}> .\n'
+            f'    ?cplx_cl sio:SIO_000062 ?experiment_cl .\n'
+            f'    ?peptide sio:SIO_000313 ?cplx_cl .\n'
+        )
+    # Text path: filter cell-line label first, then follow the participation chain.
+    esc = _escape_sparql_literal(val)
+    return (
+        f'    ?cell_line_cl rdfs:label ?cell_line_label_cl .\n'
+        f'    FILTER(CONTAINS(LCASE(STR(?cell_line_label_cl)), LCASE("{esc}")))\n'
+        f'    ?experiment_cl sio:SIO_000132 ?cell_line_cl .\n'
+        f'    ?cplx_cl sio:SIO_000062 ?experiment_cl .\n'
+        f'    ?peptide sio:SIO_000313 ?cplx_cl .\n'
+    )
+
+
+def _pattern_cargo(val: str) -> str:
+    # URI path: anchor on the known cargo URI in the complex, walk to peptide.
+    if _is_uri(val):
+        return (
+            f'    ?cplx_cg sio:SIO_000369 <{val}> .\n'
+            f'    ?peptide sio:SIO_000313 ?cplx_cg .\n'
+        )
+    # Text path: filter the cargoType literal first (no OPTIONAL — we need it to match).
+    esc = _escape_sparql_literal(val)
+    return (
+        f'    ?cargoNode_cg cppS:cargoType ?cargoType_cg .\n'
+        f'    FILTER(CONTAINS(LCASE(STR(?cargoType_cg)), LCASE("{esc}")))\n'
+        f'    ?cplx_cg sio:SIO_000369 ?cargoNode_cg .\n'
+        f'    ?peptide sio:SIO_000313 ?cplx_cg .\n'
+    )
+
+
+def _pattern_doc_id(val: str) -> str:
+    # Filter on document URI/literal first, then walk back to peptide.
+    esc = _escape_sparql_literal(val)
+    return (
+        f'    ?experiment_doc sio:SIO_000557 ?document_doc .\n'
+        f'    FILTER(CONTAINS(LCASE(STR(?document_doc)), LCASE("{esc}")))\n'
+        f'    ?cplx_doc sio:SIO_000062 ?experiment_doc .\n'
+        f'    ?peptide sio:SIO_000313 ?cplx_doc .\n'
     )
 
 _FIELD_BUILDERS = {
     "sequence":  _pattern_sequence,
-    "cpp_id":    _pattern_cpp_id,
     "mechanism": _pattern_mechanism,
     "subcell":   _pattern_subcell,
     "cell_line": _pattern_cell_line,
     "cargo":     _pattern_cargo,
     "doc_id":    _pattern_doc_id,
 }
+
+# ---------------------------------------------------------------------------
+# Module-level compute functions  (shared by endpoints + cache pre-warmer)
+# ---------------------------------------------------------------------------
+
+# Classes whose members are declared as rdfs:subClassOf (not rdf:type).
+_SUBCLASS_COUNTED_URIS = [
+    "https://cppkg.bio2vec.net/schema#UptakeMechanism",
+    "http://semanticscience.org/resource/SIO_001400",
+]
+_SUBCLASS_BROWSE_URIS = set(_SUBCLASS_COUNTED_URIS)
+
+
+def _compute_metrics(g: Graph) -> dict:
+    subjects = set(g.subjects())
+    objects  = set(g.objects())
+    return {
+        "total_triples":    len(g),
+        "total_nodes":      len(subjects | objects),
+        "total_predicates": len(set(g.predicates())),
+    }
+
+
+def _compute_classes(g: Graph) -> list:
+    cols, rows = sparql_to_records(g, Q_CLASS_COUNTS)
+    df = pd.DataFrame(rows, columns=cols)
+    df["count"] = pd.to_numeric(df["count"], errors="coerce")
+    count_map = {r["class"]: (int(r["count"]) if pd.notna(r["count"]) else 0)
+                 for _, r in df.iterrows()}
+
+    for parent_uri in _SUBCLASS_COUNTED_URIS:
+        q = (
+            "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+            "SELECT (COUNT(DISTINCT ?sub) AS ?count) WHERE {\n"
+            "    ?sub rdfs:subClassOf <%s> .\n"
+            "}" % parent_uri
+        )
+        with _sparql_lock:
+            res = list(g.query(q))
+        if res and res[0][0] is not None:
+            count_map[parent_uri] = int(str(res[0][0]))
+
+    result = [
+        {"name": e["name"], "description": e["description"],
+         "uri": uri, "count": count_map.get(uri, 0)}
+        for uri, e in CLASS_CATALOG.items()
+    ]
+    result.sort(key=lambda x: x["count"], reverse=True)
+    return result
+
+
+def _compute_associations(g: Graph) -> list:
+    rows = []
+    for entry in ASSOCIATION_CATALOG:
+        _log_sparql_query("/api/associations", entry["query"],
+                          association=entry["name"])
+        try:
+            with _sparql_lock:
+                res = list(g.query(entry["query"]))
+            count = int(str(res[0][0])) if res and res[0][0] is not None else 0
+        except Exception as exc:
+            traceback.print_exc()
+            rows.append({"name": entry["name"], "description": entry["description"],
+                         "count": 0, "error": str(exc)})
+            continue
+        rows.append({"name": entry["name"], "description": entry["description"],
+                     "count": count})
+    return rows
+
+
+def _compute_browse_page(g: Graph, class_uri: str,
+                         page: int, per_page: int, filter_text: str) -> dict:
+    pred = "rdfs:subClassOf" if class_uri in _SUBCLASS_BROWSE_URIS else "rdf:type"
+    flt  = ""
+    if filter_text:
+        esc = _escape_sparql_literal(filter_text)
+        flt = ('FILTER(CONTAINS(LCASE(COALESCE(STR(?label), STR(?entity))), '
+               'LCASE("{}")))'.format(esc))
+
+    count_q = """
+    PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    SELECT (COUNT(DISTINCT ?entity) AS ?total) WHERE {{
+      ?entity {pred} <{cls}> .
+      OPTIONAL {{ ?entity rdfs:label ?label . }}
+      {flt}
+    }}
+    """.format(pred=pred, cls=class_uri, flt=flt)
+    _log_sparql_query("/api/browse count", count_q, class_uri=class_uri,
+                      page=page, per_page=per_page, filter=filter_text)
+    with _sparql_lock:
+        count_res = list(g.query(count_q))
+    total = int(str(count_res[0][0])) if count_res and count_res[0][0] else 0
+
+    offset = (page - 1) * per_page
+    page_q = """
+    PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX cppS: <https://cppkg.bio2vec.net/schema#>
+    SELECT DISTINCT ?entity (SAMPLE(?lbl) AS ?label) (SAMPLE(?seq) AS ?sequence) WHERE {{
+      ?entity {pred} <{cls}> .
+      OPTIONAL {{ ?entity rdfs:label ?lbl . }}
+      OPTIONAL {{ ?entity cppS:sequence ?seq . }}
+      {flt}
+    }}
+    GROUP BY ?entity
+    ORDER BY ?label ?entity
+    LIMIT {lim} OFFSET {off}
+    """.format(pred=pred, cls=class_uri, flt=flt, lim=per_page, off=offset)
+    _log_sparql_query("/api/browse page", page_q, class_uri=class_uri,
+                      page=page, per_page=per_page, filter=filter_text,
+                      offset=offset)
+    _, rows = sparql_to_records(g, page_q)
+
+    items = [
+        {"uri": r[0], "local_id": _uri_fragment(r[0]),
+         "label": r[1] or _uri_fragment(r[0]), "extra": r[2]}
+        for r in rows
+    ]
+    return {"items": items, "total": total, "page": page,
+            "per_page": per_page, "pages": max(1, (total + per_page - 1) // per_page)}
+
+
+def _warm_cache(g: Graph) -> None:
+    """Pre-populate the cache immediately after graph load.
+
+    Runs in a daemon thread so the server stays responsive.  By the time the
+    first browser tab opens, every home-page query and browse page-1 for each
+    class will already be cached.
+    """
+    import time
+    t0 = time.time()
+    print("[Cache] Pre-warming …")
+
+    for label, key, fn in [
+        ("metrics",      "metrics",      lambda: _compute_metrics(g)),
+        ("classes",      "classes",      lambda: _compute_classes(g)),
+        ("associations", "associations", lambda: _compute_associations(g)),
+    ]:
+        try:
+            _get_cached(key, fn)
+            print(f"[Cache]   {label} ✓")
+        except Exception as exc:
+            print(f"[Cache]   {label} FAILED: {exc}")
+
+    for uri in CLASS_CATALOG:
+        key = ("browse", uri, 1, 50, "")
+        try:
+            _get_cached(key, lambda u=uri: _compute_browse_page(g, u, 1, 50, ""))
+            print(f"[Cache]   browse/{uri.rsplit('/', 1)[-1]} ✓")
+        except Exception as exc:
+            print(f"[Cache]   browse/{uri} FAILED: {exc}")
+
+    print(f"[Cache] Pre-warm done in {time.time() - t0:.1f}s")
+    _save_cache_to_disk()
 
 
 def _compose_candidate_query(filters: dict):
@@ -332,7 +704,7 @@ def _compose_candidate_query(filters: dict):
         builder = _FIELD_BUILDERS.get(key)
         if builder is None:
             raise ValueError(f"Unknown search field: {key}")
-        parts.append(builder(_escape_sparql_literal(term)))
+        parts.append(builder(term))
 
     if not parts:
         return None, None
@@ -344,22 +716,82 @@ def _compose_candidate_query(filters: dict):
 MAX_MATCHED_PEPTIDES = 250
 
 _CANDIDATE_WHERE_TOKEN = "##CANDIDATE_WHERE##"
-_VALUES_TOKEN = "##PEPTIDE_VALUES##"
 
 CANDIDATE_QUERY = (
     "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
     "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+    "PREFIX owl:  <http://www.w3.org/2002/07/owl#>\n"
     "PREFIX sio:  <http://semanticscience.org/resource/>\n"
     "PREFIX cpp:  <https://cppkg.bio2vec.net/dataset/>\n"
     "PREFIX cppS: <https://cppkg.bio2vec.net/schema#>\n"
     "SELECT DISTINCT ?peptide\n"
     "WHERE {\n"
-    "    ?peptide rdf:type cpp:CellPenetratingPeptide .\n"
     "    "+ _CANDIDATE_WHERE_TOKEN + "\n"
     "}\n"
     "LIMIT " + str(MAX_MATCHED_PEPTIDES) + "\n"
 )
 
+
+
+# ---------------------------------------------------------------------------
+# Autocomplete queries — return (uri, label) pairs filtered by typed text.
+# Used by the frontend dropdowns for mechanism / subcell / cell_line / cargo.
+# ---------------------------------------------------------------------------
+
+_AUTOCOMPLETE_QUERIES = {
+    "mechanism": (
+        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+        "PREFIX owl:  <http://www.w3.org/2002/07/owl#>\n"
+        "PREFIX sio:  <http://semanticscience.org/resource/>\n"
+        "PREFIX cppS: <https://cppkg.bio2vec.net/schema#>\n"
+        "SELECT ?uri (SAMPLE(?rawLabel) AS ?label) WHERE {{\n"
+        "  ?r owl:onProperty sio:SIO_000356 .\n"
+        "  ?r owl:someValuesFrom ?uri .\n"
+        "  ?uri rdfs:subClassOf cppS:UptakeMechanism .\n"
+        "  ?uri rdfs:label ?rawLabel .\n"
+        "{filter}"
+        "}} GROUP BY ?uri ORDER BY LCASE(STR(?label)) LIMIT 250\n"
+    ),
+    "subcell": (
+        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+        "PREFIX owl:  <http://www.w3.org/2002/07/owl#>\n"
+        "PREFIX sio:  <http://semanticscience.org/resource/>\n"
+        "SELECT ?uri (SAMPLE(?rawLabel) AS ?label) WHERE {{\n"
+        "  ?r owl:onProperty sio:SIO_000061 .\n"
+        "  ?r owl:someValuesFrom ?uri .\n"
+        "  ?uri rdfs:label ?rawLabel .\n"
+        "{filter}"
+        "}} GROUP BY ?uri ORDER BY LCASE(STR(?label)) LIMIT 250\n"
+    ),
+    "cell_line": (
+        "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+        "PREFIX sio:  <http://semanticscience.org/resource/>\n"
+        "SELECT ?uri (SAMPLE(?rawLabel) AS ?label) WHERE {{\n"
+        "  ?uri rdf:type sio:SIO_010054 .\n"
+        "  ?uri rdfs:label ?rawLabel .\n"
+        "{filter}"
+        "}} GROUP BY ?uri ORDER BY LCASE(STR(?label))\n"
+    ),
+    "cargo": (
+        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+        "PREFIX sio:  <http://semanticscience.org/resource/>\n"
+        "PREFIX cppS: <https://cppkg.bio2vec.net/schema#>\n"
+        "SELECT ?uri (SAMPLE(?rawLabel) AS ?label) WHERE {{\n"
+        "  ?cplx sio:SIO_000369 ?uri .\n"
+        "  ?uri cppS:cargoType ?rawLabel .\n"
+        "  FILTER(STRSTARTS(STR(?uri), \"http://purl.obolibrary.org/obo/CHEBI\"))\n"
+        "{filter}"
+        "}} GROUP BY ?uri ORDER BY LCASE(STR(?label))\n"
+    ),
+}
+
+_AUTOCOMPLETE_FILTER_VARS = {
+    "mechanism": "rawLabel",
+    "subcell": "rawLabel",
+    "cell_line": "rawLabel",
+    "cargo": "rawLabel",
+}
 
 
 # ---------------------------------------------------------------------------
@@ -384,14 +816,10 @@ def api_status():
 def api_metrics():
     try:
         g = get_graph()
-        subjects = set(g.subjects())
-        objects = set(g.objects())
-        total_nodes = len(subjects | objects)
-        return jsonify({
-            "total_triples":    len(g),
-            "total_nodes":      total_nodes,
-            "total_predicates": len(set(g.predicates())),
-        })
+    except Exception as exc:
+        return jsonify({"error": str(exc)}), 500
+    try:
+        return jsonify(_get_cached("metrics", lambda: _compute_metrics(g)))
     except Exception as exc:
         return jsonify({"error": str(exc)}), 500
 
@@ -400,61 +828,25 @@ def api_metrics():
 def api_classes():
     try:
         g = get_graph()
-        try:
-            cols, rows = sparql_to_records(g, Q_CLASS_COUNTS)
-            df = pd.DataFrame(rows, columns=cols)
-            df["count"] = pd.to_numeric(df["count"], errors="coerce")
-
-            result = []
-            for _, r in df.iterrows():
-                entry = CLASS_CATALOG.get(r["class"])
-                if entry:
-                    result.append({
-                        "name":        entry["name"],
-                        "description": entry["description"],
-                        "uri":         r["class"],
-                        "count":       int(r["count"]) if pd.notna(r["count"]) else 0,
-                    })
-            result.sort(key=lambda x: x["count"], reverse=True)
-            return jsonify(result)
-        except Exception as qexc:
-            # Log and return an empty list with an error field rather than 500
-            traceback.print_exc()
-            return jsonify({"items": [], "error": str(qexc)}), 200
     except Exception as exc:
         traceback.print_exc()
         return jsonify({"error": str(exc)}), 500
+    try:
+        return jsonify(_get_cached("classes", lambda: _compute_classes(g)))
+    except Exception as exc:
+        traceback.print_exc()
+        return jsonify({"items": [], "error": str(exc)}), 200
 
 
 @app.route("/api/associations")
 def api_associations():
     try:
         g = get_graph()
-        rows = []
-        for entry in ASSOCIATION_CATALOG:
-            _log_sparql_query("/api/associations", entry["query"], association=entry["name"])
-            try:
-                with _sparql_lock:
-                    result = list(g.query(entry["query"]))
-                count = int(str(result[0][0])) if result and result[0][0] is not None else 0
-            except Exception as qexc:
-                traceback.print_exc()
-                count = 0
-                # attach the error message to the entry for debugging
-                rows.append({
-                    "name":        entry["name"],
-                    "description": entry["description"],
-                    "count":       count,
-                    "error":       str(qexc),
-                })
-                # continue to next association
-                continue
-            rows.append({
-                "name":        entry["name"],
-                "description": entry["description"],
-                "count":       count,
-            })
-        return jsonify(rows)
+    except Exception as exc:
+        traceback.print_exc()
+        return jsonify({"error": str(exc)}), 500
+    try:
+        return jsonify(_get_cached("associations", lambda: _compute_associations(g)))
     except Exception as exc:
         traceback.print_exc()
         return jsonify({"error": str(exc)}), 500
@@ -482,28 +874,32 @@ def api_search():
 
     try:
         g = get_graph()
+    except Exception as exc:
+        traceback.print_exc()
+        return jsonify({"error": str(exc)}), 500
 
+    # Cache key: sorted filter items so order doesn't matter.
+    cache_key = ("search", tuple(sorted(
+        (k, (str(v) or "").strip()) for k, v in filters.items()
+        if (str(v) or "").strip()
+    )))
+
+    def _compute():
         try:
             with _sparql_lock:
                 candidate_rows = list(g.query(candidate_query))
         except Exception as qexc:
             traceback.print_exc()
-            return jsonify({
-                "error": "Candidate query failed",
-                "debug": {"candidate_query": candidate_query, "exception": str(qexc)},
-            }), 500
+            return {"_error": "Candidate query failed", "debug": str(qexc)}
+
         peptides = [str(getattr(r, 'peptide', r[0])) for r in candidate_rows]
 
         if not peptides:
-            return jsonify({
-                "items": [], "matched_peptides": 0, "warnings": [],
-                "debug": {"candidate_query": candidate_query},
-            })
+            return {"items": [], "matched_peptides": 0, "warnings": [],
+                    "debug": {"candidate_query": candidate_query}}
 
-        # Fetch pepName + sequence for matched peptides in one small query
         values_block = " ".join("<{}>".format(uri) for uri in peptides)
         basics_q = (
-            "PREFIX cpp:  <https://cppkg.bio2vec.net/dataset/>\n"
             "PREFIX cppS: <https://cppkg.bio2vec.net/schema#>\n"
             "SELECT ?peptide ?pepName ?sequence WHERE {\n"
             "  VALUES ?peptide { " + values_block + " }\n"
@@ -516,7 +912,7 @@ def api_search():
                 basics_rows = list(g.query(basics_q))
         except Exception as qexc:
             traceback.print_exc()
-            return jsonify({"error": "Basics query failed", "debug": str(qexc)}), 500
+            return {"_error": "Basics query failed", "debug": str(qexc)}
 
         basics = {str(r[0]): (str(r[1]) if r[1] else "", str(r[2]) if r[2] else "")
                   for r in basics_rows}
@@ -534,14 +930,22 @@ def api_search():
 
         warnings = []
         if len(peptides) >= MAX_MATCHED_PEPTIDES:
-            warnings.append(f"Matched at least {MAX_MATCHED_PEPTIDES} peptides. Refine the search term for faster results.")
-
-        return jsonify({
+            warnings.append(
+                f"Matched at least {MAX_MATCHED_PEPTIDES} peptides. "
+                "Refine the search term for faster results."
+            )
+        return {
             "items":            items,
             "matched_peptides": len(items),
             "warnings":         warnings,
             "debug":            {"candidate_query": candidate_query},
-        })
+        }
+
+    try:
+        result = _get_cached(cache_key, _compute)
+        if "_error" in result:
+            return jsonify({"error": result["_error"], "debug": result.get("debug")}), 500
+        return jsonify(result)
     except Exception as exc:
         traceback.print_exc()
         return jsonify({"error": str(exc)}), 500
@@ -566,6 +970,34 @@ def api_search_preview():
         return jsonify({"error": str(exc)}), 400
 
     return jsonify({"candidate_query": candidate_query or ""})
+
+
+@app.route("/api/autocomplete/<field>")
+def api_autocomplete(field):
+    """Return available (uri, label, id) options for the given dropdown field."""
+    if field not in _AUTOCOMPLETE_QUERIES:
+        return jsonify([]), 400
+    q_term = request.args.get("q", "").strip()
+    filter_clause = ""
+    if q_term:
+        esc = _escape_sparql_literal(q_term)
+        filter_var = _AUTOCOMPLETE_FILTER_VARS.get(field, "label")
+        filter_clause = f'  FILTER(CONTAINS(LCASE(STR(?{filter_var})), LCASE("{esc}")))\n'
+    query = _AUTOCOMPLETE_QUERIES[field].format(filter=filter_clause)
+    try:
+        g = get_graph()
+        _, rows = sparql_to_records(g, query)
+        results = []
+        for row in rows:
+            uri, label = row[0], row[1]
+            if not uri or not label:
+                continue
+            local = _uri_fragment(uri).replace("_", ":")
+            results.append({"uri": uri, "label": label, "id": local})
+        return jsonify(results)
+    except Exception as exc:
+        traceback.print_exc()
+        return jsonify({"error": str(exc)}), 500
 
 
 @app.route("/api/sparql", methods=["POST"])
@@ -706,93 +1138,28 @@ def api_entity(entity_id):
 
 @app.route("/api/browse")
 def api_browse():
-    class_uri = request.args.get("class", "").strip()
+    class_uri   = request.args.get("class", "").strip()
+    filter_text = request.args.get("filter", "").strip()
     try:
-        page = max(1, int(request.args.get("page", 1)))
+        page     = max(1, int(request.args.get("page", 1)))
         per_page = min(100, max(10, int(request.args.get("per_page", 50))))
     except (ValueError, TypeError):
         page, per_page = 1, 50
-    filter_text = request.args.get("filter", "").strip()
 
     if not class_uri:
         return jsonify({"error": "class parameter required"}), 400
 
     try:
         g = get_graph()
+    except Exception as exc:
+        return jsonify({"error": str(exc)}), 500
 
-        filter_clause = ""
-        if filter_text:
-            esc = _escape_sparql_literal(filter_text)
-            filter_clause = 'FILTER(CONTAINS(LCASE(COALESCE(STR(?label), STR(?entity))), LCASE("{}")))'.format(esc)
-
-        # Count total
-        count_q = """
-        PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        SELECT (COUNT(DISTINCT ?entity) AS ?total) WHERE {{
-          ?entity rdf:type <{cls}> .
-          OPTIONAL {{ ?entity rdfs:label ?label . }}
-          {flt}
-        }}
-        """.format(cls=class_uri, flt=filter_clause)
-        _log_sparql_query(
-            "/api/browse count",
-            count_q,
-            class_uri=class_uri,
-            page=page,
-            per_page=per_page,
-            filter=filter_text,
-        )
-        with _sparql_lock:
-            count_res = list(g.query(count_q))
-        total = int(str(count_res[0][0])) if count_res and count_res[0][0] else 0
-
-        # Fetch page  (rdflib 7 supports OFFSET)
-        offset = (page - 1) * per_page
-        q = """
-        PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        PREFIX cppS: <https://cppkg.bio2vec.net/schema#>
-        SELECT DISTINCT ?entity (SAMPLE(?lbl) AS ?label) (SAMPLE(?seq) AS ?sequence) WHERE {{
-          ?entity rdf:type <{cls}> .
-          OPTIONAL {{ ?entity rdfs:label ?lbl . }}
-          OPTIONAL {{ ?entity cppS:sequence ?seq . }}
-          {flt}
-        }}
-        GROUP BY ?entity
-        ORDER BY ?label ?entity
-        LIMIT {lim} OFFSET {off}
-        """.format(cls=class_uri, flt=filter_clause, lim=per_page, off=offset)
-        _log_sparql_query(
-            "/api/browse page",
-            q,
-            class_uri=class_uri,
-            page=page,
-            per_page=per_page,
-            filter=filter_text,
-            offset=offset,
-        )
-        _, rows = sparql_to_records(g, q)
-
-        items = []
-        for row in rows:
-            ent_uri, label, seq = row[0], row[1], row[2]
-            local_id = _uri_fragment(ent_uri)
-            items.append({
-                "uri":      ent_uri,
-                "local_id": local_id,
-                "label":    label or local_id,
-                "extra":    seq,
-            })
-
-        pages = max(1, (total + per_page - 1) // per_page)
-        return jsonify({
-            "items":    items,
-            "total":    total,
-            "page":     page,
-            "per_page": per_page,
-            "pages":    pages,
-        })
+    cache_key = ("browse", class_uri, page, per_page, filter_text)
+    try:
+        return jsonify(_get_cached(
+            cache_key,
+            lambda: _compute_browse_page(g, class_uri, page, per_page, filter_text),
+        ))
     except Exception as exc:
         return jsonify({"error": str(exc)}), 500
 

@@ -338,6 +338,26 @@ def _sanitize_xml(text: str) -> str:
     )
 
 
+def _split_multi_value_field(value) -> List[str]:
+    """Split comma-separated ontology identifiers, ignoring null and empty values."""
+    if pd.isna(value):
+        return []
+    return [part.strip() for part in str(value).split(",") if part.strip()]
+
+
+def _load_mechanism_metadata(*candidate_paths: str) -> dict:
+    """Load mechanism metadata from the first existing JSON path."""
+    for path in candidate_paths:
+        if path and os.path.exists(path):
+            try:
+                with open(path, "r", encoding="utf-8") as handle:
+                    return json.load(handle)
+            except Exception as exc:
+                print(f"Warning: failed to load metadata {path}: {exc}")
+                return {}
+    return {}
+
+
 def _add_features(manager, ontology, factory, subject_iri_str, col_value_pairs):
     """
     Add literal annotation assertions for feature columns to a named individual.
@@ -1430,7 +1450,508 @@ def extend_ontology_with_annotations(ontology: str,
     # ------------------------------------------------------------------ #
     # Phase 3b: ABox annotation chains via mowl insert_annotations        #
     # ------------------------------------------------------------------ #
-    
+
+
+def _compute_graph_stats(ttl_path: str) -> dict:
+    """Load the compiled TTL with rdflib and return a breakdown of
+    triple counts (by predicate namespace), node counts (by node type),
+    and the number of unique predicate URIs.
+
+    Returns an empty dict if the file cannot be read.
+    """
+    try:
+        from rdflib import Graph as RGraph, BNode, Literal, URIRef
+        g = RGraph()
+        g.parse(ttl_path, format="turtle")
+
+        subjects   = set(g.subjects())
+        objects    = set(g.objects())
+        all_nodes  = subjects | objects
+        predicates = set(g.predicates())
+
+        n_uri     = sum(1 for n in all_nodes if isinstance(n, URIRef))
+        n_literal = sum(1 for n in all_nodes if isinstance(n, Literal))
+        n_bnode   = sum(1 for n in all_nodes if isinstance(n, BNode))
+
+        ns = {"rdf": 0, "rdfs": 0, "owl": 0, "sio": 0, "cppS": 0, "other": 0}
+        for _, p, _ in g:
+            ps = str(p)
+            if "rdf-syntax" in ps or "/rdf#" in ps:
+                ns["rdf"]  += 1
+            elif "rdf-schema" in ps:
+                ns["rdfs"] += 1
+            elif "owl#" in ps:
+                ns["owl"]  += 1
+            elif "semanticscience" in ps:
+                ns["sio"]  += 1
+            elif "cppkg" in ps:
+                ns["cppS"] += 1
+            else:
+                ns["other"] += 1
+
+        return {
+            "total_triples": len(g),
+            "total_nodes":   len(all_nodes),
+            "n_uri":         n_uri,
+            "n_literal":     n_literal,
+            "n_bnode":       n_bnode,
+            "n_predicates":  len(predicates),
+            "ns":            ns,
+        }
+    except Exception as exc:
+        print(f"[Warning] Could not load TTL for graph stats ({ttl_path}): {exc}")
+        return {}
+
+
+def print_build_summary(gene_to_go_file: str = None,
+                        chebi_to_go_file: str = None,
+                        cpp_csv_file: str = None,
+                        ttl_file: str = None):
+    """
+    Print a compact end-of-run summary of entity and association counts.
+
+    Counts are derived from the same source files used to build the ontology,
+    so the report remains deterministic and inexpensive to compute.
+    """
+    # Accumulators for the old internal counters (kept for backwards compat)
+    entity_counts = []
+    association_counts = []
+    property_counts = {
+        "Has attribute": 0,
+        "Has component part": 0,
+        "Is located in": 0,
+        "Is realized in": 0,
+        "Has participant": 0,
+        "Is about": 0,
+    }
+    relation_breakdown = {}
+    tracked_entities = set()
+    tracked_documents = set()
+    tracked_mechanisms = set()
+
+    gene_has_evidence = set()
+    inhibitor_has_evidence = set()
+
+    # Per-block summary variables — initialised to 0/empty so the final
+    # summary prints correctly even when a source file is absent.
+    n_genes              = 0
+    n_gene_mech_links    = 0   # unique (gene, mechanism) pairs
+    n_inhibitors         = 0
+    n_inhib_mech_links   = 0   # unique (inhibitor, mechanism) pairs
+    n_cpps               = 0
+    n_cargos             = 0
+    n_complexes          = 0
+    n_experiments        = 0   # unique experiment IRIs (not raw CSV rows)
+    n_cell_lines         = 0
+    n_subcellular        = 0
+    n_cpp_roles_realized = 0   # distinct CPP roles with ≥1 mechanism
+    n_cargo_roles_realized = 0 # distinct Cargo roles with ≥1 mechanism
+    n_complexes_in_exp     = 0   # distinct CPP-Complexes that are participant in an experiment
+    n_cell_lines_in_exp    = 0   # distinct Cell Lines that are participant in an experiment
+    n_complexes_located    = 0   # distinct CPP-Complexes with ≥1 subcellular location
+    n_experiments_about    = 0   # unique (experiment, mechanism) pairs
+    n_experiments_desc_by  = 0   # unique (experiment, document) pairs
+
+    # External ontology identifier sets — populated per source block.
+    _ensembl_iris      = set()   # Ensembl gene IRIs
+    _inhibitor_chebi   = set()   # OBO ChEBI IRIs from inhibitor source
+    _cargo_chebi       = set()   # OBO ChEBI IRIs from cargo source
+    tracked_pubmeds    = set()   # PubMed document IRIs
+    tracked_patents    = set()   # Patent document IRIs
+
+    def _add_relation(source_type: str, association: str, target_type: str, count: int):
+        """Accumulate counts for a typed relation summary row."""
+        if count <= 0:
+            return
+        key = (source_type, association, target_type)
+        relation_breakdown[key] = relation_breakdown.get(key, 0) + count
+
+    metadata = _load_mechanism_metadata(
+        os.path.join(os.path.dirname(gene_to_go_file), "mech_metadata.json")
+        if gene_to_go_file else None,
+        os.path.join(os.path.dirname(chebi_to_go_file), "mech_metadata.json")
+        if chebi_to_go_file else None,
+    )
+
+    if gene_to_go_file and os.path.exists(gene_to_go_file):
+        df_gene = pd.read_csv(gene_to_go_file, sep="\t", header=None).dropna()
+        df_gene_pairs = df_gene.drop_duplicates()
+        genes = set(df_gene[0].astype(str))
+        gene_mechanisms = set(df_gene[1].astype(str))
+        tracked_entities.update(genes)
+        tracked_mechanisms.update(gene_mechanisms)
+
+        _ensembl_iris = set(genes)
+
+        for gene_iri, gene_meta in metadata.get("genes", {}).items():
+            for pm in gene_meta.get("pubmeds", []) or []:
+                try:
+                    pub_iri = f"https://identifiers.org/pubmed:{int(float(str(pm)))}"
+                except Exception:
+                    continue
+                tracked_documents.add(pub_iri)
+                tracked_pubmeds.add(pub_iri)
+                gene_has_evidence.add((gene_iri, pub_iri))
+
+        n_genes           = len(genes)
+        n_gene_mech_links = len(df_gene_pairs)
+
+        entity_counts.extend([
+            ("Genes", len(genes)),
+            ("Activator roles", len(df_gene_pairs)),
+            ("Up-regulation processes", len(df_gene_pairs)),
+        ])
+        property_counts["Has attribute"] += len(df_gene_pairs)
+        property_counts["Is realized in"] += len(df_gene_pairs)
+        _add_relation("Gene", "Has attribute", "Activator role", len(df_gene_pairs))
+        _add_relation("Activator role", "Is attribute of", "Gene", len(df_gene_pairs))
+        _add_relation("Activator role", "Is realized in", "Up-regulation process", len(df_gene_pairs))
+        _add_relation("Up-regulation process", "Realizes", "Activator role", len(df_gene_pairs))
+        _add_relation("Up-regulation process", "Positively regulates", "Uptake mechanism", len(df_gene_pairs))
+        _add_relation("Gene", "Has evidence", "Document", len(gene_has_evidence))
+        association_counts.extend([
+            ("Gene -> uptake mechanism links", len(df_gene_pairs)),
+            ("Gene -> PubMed evidence links", len(gene_has_evidence)),
+        ])
+
+    if chebi_to_go_file and os.path.exists(chebi_to_go_file):
+        df_chebi = pd.read_csv(chebi_to_go_file, sep="\t", header=None).dropna()
+        df_chebi_pairs = df_chebi.drop_duplicates()
+        inhibitors = set(df_chebi[0].astype(str))
+        inhibitor_mechanisms = set(df_chebi[1].astype(str))
+        tracked_entities.update(inhibitors)
+        tracked_mechanisms.update(inhibitor_mechanisms)
+
+        _inhibitor_chebi = set(inhibitors)
+
+        for chebi_iri, chebi_meta in metadata.get("chebi", {}).items():
+            for pm in chebi_meta.get("pubmeds", []) or []:
+                try:
+                    pub_iri = f"https://identifiers.org/pubmed:{int(float(str(pm)))}"
+                except Exception:
+                    continue
+                tracked_documents.add(pub_iri)
+                tracked_pubmeds.add(pub_iri)
+                inhibitor_has_evidence.add((chebi_iri, pub_iri))
+
+        n_inhibitors       = len(inhibitors)
+        n_inhib_mech_links = len(df_chebi_pairs)
+
+        entity_counts.extend([
+            ("Inhibitors", len(inhibitors)),
+            ("Inhibitor roles", len(df_chebi_pairs)),
+            ("Down-regulation processes", len(df_chebi_pairs)),
+        ])
+        property_counts["Has attribute"] += len(df_chebi_pairs)
+        property_counts["Is realized in"] += len(df_chebi_pairs)
+        _add_relation("Inhibitor", "Has attribute", "Inhibitor role", len(df_chebi_pairs))
+        _add_relation("Inhibitor role", "Is attribute of", "Inhibitor", len(df_chebi_pairs))
+        _add_relation("Inhibitor role", "Is realized in", "Down-regulation process", len(df_chebi_pairs))
+        _add_relation("Down-regulation process", "Realizes", "Inhibitor role", len(df_chebi_pairs))
+        _add_relation("Down-regulation process", "Negatively regulates", "Uptake mechanism", len(df_chebi_pairs))
+        _add_relation("Inhibitor", "Has evidence", "Document", len(inhibitor_has_evidence))
+        association_counts.extend([
+            ("Inhibitor -> uptake mechanism links", len(df_chebi_pairs)),
+            ("Inhibitor -> PubMed evidence links", len(inhibitor_has_evidence)),
+        ])
+
+    if cpp_csv_file and os.path.exists(cpp_csv_file):
+        df_cpp = pd.read_csv(cpp_csv_file, usecols=[
+            "id", "CPP_ID", "RAG_curie_CheBI",
+            "Main Uptake Mechanism ID", "Subcategory Uptake Mechanism ID",
+            "RAG_curie_CLO", "Subcellular Delivery ID",
+            "Pubmed ID", "Patent",
+        ])
+
+        df_pairs = df_cpp.dropna(subset=["CPP_ID", "RAG_curie_CheBI"]).copy()
+        unique_pairs = df_pairs.drop_duplicates(subset=["CPP_ID", "RAG_curie_CheBI"]).copy()
+
+        cpps = set(df_pairs["CPP_ID"].astype(str))
+        cargos = {
+            "http://purl.obolibrary.org/obo/" + str(acc).replace(":", "_")
+            for acc in df_pairs["RAG_curie_CheBI"].astype(str).unique()
+        }
+        _cargo_chebi = set(cargos)
+        cell_lines = {
+            "http://purl.obolibrary.org/obo/" + str(acc).replace(":", "_")
+            for acc in df_cpp["RAG_curie_CLO"].dropna().astype(str)
+            if acc.strip()
+        }
+        subcellular_terms = set()
+        cpp_role_realized_in = set()
+        cargo_role_realized_in = set()
+        complex_located_in = set()
+        experiment_about = set()
+        experiment_has_participant = set()
+        experiment_to_complex = set()
+        experiment_to_cell_line = set()
+        experiment_described_by = set()
+
+        pair_to_idx = {
+            (row["CPP_ID"], row["RAG_curie_CheBI"]): idx
+            for idx, (_, row) in enumerate(unique_pairs.iterrows(), start=1)
+        }
+
+        for pair_idx, (_, row) in enumerate(unique_pairs.iterrows(), start=1):
+            cpp_role_iri = CPP_DATASET_NS + f"cpp_role_{pair_idx:04d}"
+            cargo_role_iri = CPP_DATASET_NS + f"cargo_role_{pair_idx:04d}"
+            chosen_mechanisms = _split_multi_value_field(
+                row["Subcategory Uptake Mechanism ID"]
+                if pd.notna(row["Subcategory Uptake Mechanism ID"])
+                and str(row["Subcategory Uptake Mechanism ID"]).strip()
+                else row["Main Uptake Mechanism ID"]
+            )
+            tracked_mechanisms.update(chosen_mechanisms)
+            for mech_iri in chosen_mechanisms:
+                cpp_role_realized_in.add((cpp_role_iri, mech_iri))
+                cargo_role_realized_in.add((cargo_role_iri, mech_iri))
+
+        valid_experiments = 0
+        for _, row in df_cpp.iterrows():
+            if pd.isna(row["CPP_ID"]) or pd.isna(row["RAG_curie_CheBI"]):
+                continue
+
+            valid_experiments += 1
+            pair_idx = pair_to_idx[(row["CPP_ID"], row["RAG_curie_CheBI"])]
+            exp_iri = CPP_DATASET_NS + f"experiment_{int(row['id'])}"
+            complex_iri = CPP_DATASET_NS + f"cpp_complex_{pair_idx:04d}"
+            experiment_has_participant.add((exp_iri, complex_iri))
+            experiment_to_complex.add((exp_iri, complex_iri))
+
+            chosen_mechanisms = _split_multi_value_field(
+                row["Subcategory Uptake Mechanism ID"]
+                if pd.notna(row["Subcategory Uptake Mechanism ID"])
+                and str(row["Subcategory Uptake Mechanism ID"]).strip()
+                else row["Main Uptake Mechanism ID"]
+            )
+            tracked_mechanisms.update(chosen_mechanisms)
+            for mech_iri in chosen_mechanisms:
+                experiment_about.add((exp_iri, mech_iri))
+
+            clo_value = row["RAG_curie_CLO"]
+            if pd.notna(clo_value) and str(clo_value).strip():
+                clo_iri = "http://purl.obolibrary.org/obo/" + str(clo_value).strip().replace(":", "_")
+                experiment_has_participant.add((exp_iri, clo_iri))
+                experiment_to_cell_line.add((exp_iri, clo_iri))
+
+            for loc_iri in _split_multi_value_field(row["Subcellular Delivery ID"]):
+                subcellular_terms.add(loc_iri)
+                complex_located_in.add((complex_iri, loc_iri))
+
+            pubmed_val = row["Pubmed ID"]
+            patent_val = row["Patent"]
+            pub_iri = None
+            pubmed_valid = pd.notna(pubmed_val) and str(pubmed_val).strip() not in ("", "0", "0.0")
+            if pubmed_valid:
+                pub_iri = f"https://identifiers.org/pubmed:{int(float(pubmed_val))}"
+            elif pd.notna(patent_val) and str(patent_val).strip():
+                pub_iri = "https://patents.google.com/patent/" + str(patent_val).strip().replace(" ", "")
+
+            if pub_iri:
+                tracked_documents.add(pub_iri)
+                experiment_described_by.add((exp_iri, pub_iri))
+                if pubmed_valid:
+                    tracked_pubmeds.add(pub_iri)
+                else:
+                    tracked_patents.add(pub_iri)
+
+        tracked_entities.update(cpps)
+        tracked_entities.update(cargos)
+        tracked_entities.update(cell_lines)
+        tracked_entities.update(
+            CPP_DATASET_NS + f"cpp_complex_{idx:04d}"
+            for idx in range(1, len(unique_pairs) + 1)
+        )
+        tracked_entities.update(
+            CPP_DATASET_NS + f"cpp_role_{idx:04d}"
+            for idx in range(1, len(unique_pairs) + 1)
+        )
+        tracked_entities.update(
+            CPP_DATASET_NS + f"cargo_role_{idx:04d}"
+            for idx in range(1, len(unique_pairs) + 1)
+        )
+        tracked_entities.update(
+            CPP_DATASET_NS + f"experiment_{int(exp_id)}"
+            for exp_id in df_pairs["id"].dropna().astype(int).unique()
+        )
+
+        # Unique counts that match what ends up in the compiled RDF graph.
+        n_cpps               = len(cpps)
+        n_cargos             = len(cargos)
+        n_complexes          = len(unique_pairs)
+        # Unique experiment IRIs (each CSV row with the same id → same IRI).
+        n_experiments        = len(df_pairs["id"].dropna().astype(int).unique())
+        n_cell_lines         = len(cell_lines)
+        n_subcellular        = len(subcellular_terms)
+        # Distinct roles that are realised in at least one mechanism.
+        n_cpp_roles_realized   = len({role for role, _ in cpp_role_realized_in})
+        n_cargo_roles_realized = len({role for role, _ in cargo_role_realized_in})
+        # Distinct CPP-Complexes / Cell Lines that participate in an experiment.
+        n_complexes_in_exp   = len({cx  for _, cx  in experiment_to_complex})
+        n_cell_lines_in_exp  = len({cl  for _, cl  in experiment_to_cell_line})
+        # Distinct CPP-Complexes with at least one subcellular location.
+        n_complexes_located    = len({cx for cx, _ in complex_located_in})
+        # Unique (experiment, mechanism) and (experiment, document) links.
+        n_experiments_about    = len(experiment_about)
+        n_experiments_desc_by  = len(experiment_described_by)
+
+        entity_counts.extend([
+            ("CPPs", len(cpps)),
+            ("Cargoes", len(cargos)),
+            ("CPP-Complexes", len(unique_pairs)),
+            ("CPP roles", len(unique_pairs)),
+            ("Cargo roles", len(unique_pairs)),
+            ("Experiments", n_experiments),
+            ("Cell lines", len(cell_lines)),
+            ("Subcellular locations", len(subcellular_terms)),
+        ])
+        property_counts["Has attribute"] += len(unique_pairs) * 2
+        property_counts["Has component part"] += len(unique_pairs) * 2
+        property_counts["Is realized in"] += (
+            len(cpp_role_realized_in) + len(cargo_role_realized_in)
+        )
+        property_counts["Has participant"] += len(experiment_has_participant)
+        property_counts["Is about"] += len(experiment_about)
+        property_counts["Is located in"] += len(complex_located_in)
+        _add_relation("CPP-Complex", "Has component part", "CPP", len(unique_pairs))
+        _add_relation("CPP-Complex", "Has component part", "Cargo", len(unique_pairs))
+        _add_relation("CPP", "Is component part of", "CPP-Complex", len(unique_pairs))
+        _add_relation("Cargo", "Is component part of", "CPP-Complex", len(unique_pairs))
+        _add_relation("CPP", "Has attribute", "CPP role", len(unique_pairs))
+        _add_relation("CPP role", "Is attribute of", "CPP", len(unique_pairs))
+        _add_relation("Cargo", "Has attribute", "Cargo role", len(unique_pairs))
+        _add_relation("Cargo role", "Is attribute of", "Cargo", len(unique_pairs))
+        _add_relation("CPP role", "Is realized in", "Uptake mechanism", len(cpp_role_realized_in))
+        _add_relation("Cargo role", "Is realized in", "Uptake mechanism", len(cargo_role_realized_in))
+        _add_relation("Experiment", "Has participant", "CPP-Complex", len(experiment_to_complex))
+        _add_relation("Experiment", "Has participant", "Cell line", len(experiment_to_cell_line))
+        _add_relation("CPP-Complex", "Is participant in", "Experiment", len(experiment_to_complex))
+        _add_relation("Cell line", "Is participant in", "Experiment", len(experiment_to_cell_line))
+        _add_relation("Experiment", "Is about", "Uptake mechanism", len(experiment_about))
+        _add_relation("CPP-Complex", "Is located in", "Subcellular location", len(complex_located_in))
+        _add_relation("Experiment", "Is described by", "Document", len(experiment_described_by))
+        _add_relation("Document", "Describes", "Experiment", len(experiment_described_by))
+        association_counts.extend([
+            ("CPP-Complex -> component links", len(unique_pairs) * 2),
+            ("CPP role -> uptake mechanism links", len(cpp_role_realized_in)),
+            ("Cargo role -> uptake mechanism links", len(cargo_role_realized_in)),
+            ("Experiment -> participant links", len(experiment_has_participant)),
+            ("Experiment -> mechanism links", len(experiment_about)),
+            ("CPP-Complex -> subcellular location links", len(complex_located_in)),
+            ("Experiment -> document links", len(experiment_described_by)),
+        ])
+
+    if tracked_mechanisms:
+        entity_counts.insert(0, ("Uptake mechanisms", len(tracked_mechanisms)))
+    if tracked_documents:
+        entity_counts.append(("Documents", len(tracked_documents)))
+
+    # Derived external-ID counts (computed once, after all blocks have run).
+    n_go_terms     = sum(1 for m in tracked_mechanisms
+                         if "purl.obolibrary.org/obo/GO" in m)
+    n_chebi_unique = len(_inhibitor_chebi | _cargo_chebi)
+
+    # -----------------------------------------------------------------------
+    # Documentation-ready summary
+    # All counts reflect unique IRIs/links as they appear in the compiled
+    # RDF graph — matching the /api/classes and /api/associations endpoints.
+    # -----------------------------------------------------------------------
+
+    entity_rows = [
+        ("Uptake Mechanism",        len(tracked_mechanisms)),
+        ("Gene",                    n_genes),
+        ("Inhibitor",               n_inhibitors),
+        ("Cell-Penetrating Peptide",n_cpps),
+        ("Cargo",                   n_cargos),
+        ("CPP-Complex",             n_complexes),
+        ("Cell Line",               n_cell_lines),
+        ("Subcellular Entity",      n_subcellular),
+        ("Experiment",              n_experiments),
+        ("Document",                len(tracked_documents)),
+    ]
+    total_unique_entities = sum(c for _, c in entity_rows)
+
+    assoc_rows = [
+        ("Positively Regulates  (Gene → Uptake Mechanism)",             n_gene_mech_links),
+        ("Negatively Regulates  (Inhibitor → Uptake Mechanism)",        n_inhib_mech_links),
+        ("Activator Role: Is Attribute Of  (→ Gene)",                   n_gene_mech_links),
+        ("Inhibitor Role: Is Attribute Of  (→ Inhibitor)",              n_inhib_mech_links),
+        ("CPP Role: Is Realized In  (→ Uptake Mechanism)",              n_cpp_roles_realized),
+        ("Cargo Role: Is Realized In  (→ Uptake Mechanism)",            n_cargo_roles_realized),
+        ("Cargo: Is Component Part Of  (→ CPP-Complex)",                n_complexes),
+        ("Cell-Penetrating Peptide: Is Component Part Of  (→ Complex)", n_complexes),
+        ("CPP-Complex: Is Participant In  (→ Experiment)",              n_complexes_in_exp),
+        ("Cell Line: Is Participant In  (→ Experiment)",                n_cell_lines_in_exp),
+        ("Subcellular Delivery Localization  (CPP-Complex → Location)", n_complexes_located),
+        ("Experiment: Is About  (→ Uptake Mechanism)",                  n_experiments_about),
+        ("Experiment: Is Described By  (→ Document)",                   n_experiments_desc_by),
+    ]
+    total_unique_assoc = sum(c for _, c in assoc_rows)
+
+    # Load graph-level statistics from the compiled TTL (if provided).
+    gs = _compute_graph_stats(ttl_file) if ttl_file else {}
+
+    W = 72
+    print("\n" + "=" * W)
+    print("KNOWLEDGE GRAPH BUILD SUMMARY")
+    print("=" * W)
+
+    # ── Unique Entities ──────────────────────────────────────────────────
+    print("\nUnique Entities")
+    print("-" * W)
+    for label, count in entity_rows:
+        print(f"  {label:<30} {count:>8,}")
+    print("-" * W)
+    print(f"  {'Total unique entities':<30} {total_unique_entities:>8,}")
+
+    # ── External Identifiers Referenced ──────────────────────────────────
+    ext_rows = [
+        ("Ensembl gene IDs",                        len(_ensembl_iris)),
+        ("ChEBI compound IDs  (cargo + inhibitor)", n_chebi_unique),
+        ("  of which: cargo molecules",             len(_cargo_chebi)),
+        ("  of which: inhibitor compounds",         len(_inhibitor_chebi)),
+        ("CLO cell line IDs",                       n_cell_lines),
+        ("GO terms  (uptake mechanism classes)",    n_go_terms),
+        ("PubMed IDs",                              len(tracked_pubmeds)),
+        ("Patent IDs",                              len(tracked_patents)),
+    ]
+    total_ext = sum(c for label, c in ext_rows if not label.startswith("  "))
+    print("\nExternal Identifiers Referenced")
+    print("-" * W)
+    for label, count in ext_rows:
+        print(f"  {label:<40} {count:>8,}")
+    print("-" * W)
+    print(f"  {'Total external IDs (excl. sub-rows)':<40} {total_ext:>8,}")
+
+    # ── Unique Associations ───────────────────────────────────────────────
+    print("\nUnique Associations")
+    print("-" * W)
+    for label, count in assoc_rows:
+        print(f"  {label:<62} {count:>6,}")
+    print("-" * W)
+    print(f"  {'Total unique associations':<62} {total_unique_assoc:>6,}")
+
+    # ── Graph Statistics (from compiled RDF graph) ────────────────────────
+    if gs:
+        ns = gs["ns"]
+        print("\nGraph Statistics  (compiled RDF graph)")
+        print("-" * W)
+        print(f"  {'Total triples':<35} {gs['total_triples']:>8,}")
+        print(f"    rdf:  type assertions & declarations  {ns['rdf']:>8,}")
+        print(f"    rdfs: labels & subclass hierarchy     {ns['rdfs']:>8,}")
+        print(f"    owl:  blank-node axiom machinery      {ns['owl']:>8,}")
+        print(f"    sio:  semantic relations               {ns['sio']:>8,}")
+        print(f"    cppS: domain data properties          {ns['cppS']:>8,}")
+        print(f"    other (Dublin Core, etc.)             {ns['other']:>8,}")
+        print(f"  {'Total nodes':<35} {gs['total_nodes']:>8,}")
+        print(f"    Named entities (URI references)       {gs['n_uri']:>8,}")
+        print(f"    Literal values (strings/numbers)      {gs['n_literal']:>8,}")
+        print(f"    Blank nodes (OWL restrictions)        {gs['n_bnode']:>8,}")
+        print(f"  {'Unique edge types (predicates)':<35} {gs['n_predicates']:>8,}")
+        print("-" * W)
+
+    print("\n" + "=" * W)
+
 
 # ============================================================================
 # MAIN EXECUTION
@@ -1603,6 +2124,13 @@ def main():
             cpp_cell_file=cpp_cell_file,
             output_file="data/Ontology/CPP_KG.owl"
         )
+
+    print_build_summary(
+        gene_to_go_file=GENE_TO_GO_FILE,
+        chebi_to_go_file=CHEBI_TO_GO_FILE,
+        cpp_csv_file=CPP_CSV_FILE,
+        ttl_file="data/Ontology/CPP_KG.ttl",
+    )
 
 
 if __name__ == "__main__":
