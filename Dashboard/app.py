@@ -29,6 +29,7 @@ GITHUB_TTL_URL = "https://raw.githubusercontent.com/bio-ontology-research-group/
 ZENODO_API_URL = "https://zenodo.org/api/records/19427198"
 _HERE = Path(__file__).parent
 LOCAL_TTL_CANDIDATES = [
+    _HERE / "../data/Ontology/CPP_KG_materialized.ttl",
     _HERE / "../data/Ontology/CPP_KG.ttl",
     _HERE / "../data/CPP_KG.ttl",
 ]
@@ -311,31 +312,28 @@ ASSOCIATION_CATALOG = [
     {
         "name": "Cargo Role: Is Realized In",
         "description": "Functional role of the Cargo realized in the Uptake Mechanism.",
-        # Cargo roles linked to an uptake mechanism carry an OWL restriction typed on the
-        # individual: ?role rdf:type [ owl:onProperty SIO_000356 ; ... ].  We match the
-        # blank-node restriction via a named variable to avoid rdflib prefix-name issues.
+        # HORST-materialized: sio:SIO_000356 is now explicit on the role individual.
         "query": (
             "PREFIX rdf: <{rdf}> "
-            "PREFIX owl: <{owl}> "
+            "PREFIX sio: <{sio}> "
             "SELECT (COUNT(DISTINCT ?role) AS ?count) WHERE {{ "
             "  ?role rdf:type <{cpp}CargoRole> . "
-            "  ?role rdf:type ?restriction . "
-            "  ?restriction <{owl}onProperty> <{sio}SIO_000356> . "
+            "  ?role <{sio}SIO_000356> ?proc . "
             "}}"
-        ).format(rdf=_RDF, owl=_OWL, cpp=_CPP, sio=_SIO),
+        ).format(rdf=_RDF, cpp=_CPP, sio=_SIO),
     },
     {
         "name": "CPP Role: Is Realized In",
         "description": "Functional role of the Cell-penetrating peptide realized in the Uptake Mechanism.",
+        # HORST-materialized: sio:SIO_000356 is now explicit on the role individual.
         "query": (
             "PREFIX rdf: <{rdf}> "
-            "PREFIX owl: <{owl}> "
+            "PREFIX sio: <{sio}> "
             "SELECT (COUNT(DISTINCT ?role) AS ?count) WHERE {{ "
             "  ?role rdf:type <{cpp}CellPenetratingPeptideRole> . "
-            "  ?role rdf:type ?restriction . "
-            "  ?restriction <{owl}onProperty> <{sio}SIO_000356> . "
+            "  ?role <{sio}SIO_000356> ?proc . "
             "}}"
-        ).format(rdf=_RDF, owl=_OWL, cpp=_CPP, sio=_SIO),
+        ).format(rdf=_RDF, cpp=_CPP, sio=_SIO),
     },
     {
         "name": "CPP-Complex: Is Participant In",
@@ -363,16 +361,15 @@ ASSOCIATION_CATALOG = [
     {
         "name": "Subcellular Delivery Localization",
         "description": "CPP-Complex interaction with Subcellular Entity.",
-        # Uses full URI for CPP-Complex; blank-node restriction matched via named variable.
+        # HORST-materialized: sio:SIO_000061 is now explicit on the CPP-Complex individual.
         "query": (
             "PREFIX rdf: <{rdf}> "
-            "PREFIX owl: <{owl}> "
+            "PREFIX sio: <{sio}> "
             "SELECT (COUNT(DISTINCT ?s) AS ?count) WHERE {{ "
             "  ?s rdf:type <{cpp}CPP-Complex> . "
-            "  ?s rdf:type ?restriction . "
-            "  ?restriction <{owl}onProperty> <{sio}SIO_000061> . "
+            "  ?s <{sio}SIO_000061> ?loc . "
             "}}"
-        ).format(rdf=_RDF, owl=_OWL, cpp=_CPP, sio=_SIO),
+        ).format(rdf=_RDF, cpp=_CPP, sio=_SIO),
     },
 ]
 
@@ -435,46 +432,42 @@ def _pattern_sequence(val: str) -> str:
 
 
 def _pattern_mechanism(val: str) -> str:
-    # URI path: anchor on the single blank-node restriction that names the mechanism,
-    # then walk forward to the peptide (object-first traversal).
+    # HORST-materialized graph: sio:SIO_000356 is now explicit on the CPPRole individual
+    # (was hidden inside a blank-node OWL restriction).
     if _is_uri(val):
         return (
-            f'    ?mechRestr_mec owl:someValuesFrom <{val}> ;\n'
-            f'                   owl:onProperty sio:SIO_000356 .\n'
-            f'    ?cppRole_mec rdf:type ?mechRestr_mec ;\n'
+            f'    ?cppRole_mec sio:SIO_000356 <{val}> ;\n'
             f'                 rdf:type cpp:CellPenetratingPeptideRole .\n'
             f'    ?peptide sio:SIO_000008 ?cppRole_mec .\n'
         )
-    # Text path: filter on the mechanism label first, then walk to the peptide.
+    # Text path: filter on mechanism label, then walk to peptide via explicit triple.
     esc = _escape_sparql_literal(val)
     return (
         f'    ?mech_mec rdfs:label ?mechLbl_mec .\n'
         f'    FILTER(CONTAINS(LCASE(STR(?mechLbl_mec)), LCASE("{esc}")))\n'
-        f'    ?mechRestr_mec owl:someValuesFrom ?mech_mec ;\n'
-        f'                   owl:onProperty sio:SIO_000356 .\n'
-        f'    ?cppRole_mec rdf:type ?mechRestr_mec .\n'
+        f'    ?cppRole_mec sio:SIO_000356 ?mech_mec ;\n'
+        f'                 rdf:type cpp:CellPenetratingPeptideRole .\n'
         f'    ?peptide sio:SIO_000008 ?cppRole_mec .\n'
     )
 
 
 def _pattern_subcell(val: str) -> str:
-    # URI path: start from the restriction blank node (most selective), walk to peptide.
+    # HORST-materialized graph: sio:SIO_000061 is now explicit on the CPP-Complex individual
+    # (was hidden inside a blank-node OWL restriction).
     if _is_uri(val):
         return (
-            f'    ?locRestr_sub owl:someValuesFrom <{val}> ;\n'
-            f'                  owl:onProperty sio:SIO_000061 .\n'
-            f'    ?cplx_sub rdf:type ?locRestr_sub .\n'
-            f'    ?peptide sio:SIO_000313 ?cplx_sub .\n'
+            f'    ?cplx_sub sio:SIO_000061 <{val}> .\n'
+            f'    ?peptide sio:SIO_000313 ?cplx_sub ;\n'
+            f'             rdf:type cpp:CellPenetratingPeptide .\n'
         )
-    # Text path: filter the label of the subcellular node first.
+    # Text path: filter subcellular label, then walk to peptide via explicit triple.
     esc = _escape_sparql_literal(val)
     return (
         f'    ?subcellNode_sub rdfs:label ?subcellLbl_sub .\n'
         f'    FILTER(CONTAINS(LCASE(STR(?subcellLbl_sub)), LCASE("{esc}")))\n'
-        f'    ?locRestr_sub owl:someValuesFrom ?subcellNode_sub ;\n'
-        f'                  owl:onProperty sio:SIO_000061 .\n'
-        f'    ?cplx_sub rdf:type ?locRestr_sub .\n'
-        f'    ?peptide sio:SIO_000313 ?cplx_sub .\n'
+        f'    ?cplx_sub sio:SIO_000061 ?subcellNode_sub .\n'
+        f'    ?peptide sio:SIO_000313 ?cplx_sub ;\n'
+        f'             rdf:type cpp:CellPenetratingPeptide .\n'
     )
 
 
@@ -484,7 +477,8 @@ def _pattern_cell_line(val: str) -> str:
         return (
             f'    ?experiment_cl sio:SIO_000132 <{val}> .\n'
             f'    ?cplx_cl sio:SIO_000062 ?experiment_cl .\n'
-            f'    ?peptide sio:SIO_000313 ?cplx_cl .\n'
+            f'    ?peptide sio:SIO_000313 ?cplx_cl ;\n'
+            f'             rdf:type cpp:CellPenetratingPeptide .\n'
         )
     # Text path: filter cell-line label first, then follow the participation chain.
     esc = _escape_sparql_literal(val)
@@ -498,19 +492,22 @@ def _pattern_cell_line(val: str) -> str:
 
 
 def _pattern_cargo(val: str) -> str:
-    # URI path: anchor on the known cargo URI in the complex, walk to peptide.
+    # Both cargo and peptide share SIO_000313 → cpp_complex, so without the type
+    # constraint ?peptide would match the cargo itself.  The cpp:CellPenetratingPeptide
+    # type filter ensures only peptide individuals are returned.
     if _is_uri(val):
         return (
-            f'    ?cplx_cg sio:SIO_000369 <{val}> .\n'
-            f'    ?peptide sio:SIO_000313 ?cplx_cg .\n'
+            f'    <{val}> sio:SIO_000313 ?cplx_cg .\n'
+            f'    ?peptide sio:SIO_000313 ?cplx_cg ;\n'
+            f'             rdf:type cpp:CellPenetratingPeptide .\n'
         )
-    # Text path: filter the cargoType literal first (no OPTIONAL — we need it to match).
     esc = _escape_sparql_literal(val)
     return (
         f'    ?cargoNode_cg cppS:cargoType ?cargoType_cg .\n'
         f'    FILTER(CONTAINS(LCASE(STR(?cargoType_cg)), LCASE("{esc}")))\n'
-        f'    ?cplx_cg sio:SIO_000369 ?cargoNode_cg .\n'
-        f'    ?peptide sio:SIO_000313 ?cplx_cg .\n'
+        f'    ?cargoNode_cg sio:SIO_000313 ?cplx_cg .\n'
+        f'    ?peptide sio:SIO_000313 ?cplx_cg ;\n'
+        f'             rdf:type cpp:CellPenetratingPeptide .\n'
     )
 
 
@@ -521,7 +518,8 @@ def _pattern_doc_id(val: str) -> str:
         f'    ?experiment_doc sio:SIO_000557 ?document_doc .\n'
         f'    FILTER(CONTAINS(LCASE(STR(?document_doc)), LCASE("{esc}")))\n'
         f'    ?cplx_doc sio:SIO_000062 ?experiment_doc .\n'
-        f'    ?peptide sio:SIO_000313 ?cplx_doc .\n'
+        f'    ?peptide sio:SIO_000313 ?cplx_doc ;\n'
+        f'             rdf:type cpp:CellPenetratingPeptide .\n'
     )
 
 _FIELD_BUILDERS = {
@@ -730,7 +728,6 @@ CANDIDATE_QUERY = (
     "}\n"
     "LIMIT " + str(MAX_MATCHED_PEPTIDES) + "\n"
 )
-
 
 
 # ---------------------------------------------------------------------------
@@ -1096,41 +1093,50 @@ def api_entity(entity_id):
         if uri is None:
             return jsonify({"error": "Entity not found: {}".format(entity_id)}), 404
 
-        # Outgoing properties
-        out_q = """
+        # Flat property list: only named URIs and literals as objects.
+        # Blank nodes (OWL restrictions, anonymous classes) are excluded entirely.
+        props_q = """
+        PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        SELECT ?pred ?predLabel ?obj ?objLabel WHERE {{
+        PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+        SELECT ?pred (SAMPLE(?predLbl) AS ?predLabel) ?obj (SAMPLE(?objLbl) AS ?objLabel) WHERE {{
           <{uri}> ?pred ?obj .
-          OPTIONAL {{ ?pred rdfs:label ?predLabel . }}
-          OPTIONAL {{ ?obj rdfs:label ?objLabel . }}
+          FILTER(!isBlank(?obj))
+          FILTER(?pred != owl:sameAs)
+          OPTIONAL {{ ?pred rdfs:label ?predLbl . }}
+          OPTIONAL {{ ?obj  rdfs:label ?objLbl  . }}
         }}
+        GROUP BY ?pred ?obj
         ORDER BY ?predLabel ?pred ?objLabel ?obj
         LIMIT 400
         """.format(uri=uri)
-        _, out_rows = sparql_to_records(g, out_q)
+        _, prop_rows = sparql_to_records(g, props_q)
 
-        # Incoming links
-        in_q = """
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        SELECT ?subj ?subjLabel ?pred ?predLabel WHERE {{
-          ?subj ?pred <{uri}> .
-          FILTER(isURI(?subj))
-          OPTIONAL {{ ?subj rdfs:label ?subjLabel . }}
-          OPTIONAL {{ ?pred rdfs:label ?predLabel . }}
-        }}
-        ORDER BY ?predLabel ?pred ?subjLabel ?subj
-        LIMIT 150
-        """.format(uri=uri)
-        _, in_rows = sparql_to_records(g, in_q)
+        # Build structured property list with human-readable display values.
+        properties = []
+        for pred, pred_label, obj, obj_label in prop_rows:
+            pred_display = pred_label or _uri_fragment(pred)
+            if obj.startswith("http"):
+                obj_display = obj_label or _uri_fragment(obj)
+                obj_type = "uri"
+            else:
+                obj_display = obj
+                obj_type = "literal"
+            properties.append({
+                "predicate":       pred,
+                "predicate_label": pred_display,
+                "object":          obj,
+                "object_label":    obj_display,
+                "object_type":     obj_type,
+            })
 
         graph_data = _get_neighborhood(g, uri)
 
         return jsonify({
-            "uri":       uri,
-            "entity_id": entity_id,
-            "outgoing":  out_rows,
-            "incoming":  in_rows,
-            "graph":     graph_data,
+            "uri":        uri,
+            "entity_id":  entity_id,
+            "properties": properties,
+            "graph":      graph_data,
         })
     except Exception as exc:
         return jsonify({"error": str(exc)}), 500

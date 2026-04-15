@@ -365,29 +365,10 @@
         <div class="col-lg-5">
           <div class="section-card">
             <h5>Properties <span class="badge bg-light text-dark ms-1" id="entity-props-count" style="font-size:.75rem;"></span></h5>
-            <div class="table-wrapper" style="max-height:300px; overflow-y:auto;">
+            <div class="table-wrapper" style="max-height:600px; overflow-y:auto;">
               <table class="table table-sm mb-0 prop-table">
+                <thead class="table-light"><tr><th>Property</th><th>Value</th></tr></thead>
                 <tbody id="entity-props-tbody"></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="section-card">
-            <h5>Outgoing Links <span class="badge bg-primary badge-pill ms-1" id="entity-out-count"></span></h5>
-            <div class="table-wrapper" style="max-height:280px; overflow-y:auto;">
-              <table class="table table-sm mb-0">
-                <thead class="table-light"><tr><th>Predicate</th><th>Object</th></tr></thead>
-                <tbody id="entity-out-tbody"></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="section-card">
-            <h5>Incoming Links <span class="badge bg-success badge-pill ms-1" id="entity-in-count"></span></h5>
-            <div class="table-wrapper" style="max-height:280px; overflow-y:auto;">
-              <table class="table table-sm mb-0">
-                <thead class="table-light"><tr><th>Subject</th><th>Predicate</th></tr></thead>
-                <tbody id="entity-in-tbody"></tbody>
               </table>
             </div>
           </div>
@@ -545,7 +526,7 @@
             <tr><td><strong>Cell-Penetrating Peptide</strong></td><td><span class="ns-badge">cpp:CellPenetratingPeptide</span></td><td>A short amino acid sequence with intrinsic ability to traverse biological membranes.</td></tr>
             <tr><td><strong>CPP-Complex</strong></td><td><span class="ns-badge">cpp:CPP-Complex</span></td><td>A molecular assembly formed between a CPP and its associated cargo molecule.</td></tr>
             <tr><td><strong>Cargo</strong></td><td><span class="ns-badge">cpp:Cargo</span></td><td>A therapeutic or reporter molecule transported into cells via a CPP.</td></tr>
-            <tr><td><strong>Uptake Mechanism</strong></td><td><span class="ns-badge">cppS:UptakeMechanism</span></td><td>A cellular route (endocytic or non-endocytic) through which the CPP-complex crosses the membrane.</td></tr>
+            <tr><td><strong>Uptake Mechanism</strong></td><td><span class="ns-badge">cpp:UptakeMechanism</span></td><td>A cellular route (endocytic or non-endocytic) through which the CPP-complex crosses the membrane.</td></tr>
             <tr><td><strong>Gene</strong></td><td><span class="ns-badge">sio:SIO_010035</span></td><td>Upregulator genes that positively regulate an endocytic uptake mechanism.</td></tr>
             <tr><td><strong>Inhibitor</strong></td><td><span class="ns-badge">sio:SIO_010435</span></td><td>A chemical compound used to selectively block an endocytic uptake mechanism.</td></tr>
             <tr><td><strong>Cell Line</strong></td><td><span class="ns-badge">sio:SIO_010054</span></td><td>The cultured cell population serving as the experimental host model.</td></tr>
@@ -567,6 +548,7 @@
             <tr><td>Is participant in</td><td><span class="ns-badge">sio:SIO_000062</span></td><td>CPP-Complex or Cell Line participates in an Experiment.</td></tr>
             <tr><td>Has component part </td><td><span class="ns-badge">sio:SIO_000369</span></td><td>CPP-Complex has component part Cargo and Cell Penetrating Peptide.</td></tr>
             <tr><td>Is located in</td><td><span class="ns-badge">sio:SIO_000061</span></td><td>CPP-Complex is located in a Subcellular Entity.</td></tr>
+            <tr><td>Is about</td><td><span class="ns-badge">sio:SIO_000332</span></td><td>An Experiment is about an Uptake Mechanism.</td></tr>
             <tr><td>Positively regulates</td><td><span class="ns-badge">sio:SIO_001401</span></td><td>Gene positively regulates an Uptake Mechanism.</td></tr>
             <tr><td>Negatively regulates</td><td><span class="ns-badge">sio:SIO_001402</span></td><td>Inhibitor negatively regulates an Uptake Mechanism.</td></tr>
             <tr><td>Is realized in</td><td><span class="ns-badge">sio:SIO_000356</span></td><td>A CPP or Cargo role is realized in an Uptake Mechanism.</td></tr>
@@ -1129,67 +1111,34 @@ function renderEntityDetail(d) {
     }).join('');
   } else { extRow.innerHTML = ''; }
 
-  var outRows = d.outgoing || [];
-  var inRows  = d.incoming || [];
+  var props = d.properties || [];
 
-  // Type badge
-  var typeRow = outRows.find(function(row){ return row[0].includes('22-rdf-syntax-ns#type') || row[0].endsWith('/type'); });
-  document.getElementById('entity-type-badge').textContent = typeRow ? uriFragment(typeRow[2]) : '';
+  // Type badge — pick first rdf:type value
+  var typeProp = props.find(function(p){
+    return p.predicate.includes('22-rdf-syntax-ns#type') || p.predicate.endsWith('/type');
+  });
+  document.getElementById('entity-type-badge').textContent = typeProp ? (typeProp.object_label || uriFragment(typeProp.object)) : '';
 
-  // Split into literals vs URI links
-  var literals  = outRows.filter(function(row){ return !isUri(row[2]); });
-  var uriLinks  = outRows.filter(function(row){ return  isUri(row[2]); });
-
-  // Properties
-  document.getElementById('entity-props-count').textContent = literals.length;
-  var propsTbody = document.getElementById('entity-props-tbody');
-  if (literals.length) {
-    propsTbody.innerHTML = literals.map(function(row){
-      var predLabel = row[1] || uriFragment(row[0]);
-      return '<tr><td>' + escHtml(predLabel) + '</td><td>' + escHtml(row[2]) + '</td></tr>';
+  // Render all properties in one table: literals inline, URIs as links
+  document.getElementById('entity-props-count').textContent = props.length;
+  var tbody = document.getElementById('entity-props-tbody');
+  if (props.length) {
+    tbody.innerHTML = props.map(function(p){
+      var predLabel = escHtml(p.predicate_label || uriFragment(p.predicate));
+      var valueCell;
+      if (p.object_type === 'uri') {
+        var extHref = externalHref(p.object);
+        var href    = extHref ? escHtml(extHref) : '#entity/' + encodeURIComponent(p.object);
+        var target  = extHref ? ' target="_blank" rel="noopener"' : '';
+        var lbl     = escHtml(p.object_label || uriFragment(p.object));
+        valueCell = '<a href="' + href + '" title="' + escHtml(p.object) + '"' + target + '>' + lbl + '</a>';
+      } else {
+        valueCell = escHtml(p.object);
+      }
+      return '<tr><td class="text-muted" style="white-space:nowrap;">' + predLabel + '</td><td>' + valueCell + '</td></tr>';
     }).join('');
   } else {
-    propsTbody.innerHTML = '<tr><td colspan="2" class="text-muted">No literal properties.</td></tr>';
-  }
-
-  // Outgoing URI links
-  document.getElementById('entity-out-count').textContent = uriLinks.length;
-  var outTbody = document.getElementById('entity-out-tbody');
-  if (uriLinks.length) {
-    outTbody.innerHTML = uriLinks.map(function(row){
-      var predLabel = row[1] || uriFragment(row[0]);
-      var objUri    = row[2];
-      var objLabel  = row[3] || uriFragment(objUri);
-      var extHref   = externalHref(objUri);
-      var href      = extHref ? escHtml(extHref) : '#entity/' + encodeURIComponent(objUri);
-      var target    = extHref ? ' target="_blank" rel="noopener"' : '';
-      return '<tr>' +
-        '<td><small class="text-muted">' + escHtml(predLabel) + '</small></td>' +
-        '<td><a href="' + href + '" title="' + escHtml(objUri) + '"' + target + '>' + escHtml(objLabel) + '</a></td>' +
-        '</tr>';
-    }).join('');
-  } else {
-    outTbody.innerHTML = '<tr><td colspan="2" class="text-muted">No outgoing URI links.</td></tr>';
-  }
-
-  // Incoming
-  document.getElementById('entity-in-count').textContent = inRows.length;
-  var inTbody = document.getElementById('entity-in-tbody');
-  if (inRows.length) {
-    inTbody.innerHTML = inRows.map(function(row){
-      var subjUri   = row[0];
-      var subjLabel = row[1] || uriFragment(subjUri);
-      var predLabel = row[3] || uriFragment(row[2]);
-      var extHref   = externalHref(subjUri);
-      var href      = extHref ? escHtml(extHref) : '#entity/' + encodeURIComponent(subjUri);
-      var target    = extHref ? ' target="_blank" rel="noopener"' : '';
-      return '<tr>' +
-        '<td><a href="' + href + '" title="' + escHtml(subjUri) + '"' + target + '>' + escHtml(subjLabel) + '</a></td>' +
-        '<td><small class="text-muted">' + escHtml(predLabel) + '</small></td>' +
-        '</tr>';
-    }).join('');
-  } else {
-    inTbody.innerHTML = '<tr><td colspan="2" class="text-muted">No incoming links.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="2" class="text-muted">No properties found.</td></tr>';
   }
 
   document.getElementById('entity-content').style.display = 'block';
