@@ -1242,6 +1242,8 @@ function renderEntityDetail(d) {
     tbody.innerHTML = props.map(function(p){
       var predLabel = escHtml(p.predicate_label || uriFragment(p.predicate));
       var valueCell;
+      var isSmiles = p.predicate.indexOf('schema#smiles') !== -1 ||
+                     (p.predicate_label && p.predicate_label.toLowerCase() === 'smiles');
       if (p.object_type === 'uri') {
         var extHref = externalHref(p.object);
         var href    = extHref ? escHtml(extHref) : '#entity/' + encodeURIComponent(p.object);
@@ -1249,13 +1251,15 @@ function renderEntityDetail(d) {
         var lbl     = escHtml(p.object_label || uriFragment(p.object));
         valueCell = '<a href="' + href + '" title="' + escHtml(p.object) + '"' + target + '>' + lbl + '</a>';
       } else {
-        var isSmiles = p.predicate.indexOf('schema#smiles') !== -1 ||
-                       (p.predicate_label && p.predicate_label.toLowerCase() === 'smiles');
         if (isSmiles) {
           var imgSrc = '/api/smiles/svg?smi=' + encodeURIComponent(p.object);
-          valueCell = '<img src="' + imgSrc + '" alt="' + escHtml(p.object) + '" ' +
-                      'style="max-width:100%;height:auto;max-height:220px;" ' +
-                      'onerror="this.replaceWith(document.createTextNode(this.alt))">';
+          var imgRow = '<tr><td class="text-muted" style="white-space:nowrap;vertical-align:top;">Chemical Structure</td>' +
+                       '<td><img src="' + imgSrc + '" alt="' + escHtml(p.object) + '" ' +
+                       'style="max-width:100%;height:auto;max-height:220px;" ' +
+                       'onerror="this.replaceWith(document.createTextNode(this.alt))"></td></tr>';
+          var txtRow = '<tr><td class="text-muted" style="white-space:nowrap;vertical-align:top;">SMILES</td>' +
+                       '<td><code style="white-space:normal;word-break:break-all;">' + escHtml(p.object) + '</code></td></tr>';
+          return imgRow + txtRow;
         } else {
           valueCell = '<span style="word-break:break-all;">' + escHtml(p.object) + '</span>';
         }
