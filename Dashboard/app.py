@@ -7,7 +7,7 @@ Run: python3 app.py
 import threading
 from pathlib import Path
 from typing import Optional
-from urllib.parse import unquote
+from urllib.parse import quote, unquote
 
 import pandas as pd
 import requests
@@ -21,9 +21,10 @@ from rdflib.namespace import RDF, RDFS
 # ---------------------------------------------------------------------------
 
 app = Flask(__name__)
+app.url_map.merge_slashes = False
 
 # Primary source: GitHub raw TTL (single request, CDN-backed).
-GITHUB_TTL_URL = "https://raw.githubusercontent.com/bio-ontology-research-group/Cell-penetrating-peptides/main/data/Ontology/CPP_KG.ttl"
+GITHUB_TTL_URL = "https://raw.githubusercontent.com/bio-ontology-research-group/Cell-penetrating-peptides/main/data/Ontology/CPP_KG_materialized.ttl"
 # Fallback: Zenodo record JSON API for the canonical versioned TTL file.
 # The API endpoint exposes a `files` array with download links.
 ZENODO_API_URL = "https://zenodo.org/api/records/19427198"
@@ -31,7 +32,6 @@ _HERE = Path(__file__).parent
 LOCAL_TTL_CANDIDATES = [
     _HERE / "../data/Ontology/CPP_KG_materialized.ttl",
     _HERE / "../data/Ontology/CPP_KG.ttl",
-    _HERE / "../data/CPP_KG.ttl",
 ]
 
 ENTITY_URI_PREFIXES = [
@@ -1009,6 +1009,8 @@ def api_sparql():
         g = get_graph()
         cols, rows = sparql_to_records(g, query)
         return jsonify({"columns": cols, "rows": rows})
+    except SystemExit:
+        return jsonify({"error": "Query timed out. Simplify your query or add a LIMIT clause."}), 504
     except Exception as exc:
         return jsonify({"error": str(exc)}), 500
 
@@ -1064,19 +1066,25 @@ def dataset_void():
     if "text/turtle" in accept or "application/rdf+xml" in accept:
         void = _build_void_turtle()
         return Response(void, mimetype="text/turtle")
-    return redirect("/#download")
+    return render_template("index.html")
 
 
 @app.route("/dataset/<path:entity_id>")
 def dataset_entity(entity_id):
-    entity_id = unquote(entity_id)
+    entity_id = _fix_collapsed_scheme(unquote(entity_id))
     accept = request.headers.get("Accept", "text/html")
     if "text/turtle" in accept:
         return _entity_as_turtle(entity_id)
     if "application/ld+json" in accept:
         return _entity_as_jsonld(entity_id)
-    # 303 See Other for browsers
-    resp = redirect("/#entity/{}".format(entity_id), 303)
+    # 303 See Other for browsers.
+    # Reconstruct the full entity URI and percent-encode it so the hash router
+    # receives the complete URI without slashes fragmenting the section/sub split.
+    if entity_id.startswith("http"):
+        entity_uri = entity_id
+    else:
+        entity_uri = ENTITY_URI_PREFIXES[0] + entity_id
+    resp = redirect("/dataset/#entity/{}".format(quote(entity_uri, safe="")), 303)
     return resp
 
 
@@ -1084,9 +1092,19 @@ def dataset_entity(entity_id):
 # Routes - new: API
 # ---------------------------------------------------------------------------
 
+def _fix_collapsed_scheme(entity_id: str) -> str:
+    """Reverse proxies often collapse https:// → https:/ in URL paths.
+    Restore the correct double-slash so URI lookups succeed."""
+    if entity_id.startswith("https:/") and not entity_id.startswith("https://"):
+        return "https://" + entity_id[7:]
+    if entity_id.startswith("http:/") and not entity_id.startswith("http://"):
+        return "http://" + entity_id[6:]
+    return entity_id
+
+
 @app.route("/api/entity/<path:entity_id>")
 def api_entity(entity_id):
-    entity_id = unquote(entity_id)
+    entity_id = _fix_collapsed_scheme(unquote(entity_id))
     try:
         g = get_graph()
         uri = _resolve_entity_uri(g, entity_id)
@@ -1103,6 +1121,8 @@ def api_entity(entity_id):
           <{uri}> ?pred ?obj .
           FILTER(!isBlank(?obj))
           FILTER(?pred != owl:sameAs)
+          FILTER(?pred != rdf:type)
+          FILTER(?obj NOT IN (owl:NamedIndividual, owl:Class, owl:Ontology))
           OPTIONAL {{ ?pred rdfs:label ?predLbl . }}
           OPTIONAL {{ ?obj  rdfs:label ?objLbl  . }}
         }}
@@ -1113,6 +1133,24 @@ def api_entity(entity_id):
         _, prop_rows = sparql_to_records(g, props_q)
 
         # Build structured property list with human-readable display values.
+        _IDENTIFIER_PREDS = {
+            "http://www.w3.org/2000/01/rdf-schema#label",
+            "http://www.w3.org/2000/01/rdf-schema#comment",
+            "http://www.w3.org/2004/02/skos/core#prefLabel",
+            "http://www.w3.org/2004/02/skos/core#altLabel",
+            "http://purl.org/dc/elements/1.1/title",
+            "http://purl.org/dc/terms/title",
+            "http://purl.org/dc/elements/1.1/identifier",
+            "http://purl.org/dc/terms/identifier",
+            "http://semanticscience.org/resource/SIO_000116",  # has name
+        }
+        _RDF_TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+
+        def _prop_order(pred):
+            if pred in _IDENTIFIER_PREDS:
+                return 0   # identifiers first
+            return 1       # domain metadata
+
         properties = []
         for pred, pred_label, obj, obj_label in prop_rows:
             pred_display = pred_label or _uri_fragment(pred)
@@ -1129,6 +1167,7 @@ def api_entity(entity_id):
                 "object_label":    obj_display,
                 "object_type":     obj_type,
             })
+        properties.sort(key=lambda p: (_prop_order(p["predicate"]), p["predicate_label"], p["object_label"]))
 
         graph_data = _get_neighborhood(g, uri)
 
@@ -1169,6 +1208,28 @@ def api_browse():
     except Exception as exc:
         return jsonify({"error": str(exc)}), 500
 
+
+
+@app.route("/api/smiles/svg")
+def api_smiles_svg():
+    smiles = request.args.get("smi", "").strip()
+    if not smiles:
+        return Response("Missing smi", status=400)
+    try:
+        from rdkit import Chem
+        from rdkit.Chem.Draw import rdMolDraw2D
+        mol = Chem.MolFromSmiles(smiles)
+        if mol is None:
+            return Response("Invalid SMILES", status=400)
+        drawer = rdMolDraw2D.MolDraw2DSVG(400, 220)
+        drawer.drawOptions().addStereoAnnotation = True
+        drawer.DrawMolecule(mol)
+        drawer.FinishDrawing()
+        svg = drawer.GetDrawingText()
+        return Response(svg, mimetype="image/svg+xml",
+                        headers={"Cache-Control": "public, max-age=86400"})
+    except Exception as exc:
+        return Response(str(exc), status=500)
 
 
 @app.route("/api/download/ttl")
@@ -1249,11 +1310,16 @@ def _get_neighborhood(g: Graph, uri: str, max_edges: int = 60):
     add_node(uri, is_focus=True)
     edge_count = 0
 
+    _OWL = "http://www.w3.org/2002/07/owl#"
+    _RDF_TYPE = RDF.type
+
     # Outgoing edges
     for pred, obj in g.predicate_objects(center):
         if edge_count >= max_edges:
             break
         if not isinstance(obj, URIRef):
+            continue
+        if str(obj).startswith(_OWL):
             continue
         pred_label = get_predicate_label(pred)[:30]
         obj_str = str(obj)

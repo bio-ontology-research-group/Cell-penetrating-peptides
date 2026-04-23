@@ -179,6 +179,7 @@
       .tab-pane h2 { font-size: 1.4rem; padding-top: 36px; }
     }
   </style>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧬</text></svg>">
 </head>
 <body>
 
@@ -207,6 +208,7 @@
     <a class="nav-item-custom" href="#search"   id="nav-search">  <i class="bi bi-search"></i> Peptide Search</a>
     <a class="nav-item-custom" href="#sparql"   id="nav-sparql">  <i class="bi bi-braces-asterisk"></i> SPARQL</a>
     <div class="nav-section-label">Info</div>
+    <a class="nav-item-custom" href="#about"    id="nav-about">   <i class="bi bi-info-circle-fill"></i> About</a>
     <a class="nav-item-custom" href="#docs"     id="nav-docs">    <i class="bi bi-book-fill"></i> Documentation</a>
     <a class="nav-item-custom" href="#download" id="nav-download"><i class="bi bi-cloud-download-fill"></i> Download</a>
     <a class="nav-item-custom" href="#" id="nav-entity" style="display:none;">
@@ -351,8 +353,6 @@
           <button class="btn btn-sm btn-outline-secondary" onclick="copyEntityUri(event)">
             <i class="bi bi-clipboard me-1"></i>Copy URI
           </button>
-          <a id="entity-ttl-btn"    class="btn btn-sm btn-outline-primary"  target="_blank" rel="noopener">Turtle</a>
-          <a id="entity-jsonld-btn" class="btn btn-sm btn-outline-success"  target="_blank" rel="noopener">JSON-LD</a>
         </div>
       </div>
       <div class="mb-2">
@@ -580,8 +580,9 @@
 
     <div class="section-card">
       <h5>Provenance</h5>
-      <p>The CPP Mechanisms Knowledge Graph was constructed by manual curation of scientific literature on cell-penetrating peptide uptake. Experimental records were extracted from primary research articles, standardised against public databases (Ensembl, ChEBI, GO, CLO), and serialised as RDF/OWL&nbsp;2 in Turtle format using the SIO framework and a custom CPP domain schema.</p>
-      <p>Data collection focused on: (1)&nbsp;identification of endocytic and non-endocytic uptake routes; (2)&nbsp;genes that regulate each pathway; (3)&nbsp;chemical inhibitors used to validate pathway specificity; (4)&nbsp;cell line models; (5)&nbsp;cargo molecule types; and (6)&nbsp;subcellular delivery destinations.</p>
+      <p>The CPP Knowledge Graph was constructed by collecting 5,288 peptide sequences from CPPSite3 <a href="https://doi.org/10.1016/j.drudis.2025.104421" target="_blank" rel="noopener">[1]</a>, which contain only standard aminoacids and their respective annotations. The experimental annotations (1)&nbsp;uptake mechanisms; (2)&nbsp;cell line models; (3)&nbsp;cargo molecule types; and (4)&nbsp;subcellular delivery destinations were standardised against public databases (Ensembl, ChEBI, GO, CLO), and serialised as RDF/OWL&nbsp;2 in Turtle format using the SIO framework and a custom CPP domain schema.</p>
+      <p>Uptake mechanisms regulation network focused on: (1)&nbsp;identification of endocytic uptake routes; (2)&nbsp;genes that regulate each pathway; (3)&nbsp;chemical inhibitors used to validate pathway specificity.</p>
+      <p class="text-muted small mt-2 mb-0">[1] Bajiya, N. <em>et al.</em> CPPsite3: An updated large repository of experimentally validated cell-penetrating peptides. <em>Drug Discovery Today</em>, 104421 (2025). <a href="https://doi.org/10.1016/j.drudis.2025.104421" target="_blank" rel="noopener">https://doi.org/10.1016/j.drudis.2025.104421</a></p>
     </div>
 
     <div class="section-card">
@@ -657,6 +658,113 @@
     </div>
   </div>
 
+  <!-- ===== ABOUT ===== -->
+  <div class="tab-pane" id="tab-about">
+    <h2 class="mb-1"><i class="bi bi-info-circle-fill me-2"></i>About</h2>
+    <p class="text-muted mb-3">Background, architecture, team, and contact information for the CPP Knowledge Graph.</p>
+    <hr/>
+
+    <div class="section-card">
+      <h5>What is the CPP Knowledge Graph?</h5>
+      <p>The CPP Knowledge Graph is a machine-readable resource to structure cell-penetrating peptides and their biological context into an interconnected network. It links peptide sequences to critical experimental details, including their uptake mechanisms, cell lines, cargo molecules, and subcellular delivery locations.</p>
+    </div>
+
+    <div class="section-card">
+      <h5>Data Sources</h5>
+      <p>To ensure the data is standardized and interoperable, biological factors are mapped to community ontologies:</p>
+      <ul class="mb-0">
+        <li><a href="http://semanticscience.org/" target="_blank" rel="noopener">Semanticscience Integrated Ontology (SIO)</a></li>
+        <li><a href="https://geneontology.org/" target="_blank" rel="noopener">Gene Ontology (GO)</a></li>
+        <li><a href="https://obofoundry.org/ontology/clo.html" target="_blank" rel="noopener">Cell Line Ontology (CLO)</a></li>
+        <li><a href="https://www.ebi.ac.uk/chebi/" target="_blank" rel="noopener">Chemical Entities of Biological Interest (ChEBI)</a></li>
+      </ul>
+    </div>
+
+    <div class="section-card">
+      <h5>Architecture</h5>
+      <div class="row g-3 mt-1">
+        <div class="col-md-4">
+          <div class="p-3 rounded border h-100">
+            <h6 class="fw-semibold"><i class="bi bi-diagram-3-fill me-2 text-primary"></i>Uptake Mechanisms &amp; Regulation</h6>
+            <p class="text-muted small mb-0">Maps cellular uptake mechanisms and directly connects them to the specific genes that activate them and the chemicals that inhibit them.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="p-3 rounded border h-100">
+            <h6 class="fw-semibold"><i class="bi bi-capsule me-2 text-success"></i>Biological Entities</h6>
+            <p class="text-muted small mb-0">Each CPP-Complex represents the peptide conjugated to its cargo. Biological entities link these physical entities to their functional roles.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="p-3 rounded border h-100">
+            <h6 class="fw-semibold"><i class="bi bi-journal-text me-2 text-warning"></i>Experimental Context</h6>
+            <p class="text-muted small mb-0">Each experiment links the CPP-Complex to the specific cell line used, the final subcellular delivery location, and the source literature (PubMed/patents).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <h5>Team</h5>
+      <div class="row g-3 mt-1">
+        <div class="col-md-6">
+          <div class="d-flex align-items-start gap-3">
+            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width:42px;height:42px;font-size:1.1rem;">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <div>
+              <div class="fw-semibold">María de los Ángeles Gómez Castillo</div>
+              <div class="text-muted small">Biological and Environmental Science &amp; Engineering Division, King Abdullah University of Science and Technology, Thuwal, Saudi Arabia</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="d-flex align-items-start gap-3">
+            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width:42px;height:42px;font-size:1.1rem;">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <div>
+              <div class="fw-semibold">Dominik Renn</div>
+              <div class="text-muted small">Biological and Environmental Science &amp; Engineering Division, King Abdullah University of Science and Technology, Thuwal, Saudi Arabia</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="d-flex align-items-start gap-3">
+            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width:42px;height:42px;font-size:1.1rem;">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <div>
+              <div class="fw-semibold">Magnus Rueping</div>
+              <div class="text-muted small">Biological and Environmental Science &amp; Engineering Division, King Abdullah University of Science and Technology, Thuwal, Saudi Arabia</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="d-flex align-items-start gap-3">
+            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width:42px;height:42px;font-size:1.1rem;">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <div>
+              <div class="fw-semibold">Robert Hoehndorf</div>
+              <div class="text-muted small">Computer, Electrical and Mathematical Sciences &amp; Engineering Division, King Abdullah University of Science and Technology, Thuwal, Saudi Arabia</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <h5>License</h5>
+      <p class="mb-0">The CPP Knowledge Graph is released under the <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">Creative Commons Attribution 4.0 International License (CC BY 4.0)</a>.</p>
+    </div>
+
+    <div class="section-card">
+      <h5>Contact &amp; Feedback</h5>
+      <p class="mb-0">For questions, bug reports, or suggestions, please contact: <a href="mailto:maria.castillo@kaust.edu.sa">maria.castillo@kaust.edu.sa</a></p>
+    </div>
+  </div>
+
 </div><!-- /main -->
 
 <!-- ======================================================================
@@ -711,10 +819,12 @@ function copyToClipboard(text, btn) {
 
 function isUri(s) { return s && (s.startsWith('http://') || s.startsWith('https://')); }
 
-/* Return a direct external URL for PubMed, patent, and Ensembl URIs;
-   null for everything else (falls back to internal #entity/ navigation). */
+/* Return a direct external URL for PubMed, patent, Ensembl, CHEBI, GO, CLO URIs;
+   null for internal CPP namespace entities (handled by internal inspector). */
 function externalHref(uri) {
   var m;
+  // Internal CPP namespace — always inspect internally
+  if (uri.indexOf('cppkg.bio2vec.net') !== -1) return null;
   // PubMed — identifiers.org style or direct ncbi.nlm.nih.gov
   m = uri.match(/[\/:]pubmed[\/:](\d+)/i);
   if (m) return 'https://pubmed.ncbi.nlm.nih.gov/' + m[1] + '/';
@@ -722,7 +832,16 @@ function externalHref(uri) {
   if (uri.indexOf('patents.google.com') !== -1 || uri.indexOf('lens.org/patent') !== -1) return uri;
   // Ensembl genes
   m = uri.match(/(ENSG\d+)/);
-  if (m) return 'http://purl.uniprot.org/agora/' + m[1];
+  if (m) return 'https://www.ensembl.org/Homo_sapiens/Gene/Summary?g=' + m[1];
+  // ChEBI
+  m = uri.match(/CHEBI[_:](\d+)/i) || uri.match(/chebi\/(\d+)/i);
+  if (m) return 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:' + m[1];
+  // GO terms
+  m = uri.match(/GO[_:](\d+)/);
+  if (m) return 'https://www.ebi.ac.uk/QuickGO/term/GO:' + m[1].padStart(7,'0');
+  // CLO cell line ontology
+  m = uri.match(/CLO[_:](\d+)/);
+  if (m) return 'https://www.ebi.ac.uk/ols/ontologies/clo/terms?iri=http://purl.obolibrary.org/obo/CLO_' + m[1];
   // SIO ontology terms — URI itself is the canonical dereferenceable link
   if (uri.indexOf('semanticscience.org/resource/SIO_') !== -1) return uri;
   return null;
@@ -790,7 +909,7 @@ function parseHash() {
 function route() {
   var parsed = parseHash();
   var section = parsed.section, sub = parsed.sub, params = parsed.params;
-  var valid = ['home','browse','search','sparql','docs','download','entity'];
+  var valid = ['home','browse','search','sparql','docs','download','about','entity'];
   var tab = valid.indexOf(section) >= 0 ? section : 'home';
   activateTab(tab);
 
@@ -1098,9 +1217,6 @@ function renderEntityDetail(d) {
 
   document.getElementById('entity-title').textContent = frag;
   document.getElementById('entity-uri-display').textContent = uri;
-  document.getElementById('entity-ttl-btn').href    = '/dataset/' + encodeURIComponent(uri);
-  document.getElementById('entity-jsonld-btn').href = '/dataset/' + encodeURIComponent(uri);
-
   // External links
   var extLinks = getExternalLinks(uri);
   var extRow = document.getElementById('entity-ext-links-row');
@@ -1133,10 +1249,20 @@ function renderEntityDetail(d) {
         var lbl     = escHtml(p.object_label || uriFragment(p.object));
         valueCell = '<a href="' + href + '" title="' + escHtml(p.object) + '"' + target + '>' + lbl + '</a>';
       } else {
-        valueCell = escHtml(p.object);
+        var isSmiles = p.predicate.indexOf('schema#smiles') !== -1 ||
+                       (p.predicate_label && p.predicate_label.toLowerCase() === 'smiles');
+        if (isSmiles) {
+          var imgSrc = '/api/smiles/svg?smi=' + encodeURIComponent(p.object);
+          valueCell = '<img src="' + imgSrc + '" alt="' + escHtml(p.object) + '" ' +
+                      'style="max-width:100%;height:auto;max-height:220px;" ' +
+                      'onerror="this.replaceWith(document.createTextNode(this.alt))">';
+        } else {
+          valueCell = '<span style="word-break:break-all;">' + escHtml(p.object) + '</span>';
+        }
       }
-      return '<tr><td class="text-muted" style="white-space:nowrap;">' + predLabel + '</td><td>' + valueCell + '</td></tr>';
+      return '<tr><td class="text-muted" style="white-space:nowrap;vertical-align:top;">' + predLabel + '</td><td>' + valueCell + '</td></tr>';
     }).join('');
+
   } else {
     tbody.innerHTML = '<tr><td colspan="2" class="text-muted">No properties found.</td></tr>';
   }
@@ -1196,7 +1322,11 @@ function buildCytoscape(graphData, focusUri) {
 
   cyInstance.on('tap', 'node', function(evt) {
     var nodeId = evt.target.data('entityId');
-    if (nodeId) window.location.hash = '#entity/' + encodeURIComponent(nodeId);
+    if (!nodeId) return;
+    var fullUri = evt.target.data('id');
+    var ext = externalHref(fullUri || '');
+    if (ext) { window.open(ext, '_blank', 'noopener'); return; }
+    window.location.hash = '#entity/' + encodeURIComponent(nodeId);
   });
 }
 
@@ -1269,11 +1399,14 @@ function updateSearchControls() {
   // hide stale preview when filters change
   if (!hasFilters) document.getElementById('sparql-preview-wrap').style.display = 'none';
   renderActiveFilters(filters);
-  // update location hash for deep-linking
-  var qs = new URLSearchParams();
-  Object.entries(filters).forEach(function(kv){ qs.set(kv[0], kv[1]); });
-  if (hasFilters) history.replaceState(null, '', '#search?' + qs.toString());
-  else history.replaceState(null, '', '#search');
+  // update location hash for deep-linking, but only when already on the search tab
+  var currentSection = (window.location.hash.slice(1).split('/')[0].split('?')[0]) || 'home';
+  if (currentSection === 'search') {
+    var qs = new URLSearchParams();
+    Object.entries(filters).forEach(function(kv){ qs.set(kv[0], kv[1]); });
+    if (hasFilters) history.replaceState(null, '', '#search?' + qs.toString());
+    else history.replaceState(null, '', '#search');
+  }
 }
 
 async function toggleSparqlPreview() {
@@ -1501,7 +1634,7 @@ var EVAL_PFX = 'PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPRE
 var COMPETENCY_QUERIES = {
   'CPP \u2229 Endocytosis': EVAL_PFX + 'SELECT DISTINCT ?peptide\nWHERE {\n  ?peptide a cppm:CellPenetratingPeptide ;\n           sio:SIO_000008 ?cpp_role .\n  ?cpp_role sio:SIO_000356 ?mechanism .\n  ?mechanism rdfs:subClassOf* obo:GO_0006897 .\n}\nORDER BY ?peptide',
   'Genes \u2192 macropinocytosis': EVAL_PFX + 'SELECT DISTINCT ?gene ?geneLabel ?activatorRole ?upregulation\nWHERE {\n  ?gene a sio:SIO_010035 .\n  ?gene (sio:SIO_000008 / sio:SIO_000356 / sio:SIO_001401) obo:GO_0044351 .\n  ?gene sio:SIO_000008 ?activatorRole .\n  ?activatorRole sio:SIO_000356 ?upregulation .\n  ?upregulation sio:SIO_001401 obo:GO_0044351 .\n  OPTIONAL { ?gene rdfs:label ?geneLabel . }\n}\nORDER BY ?geneLabel',
-  'CPP-Complex \u2192 Nucleus': EVAL_PFX + 'SELECT DISTINCT ?complex ?location ?locationLabel ?mechanism\nWHERE {\n  ?complex a cppm:CPP-Complex .\n  ?complex sio:SIO_000061+ obo:GO_0005634 .\n  BIND(obo:GO_0005634 AS ?location)\n  OPTIONAL { obo:GO_0005634 rdfs:label ?locationLabel . }\n  OPTIONAL {\n    ?complex sio:SIO_000062 ?mechanism .\n    ?mechanism a cppS:UptakeMechanism .\n  }\n}\nORDER BY ?complex',
+  'CPP-Complex \u2192 Nucleus': EVAL_PFX + 'SELECT DISTINCT ?complex ?location ?locationLabel \nWHERE {\n  ?complex a cppm:CPP-Complex .\n  ?complex sio:SIO_000061+ obo:GO_0005634 .\n  BIND(obo:GO_0005634 AS ?location)\n  OPTIONAL { obo:GO_0005634 rdfs:label ?locationLabel . }\n  OPTIONAL {\n    ?complex sio:SIO_000062 ?mechanism .\n    ?mechanism a cppS:UptakeMechanism .\n  }\n}\nORDER BY ?complex',
 };
 
 function initSparql() {
