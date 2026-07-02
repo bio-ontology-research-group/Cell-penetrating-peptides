@@ -21,7 +21,13 @@ import importlib.util
 import os
 if not jpype.isJVMStarted():
     import glob
-    _mowl_jars = glob.glob(os.path.expanduser('~/miniconda3/envs/fab_2024/lib/python3.10/site-packages/mowl/lib/*.jar'))
+    import mowl
+    # Derive the mowl jar path from the installed package so the build works in
+    # whichever conda env mowl is installed in (previously hard-coded to a stale env).
+    _mowl_lib = os.path.join(os.path.dirname(mowl.__file__), 'lib', '*.jar')
+    _mowl_jars = glob.glob(_mowl_lib)
+    if not _mowl_jars:
+        raise RuntimeError(f"No mowl jars found at {_mowl_lib}; is mowl installed in this env?")
     jpype.startJVM(classpath=_mowl_jars)
 import jpype.imports
 import pandas as pd

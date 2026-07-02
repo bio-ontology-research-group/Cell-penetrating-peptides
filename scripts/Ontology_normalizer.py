@@ -1075,6 +1075,19 @@ def run_pipeline(
     if "rag" in raw:
         cascaded["rag"] = _cascade(raw["rag"], "rag")
 
+    # ── guard: never emit a mapping for a blank / empty input term ────────────
+    # SapBERT and RAG never abstain, so an empty input string would otherwise be
+    # mapped to the nearest embedding neighbour (a spurious identifier, e.g. an
+    # empty Cargo -> "radon(0)"). Force such inputs to NIL so they are treated as
+    # unmapped downstream and excluded from the knowledge graph.
+    _blank = [not str(t).strip() for t in texts]
+    if any(_blank):
+        log.info("Forcing NIL for %d blank/empty input term(s).", sum(_blank))
+        for results in cascaded.values():
+            for i, is_blank in enumerate(_blank):
+                if is_blank:
+                    results[i] = dict(_NIL)
+
     # ── write cascaded results to dataframe ───────────────────────────────────
     # CURIEs are output in OBO standard format (e.g. "CLO:0001008").
     # If your gold standard uses underscores ("CLO_0001008") normalise at
