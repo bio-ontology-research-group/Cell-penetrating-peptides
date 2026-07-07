@@ -30,8 +30,15 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 CELLO = ROOT / "data" / "intermediate" / "cellosaurus.txt"
-BIOS = ROOT / "data" / "biosamples.csv"
 OUTDIR = ROOT / "revision" / "baselines"
+
+# Benchmarks scored against the Cellosaurus name->CLO dictionary (CLO only).
+BENCH = {
+    "biosamples": dict(csv="data/biosamples.csv", term="Cell Line", gold="CLO_ID",
+                       out="baseline_cellosaurus_biosamples.csv"),
+    "GT_CLO":     dict(csv="data/Ground_Truth_CLO_v2.csv", term="Cell Line", gold="CLO_id",
+                       out="baseline_cellosaurus_GT_CLO.csv"),
+}
 
 _SUFFIX = re.compile(r"\s+(cell lines?|cells?)\.?$", flags=re.I)
 
@@ -97,23 +104,27 @@ def main():
         d_relaxed.setdefault(relax(k), set()).update(v)
     print(f"Cellosaurus dictionary: {len(d)} names -> CLO ({sum(len(v) for v in d.values())} pairs)")
 
-    df = pd.read_csv(BIOS)
-    gold = [canon_clo(x) for x in df["CLO_ID"]]
-    exact, relaxed = [], []
-    for t in df["Cell Line"].astype(str):
-        exact.append(set(d.get(norm(t), set())))
-        relaxed.append(set(d_relaxed.get(relax(t), set())))
+    for name, cfg in BENCH.items():
+        csv = ROOT / cfg["csv"]
+        if not csv.exists():
+            print(f"[skip] {name}: {cfg['csv']} not found")
+            continue
+        df = pd.read_csv(csv)
+        gold = [canon_clo(x) for x in df[cfg["gold"]]]
+        exact, relaxed = [], []
+        for t in df[cfg["term"]].astype(str):
+            exact.append(set(d.get(norm(t), set())))
+            relaxed.append(set(d_relaxed.get(relax(t), set())))
 
-    out = OUTDIR / "baseline_cellosaurus_biosamples.csv"
-    pd.DataFrame({"Cell Line": df["Cell Line"], "CLO_ID": df["CLO_ID"],
-                  "cello_exact": [";".join(sorted(s)) for s in exact],
-                  "cello_relaxed": [";".join(sorted(s)) for s in relaxed]}).to_csv(out, index=False)
-    print(f"-> wrote {out.relative_to(ROOT)}")
-
-    for label, sets in [("cello_exact", exact), ("cello_relaxed", relaxed)]:
-        r = score(gold, sets)
-        print(f"  {label:<14} acc={r['accuracy']:.3f} prec={r['precision']:.3f} "
-              f"cov={r['coverage']:.3f} (correct={r['correct']}/{r['N']}, pred={r['predicted']})")
+        out = OUTDIR / cfg["out"]
+        pd.DataFrame({cfg["term"]: df[cfg["term"]], cfg["gold"]: df[cfg["gold"]],
+                      "cello_exact": [";".join(sorted(s)) for s in exact],
+                      "cello_relaxed": [";".join(sorted(s)) for s in relaxed]}).to_csv(out, index=False)
+        print(f"\n[{name}] -> wrote {out.relative_to(ROOT)}")
+        for label, sets in [("cello_exact", exact), ("cello_relaxed", relaxed)]:
+            r = score(gold, sets)
+            print(f"  {label:<14} acc={r['accuracy']:.3f} prec={r['precision']:.3f} "
+                  f"cov={r['coverage']:.3f} (correct={r['correct']}/{r['N']}, pred={r['predicted']})")
 
 
 if __name__ == "__main__":

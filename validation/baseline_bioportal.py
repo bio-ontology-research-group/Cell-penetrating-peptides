@@ -34,6 +34,9 @@ API = "https://data.bioontology.org/annotator"
 BENCH = {
     "CRAFT":      dict(csv="data/CRAFT.csv", term="entity_text", gold="gold_id", onto="CHEBI"),
     "biosamples": dict(csv="data/biosamples.csv", term="Cell Line", gold="CLO_ID", onto="CLO"),
+    # Internal 300-term ground truth (R3.4 single-annotator interim; R1.2/R3.5).
+    "GT_CHEBI":   dict(csv="data/Ground_Truth_CHEBI_v2.csv", term="Cargo", gold="Cargo_CHEBI_id", onto="CHEBI"),
+    "GT_CLO":     dict(csv="data/Ground_Truth_CLO_v2.csv", term="Cell Line", gold="CLO_id", onto="CLO"),
 }
 
 

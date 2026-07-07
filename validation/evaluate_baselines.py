@@ -41,6 +41,19 @@ BENCH = {
                              ols=BL / "baseline_ols_biosamples.csv",
                              bioportal=BL / "baseline_bioportal_biosamples.csv",
                              cello=BL / "baseline_cellosaurus_biosamples.csv"),
+    # Internal 300-term ground truth (single-annotator A interim; mappable-only
+    # scoring). BioPortal/Cellosaurus files appear once a key / the Cellosaurus
+    # release is available; until then only OLS + our pipeline are scored here.
+    "Internal GT (ChEBI)": dict(prefix="CHEBI", gold="Cargo_CHEBI_id",
+                             ours=ROOT / "data" / "Ground_Truth_CHEBI_Ontology_Normalization.csv",
+                             ols=BL / "baseline_ols_GT_CHEBI.csv",
+                             bioportal=BL / "baseline_bioportal_GT_CHEBI.csv",
+                             cello=None),
+    "Internal GT (CLO)": dict(prefix="CLO", gold="CLO_id",
+                             ours=ROOT / "data" / "Ground_Truth_CLO_Ontology_Normalization.csv",
+                             ols=BL / "baseline_ols_GT_CLO.csv",
+                             bioportal=BL / "baseline_bioportal_GT_CLO.csv",
+                             cello=BL / "baseline_cellosaurus_GT_CLO.csv"),
 }
 
 
@@ -63,9 +76,13 @@ def to_set(cell, prefix):
 
 
 def score(gold, pred_sets):
-    n = len(gold)
-    made = sum(1 for p in pred_sets if p)
-    correct = sum(1 for g, p in zip(gold, pred_sets) if g in p)
+    # Mappable-only: a NIL/None gold cannot be scored as a correct identifier
+    # (no-op for the all-mappable public benchmarks; excludes the internal GT's
+    # unmappable terms, whose abstention behaviour is reported separately).
+    pairs = [(g, p) for g, p in zip(gold, pred_sets) if g is not None]
+    n = len(pairs)
+    made = sum(1 for _, p in pairs if p)
+    correct = sum(1 for g, p in pairs if g in p)
     return dict(N=n, predicted=made, correct=correct,
                 accuracy=correct / n if n else 0.0,
                 precision=correct / made if made else float("nan"),
@@ -82,6 +99,10 @@ def main():
     all_rows = []
     for bname, cfg in BENCH.items():
         pfx = cfg["prefix"]
+        if not Path(cfg["ours"]).exists():
+            print(f"[skip] {bname}: pipeline predictions not found "
+                  f"({Path(cfg['ours']).name})")
+            continue
         ours = pd.read_csv(cfg["ours"])
         gold = [canon(x, pfx) for x in ours[cfg["gold"]]]
         results = []
@@ -125,7 +146,14 @@ def main():
 
     if all_rows:
         out = BL / "baseline_comparison.csv"
-        pd.DataFrame(all_rows).to_csv(out, index=False)
+        new = pd.DataFrame(all_rows)
+        # Merge: preserve rows for benchmarks not scored this run (e.g. the public
+        # benchmarks when their prediction files are absent in this environment).
+        if out.exists():
+            old = pd.read_csv(out)
+            old = old[~old["benchmark"].isin(new["benchmark"].unique())]
+            new = pd.concat([old, new], ignore_index=True)
+        new.to_csv(out, index=False)
         print(f"\nwrote {out.relative_to(ROOT)}")
 
 

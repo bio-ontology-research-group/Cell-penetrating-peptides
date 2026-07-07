@@ -136,7 +136,7 @@ def _fetch_sio(sio_url: str = SIO_ONLINE_URL, dest_dir: str = INTERMEDIATE_DIR) 
 DATASET_IRI       = "https://cppkg.bio2vec.net"
 ONTOLOGY_IRI      = DATASET_IRI                              # ontology describes the dataset
 ONTOLOGY_VERSION  = DATASET_IRI + "/2026-03-19"
-DATASET_DOI       = "https://identifiers.org/doi:10.5281/zenodo.19351483"
+DATASET_DOI       = "https://identifiers.org/doi:10.5281/zenodo.19427198"  # version DOI cited in the manuscript; update to the NEW version DOI minted at final deposit
 
 SPARQL_ENDPOINT     = DATASET_IRI + "/api/sparql"
 SERVICE_DESCRIPTION = DATASET_IRI + "/api/sparql"   # SD doc at same IRI

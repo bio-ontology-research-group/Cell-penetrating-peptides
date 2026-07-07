@@ -857,19 +857,28 @@ class RAGNormalizer:
 
     # ── generation (batch JSON) ────────────────────────────────────────────────
 
-    def _fallback(self, text: str, candidates: list) -> dict:
+    def _fallback(self, text: str, candidates: list,
+                  match_type: str = "rag_unconfident") -> dict:
         """
         When the LLM is unconfident, prefer BioSyn's answer if available
         (it already ran and its result is cached in _biosyn_cache).
         Only fall back to raw top-1 FAISS when no BioSyn result exists.
+
+        `match_type` records *why* we fell back so R3.1 can separate a genuine
+        LLM hallucination from a legitimate abstention:
+          * rag_abstained    — LLM returned "NONE"/empty (correctly declined)
+          * rag_hallucinated — LLM returned a CURIE that is not a real / in-scope
+                               ontology class (caught by the validity guard)
+          * rag_unconfident  — legacy/unspecified (kept as default)
+        The chosen identifier is unchanged; only the label differs.
         """
         biosyn_result = self._biosyn_cache.get(text)
         if biosyn_result and biosyn_result.get("curie"):
-            return {**biosyn_result, "match_type": "rag_unconfident", "method": "rag"}
+            return {**biosyn_result, "match_type": match_type, "method": "rag"}
         top_curie, top_label, top_score = candidates[0]
         return {"curie": top_curie, "label": top_label,
                 "score": round(top_score, 4),
-                "match_type": "rag_unconfident", "method": "rag"}
+                "match_type": match_type, "method": "rag"}
 
     def _resolve(self, text: str, answer_entry: dict, candidates: list) -> dict:
         """Map one LLM JSON entry back to a result dict."""
@@ -880,7 +889,7 @@ class RAGNormalizer:
         label  = (answer_entry.get("label") or "").strip()
 
         if not answer or answer.upper() == "NONE":
-            return self._fallback(text, candidates)
+            return self._fallback(text, candidates, match_type="rag_abstained")
 
         if answer in curie_map:
             lbl, sc = curie_map[answer]
@@ -896,7 +905,7 @@ class RAGNormalizer:
         top_curie, top_label, top_score = candidates[0]
         return {"curie": top_curie, "label": top_label,
                 "score": round(top_score, 4),
-                "match_type": "rag_unconfident", "method": "rag"}
+                "match_type": "rag_hallucinated", "method": "rag"}
 
     def run(self, texts: List[str]) -> List[Dict]:
         BATCH_SIZE_LLM = 20
