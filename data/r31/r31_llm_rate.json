@@ -1,0 +1,51 @@
+{
+  "chebi": {
+    "ontology": "ChEBI",
+    "csv": "data/r31/full_CHEBI_Ontology_Normalization_r31.csv",
+    "match_type_column": "rag_match_type",
+    "counting_unit": "distinct_term",
+    "raw_match_type_counts": {
+      "rag_abstained": 466,
+      "prefix_truncated": 453,
+      "rag_selected": 402,
+      "rag_graph_selected": 123,
+      "exact_pref": 24,
+      "exact_syn": 6,
+      "rag_hallucinated": 3,
+      "NIL": 1
+    },
+    "llm_asked": 994,
+    "llm_accepted": 525,
+    "llm_hallucinated": 3,
+    "llm_abstained": 466,
+    "llm_unconfident_legacy": 0,
+    "nil_no_candidates": 1,
+    "split_available": true,
+    "hallucination_pct": 0.3,
+    "abstention_pct": 46.88,
+    "fallback_upper_bound_pct": 47.18
+  },
+  "clo": {
+    "ontology": "CLO",
+    "csv": "data/r31/full_CLO_Ontology_Normalization_r31.csv",
+    "match_type_column": "rag_match_type",
+    "counting_unit": "distinct_term",
+    "raw_match_type_counts": {
+      "rag_selected": 569,
+      "prefix_truncated": 363,
+      "exact_pref": 311,
+      "rag_abstained": 159,
+      "NIL": 76
+    },
+    "llm_asked": 728,
+    "llm_accepted": 569,
+    "llm_hallucinated": 0,
+    "llm_abstained": 159,
+    "llm_unconfident_legacy": 0,
+    "nil_no_candidates": 76,
+    "split_available": true,
+    "hallucination_pct": 0.0,
+    "abstention_pct": 21.84,
+    "fallback_upper_bound_pct": 21.84
+  }
+}
