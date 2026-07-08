@@ -12,7 +12,7 @@ OLS requires no API key. For each distinct surface form in a benchmark we query 
   * ols_top     - the rank-1 search hit regardless of exactness (lexical-search baseline).
 
 Results are cached per (ontology, surface form) so the run is resumable and re-running
-is free. Predictions are written per benchmark for scoring by evaluate_baselines.py.
+is free. Predictions are written per benchmark for scoring by evaluate_single_answer.py.
 
 Usage:
     python scripts/baseline_ols.py                 # both benchmarks
@@ -26,7 +26,7 @@ import pandas as pd
 import requests
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTDIR = ROOT / "revision" / "baselines"
+OUTDIR = ROOT / "data" / "baselines"
 CACHE = OUTDIR / "ols_cache.json"
 OLS = "https://www.ebi.ac.uk/ols4/api/search"
 

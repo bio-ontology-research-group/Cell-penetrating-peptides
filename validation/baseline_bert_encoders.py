@@ -27,8 +27,8 @@ cached per (ontology, model, obo-mtime) via the BERTNormalizer cache, so re-runs
 are fast.
 
 Output:
-    revision/baselines/baseline_bert_encoders.csv           (model,dataset,ontology,N,accuracy,coverage)
-    revision/baselines/preds_<model>_<dataset>.csv          (term,gold,pred) for auditing
+    data/baselines/baseline_bert_encoders.csv           (model,dataset,ontology,N,accuracy,coverage)
+    data/baselines/preds_<model>_<dataset>.csv          (term,gold,pred) for auditing
 """
 from __future__ import annotations
 import argparse
@@ -43,7 +43,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from Ontology_normalizer import BERTNormalizer, preprocess  # noqa: E402
 
 DATA = ROOT / "data"
-OUT = ROOT.parent / "revision" / "baselines"
+OUT = ROOT / "data" / "baselines"
 OBO = {"chebi": DATA / "Ontology" / "chebi.obo", "clo": DATA / "Ontology" / "clo.obo"}
 
 

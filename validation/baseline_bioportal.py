@@ -27,7 +27,7 @@ import pandas as pd
 import requests
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTDIR = ROOT / "revision" / "baselines"
+OUTDIR = ROOT / "data" / "baselines"
 CACHE = OUTDIR / "bioportal_cache.json"
 API = "https://data.bioontology.org/annotator"
 

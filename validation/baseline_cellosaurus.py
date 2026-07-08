@@ -30,7 +30,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 CELLO = ROOT / "data" / "intermediate" / "cellosaurus.txt"
-OUTDIR = ROOT / "revision" / "baselines"
+OUTDIR = ROOT / "data" / "baselines"
 
 # Benchmarks scored against the Cellosaurus name->CLO dictionary (CLO only).
 BENCH = {
