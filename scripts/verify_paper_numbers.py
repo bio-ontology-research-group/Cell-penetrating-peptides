@@ -276,7 +276,7 @@ else:
 #     SapBERT ChEBI columns guard against the query-model / cache-collision bug that
 #     previously drove them to 0.0 (see revision/benchmark_resume_note.md). ---
 print("\n--- Neural-encoder baselines (Table baselines) ---")
-NEURAL_CSV = Path("..") / "revision" / "baselines" / "baseline_neural_encoders.csv"
+NEURAL_CSV = DATA / "baselines" / "baseline_neural_encoders.csv"
 if NEURAL_CSV.exists():
     nb = pd.read_csv(NEURAL_CSV)
     exp = {"CRAFT:ChEBI": 0.82, "Biosamples:CLO": 0.54,
