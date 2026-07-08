@@ -1,0 +1,17 @@
+benchmark,method,N,predicted,correct,accuracy,precision,coverage
+Internal GT (ChEBI),OLS dictionary (exact),290,6,6,0.020689655172413793,1.0,0.020689655172413793
+Internal GT (ChEBI),OLS lexical (rank-1),290,29,8,0.027586206896551724,0.27586206896551724,0.1
+Internal GT (ChEBI),BioPortal Annotator (PREF),290,200,119,0.4103448275862069,0.595,0.6896551724137931
+Internal GT (ChEBI),BioPortal Annotator (any),290,279,175,0.603448275862069,0.6272401433691757,0.9620689655172414
+Internal GT (ChEBI),Our exact-match stage,290,104,78,0.2689655172413793,0.75,0.3586206896551724
+Internal GT (ChEBI),Our SapBERT stage,290,290,94,0.32413793103448274,0.32413793103448274,1.0
+Internal GT (ChEBI),Our full pipeline,290,290,107,0.3689655172413793,0.3689655172413793,1.0
+Internal GT (CLO),OLS dictionary (exact),200,4,4,0.02,1.0,0.02
+Internal GT (CLO),OLS lexical (rank-1),200,80,42,0.21,0.525,0.4
+Internal GT (CLO),BioPortal Annotator (PREF),200,73,38,0.19,0.5205479452054794,0.365
+Internal GT (CLO),BioPortal Annotator (any),200,165,122,0.61,0.7393939393939394,0.825
+Internal GT (CLO),Cellosaurus (dictionary),200,49,45,0.225,0.9183673469387755,0.245
+Internal GT (CLO),Cellosaurus (relaxed),200,105,97,0.485,0.9238095238095239,0.525
+Internal GT (CLO),Our exact-match stage,200,94,75,0.375,0.7978723404255319,0.47
+Internal GT (CLO),Our SapBERT stage,200,200,123,0.615,0.615,1.0
+Internal GT (CLO),Our full pipeline,200,200,141,0.705,0.705,1.0
