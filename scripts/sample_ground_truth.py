@@ -33,7 +33,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 PREP = ROOT / "data" / "Natural_CPP3_download_annotated_preprocessed.csv"
-OUTDIR = ROOT / "revision" / "ground_truth_v2"
+OUTDIR = ROOT / "data" / "ground_truth_v2"
 
 # (free-text column, optional context column, output-term column name, id/label names, v1 file)
 TARGETS = {

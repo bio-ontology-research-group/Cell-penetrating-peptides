@@ -24,10 +24,11 @@ from pathlib import Path
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
-# The revision/ folder may live inside the repo or as a sibling of it.
-GTDIR = next((p for p in (ROOT / "revision" / "ground_truth_v2",
+# Annotator sheets live in-repo under data/; older layouts kept them in revision/.
+GTDIR = next((p for p in (ROOT / "data" / "ground_truth_v2",
+                          ROOT / "revision" / "ground_truth_v2",
                           ROOT.parent / "revision" / "ground_truth_v2")
-              if p.exists()), ROOT / "revision" / "ground_truth_v2")
+              if p.exists()), ROOT / "data" / "ground_truth_v2")
 
 TARGETS = {
     "CHEBI": dict(term_col="Cargo", id_col="Cargo_CHEBI_id", label_col="Cargo_CHEBI_label",

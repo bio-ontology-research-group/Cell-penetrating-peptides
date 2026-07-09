@@ -29,7 +29,7 @@ ROOT = Path(__file__).resolve().parents[1]
 TOP = ROOT / "data" / "baselines"                     # public-benchmark baselines
 SIB = ROOT / "data" / "baselines"                     # internal-GT baselines
 DATA = ROOT / "data"
-GTV2 = ROOT.parent / "revision" / "ground_truth_v2"   # annotator sheets (notes/alts)
+GTV2 = ROOT / "data" / "ground_truth_v2"              # annotator sheets (notes/alts)
 
 
 def canon(raw, pfx):

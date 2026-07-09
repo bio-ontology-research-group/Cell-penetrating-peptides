@@ -11,33 +11,52 @@ Web interface: <https://cppkg.bio2vec.net/>
 
 ```
 scripts/
-  Preprocess_dataset.py          Clean and preprocess raw annotated CSV
-  Ontology_normalizer.py         Map free-text terms to CLO / ChEBI identifiers
+  Preprocess_dataset.py          Clean and preprocess the raw annotated CSV
+  Ontology_normalizer.py         Map free-text terms to CLO / ChEBI IDs (exact -> SapBERT -> Graph-RAG)
   build_and_extend_ontology.py   Construct the OWL/RDF knowledge graph
+  verify_paper_numbers.py        Re-derive and assert every quantitative claim in the paper
+  sample_ground_truth.py         Draw the internal ground-truth sample (300 terms/ontology)
+  build_single_annotator_gold.py Build gold sheets from the annotator CSVs
+  compute_iaa.py                 Inter-annotator agreement
+  r31_llm_rate.py                Tabulate the LLM hallucination-guard rate
+  figure_sequence_diversity.py   Sequence-diversity / net-charge figure
+  run_*.slurm                    SLURM jobs (GPU + Ollama) for normalization and baselines
+  benchmark/                     Neural-encoder entity-linking benchmark
 
 validation/
-  Evaluate_ontology_normalizer.py  Evaluate normalizer against ground truth
-  Competency_Questions.py        Run Competency Questions
-  validate_shex.py               ShEx shape validation of the KG
-  mechanisms_shapes.shex         ShEx shape definitions
-  
+  Evaluate_ontology_normalizer.py  Per-stage TP/FP/FN of the normalizer (ablation table)
+  evaluate_internal_gt.py          Internal ground-truth evaluation (mappable + abstention)
+  evaluate_single_answer.py        Single-answer baseline comparison vs our pipeline
+  baseline_ols.py                  OLS (EBI) lexical/dictionary baseline
+  baseline_bioportal.py            BioPortal Annotator baseline
+  baseline_cellosaurus.py          Cellosaurus dictionary baseline (CLO)
+  baseline_bert_encoders.py        Pretrained-encoder dense-NN baselines
+  Competency_Questions.py          Competency + federated SPARQL queries
+  validate_shex.py                 ShEx shape validation of the KG
+  mechanisms_shapes.shex           ShEx shape definitions
 
 data/
-  Natural_CPP3_download_annotated.csv                Raw annotated dataset
+  Natural_CPP3_download_annotated.csv                Raw annotated dataset (CPPsite3 upstream)
   Natural_CPP3_download_annotated_preprocessed.csv   Preprocessed dataset
   Natural_CPP3_download_annotated_preprocessed_Ontology_Normalization.csv
-                                                     Dataset after ontology normalization
-  Ground_Truth_CHEBI.csv         ChEBI ground truth for evaluation
-  Ground_Truth_CLO.csv           CLO ground truth for evaluation
-  biosamples.csv                 biosamples corpus (NER support)
-  CRAFT.csv                      CRAFT corpus (NER support)
-  CPP_KG.ttl                     Final knowledge graph in Turtle format
+                                                     Normalized dataset (KG source)
+  CRAFT.csv, biosamples.csv                          Public benchmark corpora (with gold IDs)
+  CRAFT_Ontology_Normalization.csv                   Pipeline predictions on CRAFT (ChEBI)
+  biosamples_Ontology_Normalization.csv              Pipeline predictions on biosamples (CLO)
+  Ground_Truth_CHEBI_v2.csv, Ground_Truth_CLO_v2.csv Internal ground-truth gold (300 terms/ontology)
+  Ground_Truth_CHEBI_Ontology_Normalization.csv      Internal gold + pipeline predictions (ChEBI)
+  Ground_Truth_CLO_Ontology_Normalization.csv        Internal gold + pipeline predictions (CLO)
+  ground_truth_v2/               Annotator sheets (GT_*_annotatorA_filled.csv)
+  baselines/                     Baseline prediction CSVs (OLS / BioPortal / Cellosaurus / neural)
+  r31/                           Full-dataset normalization + LLM hallucination-rate stats
+  triplets/                      CPP -> cargo/cell/location/mechanism tables (KG build input)
+  intermediate/                  Gene/inhibitor -> GO mechanism inputs (chebi_to_go, gene_to_go, mech_metadata)
+  Ontology/
+    CPP_KG.ttl                   Final knowledge graph (Turtle)
+    CPP_KG_materialized.ttl      HORST-materialized graph (inferred triples)
+    sio.owl, chebi.obo, clo.obo  Ontology inputs (large; fetched, not tracked)
+    biosyn_cache_*.pkl           Cached SapBERT/BioSyn ontology embeddings (large; not tracked)
   void.ttl                       VoID dataset description
-
-Ontology/
-  sio.owl                        Semanticscience Integrated Ontology (input)
-  chebi.obo                      Chemical Entities of Biological Interest
-  clo.obo                        Cell Line Ontology (CLO)
 
 environment.yml                  Conda environment specification
 ```
@@ -129,14 +148,29 @@ submission.
 
 ## Expected key numbers
 
+All values below are asserted by `scripts/verify_paper_numbers.py`
+(source of truth = `data/Ontology/CPP_KG.ttl`).
+
 | Metric | Value |
 |--------|-------|
 | Downloaded sequences | 5,288 |
 | Entries after preprocessing | 10,799 |
 | Distinct sequences | 2,708 |
-| KG CPP individuals | 2,637 |
-| KG experiments | 4,408 |
-| Total RDF triples | 159,810 |
+| KG CPP individuals | 2,642 |
+| KG CPP-Complexes | 4,132 |
+| KG experiments | 4,598 |
+| KG unique entities (total) | 15,015 |
+| Total RDF triples (asserted `CPP_KG.ttl`) | 244,572 |
+
+Ontology-normalization accuracy (full Graph-RAG pipeline, deterministic rag
+stage at `temperature=0`, `seed=42`):
+
+| Benchmark | Accuracy |
+|-----------|----------|
+| CRAFT:ChEBI (public) | 0.87 |
+| Biosamples:CLO (public) | 0.73 |
+| Internal ground truth: ChEBI | 0.37 |
+| Internal ground truth: CLO | 0.71 |
 
 ## License
 

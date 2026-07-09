@@ -683,6 +683,8 @@ class BERTNormalizer:
                 response = self._llm_client.chat.completions.create(
                     model      = self._llm_model,
                     max_tokens = 4096,
+                    temperature= 0,        # greedy decoding — deterministic, reproducible
+                    seed       = 42,
                     messages   = [{"role": "user", "content": user_msg}],
                 )
                 raw      = (response.choices[0].message.content or "").strip()
@@ -952,6 +954,8 @@ class RAGNormalizer:
                 response = self._client.chat.completions.create(
                     model      = self.model,
                     max_tokens = 4096,
+                    temperature= 0,        # greedy decoding — deterministic, reproducible
+                    seed       = 42,
                     messages   = [{"role": "user", "content": user_msg}],
                 )
                 raw      = (response.choices[0].message.content or "").strip()
