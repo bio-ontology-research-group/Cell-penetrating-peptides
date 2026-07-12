@@ -13,10 +13,14 @@ canonical
 (gold columns + prediction columns; drop-in for Evaluate_ontology_normalizer.py),
 and report:
 
-  1. Per-stage precision / recall / F1 on the MAPPABLE gold subset (gold != NIL) —
-     directly comparable to the ablation table's Exact / Semantic / Graph-RAG rows.
-  2. An abstention analysis on the NIL gold subset (terms the annotator judged
-     unmappable): how often each stage abstains vs. force-maps (ties to R3.1/R3.2).
+  1. Per-stage precision / recall / F1 / accuracy over ALL gold terms with
+     NIL-aware scoring: mappable gold (gold != NIL) is scored TP/FP/FN as usual,
+     while for an UNMAPPABLE gold term (the annotator found no adequate class) a
+     stage that emits any identifier is charged a FALSE POSITIVE and a stage that
+     abstains earns a true negative. Recall is over the mappable terms; precision
+     and accuracy include the unmappable terms.
+  2. An abstention breakdown on the NIL gold subset: how often each stage abstains
+     (true negative) vs. force-maps (false positive) — ties to R3.1/R3.2.
 
 Usage:
     python validation/evaluate_internal_gt.py
@@ -87,20 +91,23 @@ def main() -> None:
               f"[{len(merged)} terms: {n_map} mappable, {n_nil} NIL]")
         print(f"  wrote {out_path.relative_to(ROOT)}")
         print("-" * 74)
-        print(f"  {'Stage':<28}{'TP':>5}{'FP':>5}{'FN':>5}"
-              f"{'Prec':>8}{'Rec':>8}{'F1':>8}   (mappable only)")
+        print(f"  {'Stage':<28}{'TP':>5}{'FP':>5}{'FN':>5}{'TN':>5}"
+              f"{'Prec':>8}{'Rec':>8}{'F1':>8}{'Acc':>8}   (NIL-aware, all terms)")
         for col, label in PRED_COLS:
-            tp = fp = fn = 0
-            for gid, pred in zip(gold_norm[mappable], merged.loc[mappable, col]):
+            tp = fp = fn = tn = 0
+            for gid, pred in zip(gold_norm, merged[col]):
                 p = norm_id(pred)
-                if p is None:
-                    fn += 1
-                elif p == gid:
-                    tp += 1
-                else:
-                    fp += 1
+                if gid is not None:              # mappable gold term
+                    if p is None:    fn += 1     # abstained on a mappable term
+                    elif p == gid:   tp += 1     # correct mapping
+                    else:            fp += 1     # wrong mapping
+                else:                            # unmappable (NIL) gold term
+                    if p is None:    tn += 1     # correct abstention
+                    else:            fp += 1     # mapped an unmappable term -> false positive
             P, R, F = prf(tp, fp, fn)
-            print(f"  {label:<28}{tp:>5}{fp:>5}{fn:>5}{P:>8.3f}{R:>8.3f}{F:>8.3f}")
+            acc = (tp + tn) / len(merged) if len(merged) else 0.0
+            print(f"  {label:<28}{tp:>5}{fp:>5}{fn:>5}{tn:>5}"
+                  f"{P:>8.3f}{R:>8.3f}{F:>8.3f}{acc:>8.3f}")
 
         if n_nil:
             print("-" * 74)

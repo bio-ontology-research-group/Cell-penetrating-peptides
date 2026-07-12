@@ -10,13 +10,23 @@ comparable to methods that commit to one identifier. This script therefore score
 every method as a SINGLE answer: its first valid candidate must equal the gold id.
 This single-answer rule is the only baseline scoring the repository keeps.
 
+Scoring is NIL-aware: the internal ground truth keeps the terms the annotator
+judged UNMAPPABLE (no adequate ontology class). For such a term the correct
+behaviour is to abstain — a method that returns any identifier is charged a false
+positive (reported in the `FP` column), and one that abstains is credited. So
+`single` accuracy = (correct mappings + correct abstentions) / all terms. The
+public benchmarks (CRAFT, biosamples) are all mappable, so this is a no-op there.
+
 For the internal ground truth we additionally report an "accepted-set" score:
 the annotator recorded alternative acceptable ids in the `notes` column (mostly
 the second entity of multi-entity cargo strings). accepted = gold + notes ids; a
 method is credited if its single answer is in that set. This is reported as a
 robustness check, not the headline (still single-annotator; annotator B pending).
 
-Prints counts + coverage so every number is auditable. No GPU / network.
+Per method we report Precision = TP/(TP+FP), Recall = TP/(TP+FN), F1, NIL-aware
+accuracy, the FP count, and coverage. FN counts only a MAPPABLE term (non-empty
+gold) that the method left unmapped; a wrong id on a mappable term is an FP, and
+an id on an unmappable term is an FP. Every number is auditable. No GPU / network.
 
 Usage:  python validation/evaluate_single_answer.py
 """
@@ -58,18 +68,34 @@ def all_ids(cell, pfx):
 
 
 def score(golds, preds, accepted=None):
-    """Return (n, single_acc, coverage, accepted_acc-or-None)."""
+    """NIL-aware single-answer scoring. A gold of None marks an UNMAPPABLE term
+    (annotator found no adequate class): a method that abstains (pred None) is
+    correct (true negative); any identifier it emits is a false positive.
+    single_acc = (TP + TN) / n; coverage = fraction that emitted an id."""
     n = len(golds)
-    hit = cov = acc_hit = 0
+    tp = fp = fn = tn = made = acc_hit = 0
     for i, g in enumerate(golds):
         p = preds[i]
         if p is not None:
-            cov += 1
-        if p == g:
-            hit += 1
-        if accepted is not None and p is not None and p in accepted[i]:
-            acc_hit += 1
-    return n, hit / n, cov / n, (acc_hit / n if accepted is not None else None)
+            made += 1
+        if g is not None:                       # mappable gold term
+            if p is None:      fn += 1
+            elif p == g:       tp += 1
+            else:              fp += 1
+        else:                                   # unmappable (NIL) gold term
+            if p is None:      tn += 1
+            else:              fp += 1           # mapped an unmappable term -> FP
+        if accepted is not None:
+            ok = (p is None and g is None) or (p is not None and p in accepted[i])
+            acc_hit += ok
+    prec = tp / (tp + fp) if tp + fp else 0.0
+    rec = tp / (tp + fn) if tp + fn else 0.0   # FN = a mappable term left unmapped
+    f1 = 2 * prec * rec / (prec + rec) if prec + rec else 0.0
+    return dict(n=n, tp=tp, fp=fp, fn=fn, tn=tn,
+                prec=prec, rec=rec, f1=f1,
+                single=(tp + tn) / n if n else 0.0,
+                cover=made / n if n else 0.0,
+                accept=(acc_hit / n if accepted is not None else None))
 
 
 def load(path, term):
@@ -94,13 +120,15 @@ def notes_accepted(filled_path, term, gcol, pfx, terms):
 
 def bench(title, gold_map, method_preds, accepted=None):
     print(f"\n=== {title} ===")
-    print(f"  {'method':<26}{'single':>8}{'cover':>8}" + ("  accept" if accepted else ""))
+    print(f"  {'method':<26}{'Prec':>7}{'Rec':>7}{'F1':>7}{'Acc':>7}{'FP':>6}{'Cov':>7}"
+          + ("  accept" if accepted else ""))
     for name, preds in method_preds:
-        n, sa, cov, acc = score(gold_map, preds, accepted)
-        line = f"  {name:<26}{sa:>8.3f}{cov:>8.3f}"
-        if accepted is not None:
-            line += f"{acc:>8.3f}" if acc is not None else ""
-        print(line + f"   (n={n})")
+        r = score(gold_map, preds, accepted)
+        line = (f"  {name:<26}{r['prec']:>7.3f}{r['rec']:>7.3f}{r['f1']:>7.3f}"
+                f"{r['single']:>7.3f}{r['fp']:>6}{r['cover']:>7.3f}")
+        if accepted is not None and r["accept"] is not None:
+            line += f"{r['accept']:>8.3f}"
+        print(line + f"   (n={r['n']})")
 
 
 def public(title, path, gcol_name, pfx, methods):
@@ -135,7 +163,7 @@ def main():
     v2 = pd.read_csv(DATA / "Ground_Truth_CHEBI_v2.csv"); v2.columns = [c.strip() for c in v2.columns]
     v2 = v2.drop_duplicates("Cargo")
     gmap = {str(r["Cargo"]).strip(): canon(r["Cargo_CHEBI_id"], "CHEBI") for _, r in v2.iterrows()}
-    terms = [t for t, g in gmap.items() if g]
+    terms = list(gmap.keys())              # keep unmappable (NIL) terms; gold is None for them
     gold = [gmap[t] for t in terms]
     acc = notes_accepted(GTV2 / "GT_CHEBI_annotatorA_filled.csv", "Cargo", "Cargo_CHEBI_id", "CHEBI", terms)
     nrm = load(DATA / "Ground_Truth_CHEBI_Ontology_Normalization.csv", "Cargo")
@@ -156,7 +184,7 @@ def main():
     v2 = pd.read_csv(DATA / "Ground_Truth_CLO_v2.csv"); v2.columns = [c.strip() for c in v2.columns]
     v2 = v2.drop_duplicates("Cell Line")
     gmap = {str(r["Cell Line"]).strip(): canon(r["CLO_id"], "CLO") for _, r in v2.iterrows()}
-    terms = [t for t, g in gmap.items() if g]
+    terms = list(gmap.keys())              # keep unmappable (NIL) terms; gold is None for them
     gold = [gmap[t] for t in terms]
     acc = notes_accepted(GTV2 / "GT_CLO_annotatorA_filled.csv", "Cell Line", "CLO_id", "CLO", terms)
     nrm = load(DATA / "Ground_Truth_CLO_Ontology_Normalization.csv", "Cell Line")
@@ -171,23 +199,27 @@ def main():
         ("OLS lexical (rank-1)",    [single(olf.loc[t, "ols_top"], "CLO") if t in olf.index else None for t in terms]),
         ("OLS dictionary (exact)",  [single(olf.loc[t, "ols_exact"], "CLO") if t in olf.index else None for t in terms]),
     ]
+    bench("Internal:CLO", gold, preds, accepted=acc)
     clo_gold, clo_acc, clo_bpf, clo_cef, clo_terms = gold, acc, bpf, cef, terms
 
     # ---- Guard the exact values reported in Table tab:baselines / the comparison text ----
+    # NIL-aware: single accuracy credits a correct abstention on an unmappable term
+    # (gold None) and charges a FP for any id emitted on one.
     def acc_of(gold, preds):
         return sum(p == g for g, p in zip(gold, preds)) / len(gold)
-    def accepted_of(accepted, preds):
-        return sum(p is not None and p in accepted[i] for i, p in enumerate(preds)) / len(accepted)
+    def accepted_of(gold, accepted, preds):
+        return sum((p is None and g is None) or (p is not None and p in accepted[i])
+                   for i, (g, p) in enumerate(zip(gold, preds))) / len(gold)
     chk = []
     bp_ch = [single(bpf_ch.loc[t, "bio_pref"], "CHEBI") if t in bpf_ch.index else None for t in terms_ch]
-    chk.append(("BioPortal single-answer Internal:ChEBI", acc_of(gold_ch, bp_ch), 0.30))
-    chk.append(("BioPortal accepted Internal:ChEBI",      accepted_of(acc_ch, bp_ch), 0.35))
-    chk.append(("Our pipeline accepted Internal:ChEBI",   accepted_of(acc_ch, rag_ch), 0.40))
+    chk.append(("BioPortal single-answer Internal:ChEBI", acc_of(gold_ch, bp_ch), 0.32))
+    chk.append(("BioPortal accepted Internal:ChEBI",      accepted_of(gold_ch, acc_ch, bp_ch), 0.36))
+    chk.append(("Our pipeline accepted Internal:ChEBI",   accepted_of(gold_ch, acc_ch, rag_ch), 0.39))
     bp_clo = [single(clo_bpf.loc[t, "bio_pref"], "CLO") if t in clo_bpf.index else None for t in clo_terms]
     ce_clo = [single(clo_cef.loc[t, "cello_exact"], "CLO") if t in clo_terms and t in clo_cef.index else None for t in clo_terms]
-    chk.append(("BioPortal single-answer Internal:CLO",   acc_of(clo_gold, bp_clo), 0.18))
-    chk.append(("Cellosaurus single-answer Internal:CLO", acc_of(clo_gold, ce_clo), 0.21))
-    print("\n=== assertions vs manuscript (tol 0.01) ===")
+    chk.append(("BioPortal single-answer Internal:CLO",   acc_of(clo_gold, bp_clo), 0.42))
+    chk.append(("Cellosaurus single-answer Internal:CLO", acc_of(clo_gold, ce_clo), 0.46))
+    print("\n=== NIL-aware regression guard (tol 0.01) ===")
     bad = 0
     for name, got, exp in chk:
         ok = abs(round(got, 2) - exp) <= 0.01

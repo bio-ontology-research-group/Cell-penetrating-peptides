@@ -233,61 +233,101 @@ else:
     print("  [SKIP] benchmark normalization CSVs not present")
 
 
-def _acc_mappable(csv, gold_col, pred_col, prefix):
-    """Full-pipeline accuracy over rows with a mappable gold id (internal GT).
-    Returns the unrounded ratio so the caller's tolerance (not Python's
-    banker's rounding) decides the match at .xx5 boundaries, e.g. 141/200."""
+def _nil_prf(csv, gold_col, pred_col, prefix):
+    """NIL-aware single-answer scoring over ALL internal-GT terms (mappable + the
+    terms the annotator marked unmappable). Returns Precision / Recall / F1 /
+    NIL-aware Accuracy. FN = a MAPPABLE term (non-empty gold) left unmapped; a
+    wrong id on a mappable term and any id on an unmappable term are false
+    positives; a correct abstention on an unmappable term is a true negative."""
     d = pd.read_csv(DATA / csv)
-    rows = [(_canon(g, prefix), _canon(p, prefix))
-            for g, p in zip(d[gold_col], d[pred_col])]
-    rows = [(g, p) for g, p in rows if g is not None]        # mappable only
-    return sum(g == p for g, p in rows) / len(rows)
+    tp = fp = fn = tn = 0
+    for g_raw, p_raw in zip(d[gold_col], d[pred_col]):
+        g, p = _canon(g_raw, prefix), _canon(p_raw, prefix)
+        if g is not None:
+            if p is None:   fn += 1
+            elif p == g:    tp += 1
+            else:           fp += 1
+        else:
+            if p is None:   tn += 1
+            else:           fp += 1
+    prec = tp / (tp + fp) if tp + fp else 0.0
+    rec = tp / (tp + fn) if tp + fn else 0.0
+    f1 = 2 * prec * rec / (prec + rec) if prec + rec else 0.0
+    acc = (tp + tn) / len(d) if len(d) else 0.0
+    return dict(prec=prec, rec=rec, f1=f1, acc=acc)
 
 
-# --- Internal ground-truth (v2) full-pipeline accuracy: Tables ablation_results
-#     & baselines both report these; reproducible from the committed norm CSVs. ---
+# --- Internal ground-truth (v2), NIL-aware F1 (Table baselines / internal
+#     comparison). Reproducible from the committed norm CSVs. FN = mappable term
+#     left unmapped; mapping an unmappable term is a false positive. ---
 gt_chebi = DATA / "Ground_Truth_CHEBI_Ontology_Normalization.csv"
 gt_clo = DATA / "Ground_Truth_CLO_Ontology_Normalization.csv"
+CH = "Ground_Truth_CHEBI_Ontology_Normalization.csv"
+CL = "Ground_Truth_CLO_Ontology_Normalization.csv"
 if gt_chebi.exists() and gt_clo.exists():
-    check("Pipeline acc Internal:ChEBI (full, mappable)",
-          _acc_mappable("Ground_Truth_CHEBI_Ontology_Normalization.csv",
-                        "Cargo_CHEBI_id", "rag_curie", "CHEBI"), 0.37, tol=0.01)
-    check("Pipeline acc Internal:CLO (full, mappable)",
-          _acc_mappable("Ground_Truth_CLO_Ontology_Normalization.csv",
-                        "CLO_id", "rag_curie", "CLO"), 0.71, tol=0.01)
-    # Per-stage Exact / Semantic-Mapping accuracy (Table ablation_results, Accuracy
-    # column; same committed CSVs, exact_curie / biosyn_curie columns).
-    check("Exact acc Internal:ChEBI (mappable)",
-          _acc_mappable("Ground_Truth_CHEBI_Ontology_Normalization.csv",
-                        "Cargo_CHEBI_id", "exact_curie", "CHEBI"), 0.27, tol=0.01)
-    check("Semantic acc Internal:ChEBI (mappable)",
-          _acc_mappable("Ground_Truth_CHEBI_Ontology_Normalization.csv",
-                        "Cargo_CHEBI_id", "biosyn_curie", "CHEBI"), 0.32, tol=0.01)
-    check("Exact acc Internal:CLO (mappable)",
-          _acc_mappable("Ground_Truth_CLO_Ontology_Normalization.csv",
-                        "CLO_id", "exact_curie", "CLO"), 0.38, tol=0.01)
-    check("Semantic acc Internal:CLO (mappable)",
-          _acc_mappable("Ground_Truth_CLO_Ontology_Normalization.csv",
-                        "CLO_id", "biosyn_curie", "CLO"), 0.61, tol=0.01)
+    ch = _nil_prf(CH, "Cargo_CHEBI_id", "rag_curie", "CHEBI")
+    cl = _nil_prf(CL, "CLO_id", "rag_curie", "CLO")
+    check("Pipeline F1 Internal:ChEBI (NIL-aware)", ch["f1"], 0.53, tol=0.01)
+    check("Pipeline acc Internal:ChEBI (NIL-aware)", ch["acc"], 0.36, tol=0.01)
+    check("Pipeline F1 Internal:CLO (NIL-aware)", cl["f1"], 0.64, tol=0.01)
+    check("Pipeline acc Internal:CLO (NIL-aware)", cl["acc"], 0.47, tol=0.01)
+    # CLO precision/recall trade-off cited in the internal comparison: the abstaining
+    # exact-match stage has higher accuracy on CLO but lower F1 than the full pipeline.
+    ex_cl = _nil_prf(CL, "CLO_id", "exact_curie", "CLO")
+    check("Exact-stage F1 Internal:CLO (NIL-aware)", ex_cl["f1"], 0.54, tol=0.01)
+    check("Exact-stage acc Internal:CLO (NIL-aware)", ex_cl["acc"], 0.58, tol=0.01)
+    # Ablation-table F1 column (tab:ablation_results). Internal SapBERT (Semantic) stage:
+    check("SapBERT-stage F1 Internal:ChEBI",
+          _nil_prf(CH, "Cargo_CHEBI_id", "biosyn_curie", "CHEBI")["f1"], 0.48, tol=0.01)
+    check("SapBERT-stage F1 Internal:CLO",
+          _nil_prf(CL, "CLO_id", "biosyn_curie", "CLO")["f1"], 0.58, tol=0.01)
+    # Public deterministic stages (no unmappable terms, TN = 0):
+    if craft_n.exists() and bios_n.exists():
+        check("Graph-RAG F1 CRAFT:ChEBI (ablation)",
+              _nil_prf("CRAFT_Ontology_Normalization.csv", "gold_id", "rag_curie", "CHEBI")["f1"], 0.93, tol=0.01)
+        check("Graph-RAG F1 Biosamples:CLO (ablation)",
+              _nil_prf("biosamples_Ontology_Normalization.csv", "CLO_ID", "rag_curie", "CLO")["f1"], 0.84, tol=0.01)
+        check("SapBERT F1 CRAFT:ChEBI (ablation)",
+              _nil_prf("CRAFT_Ontology_Normalization.csv", "gold_id", "biosyn_curie", "CHEBI")["f1"], 0.92, tol=0.01)
+        check("SapBERT F1 Biosamples:CLO (ablation)",
+              _nil_prf("biosamples_Ontology_Normalization.csv", "CLO_ID", "biosyn_curie", "CLO")["f1"], 0.79, tol=0.01)
 else:
     print("  [SKIP] internal ground-truth normalization CSVs not present")
 
-# --- Neural-encoder baseline rows (Table baselines): SapBERT dense-NN, scored the
-#     same way as BioBERT/PubMedBERT/KRISSBERT. Reproduced by
-#     scripts/benchmark/score_encoders_manuscript.py into the committed CSV. The
-#     SapBERT ChEBI columns guard against the query-model / cache-collision bug that
-#     previously drove them to 0.0 (see revision/benchmark_resume_note.md). ---
+# --- Neural-encoder baselines (Table baselines). All four encoders are scored inside
+#     the pipeline's OWN dense retrieval: validation/baseline_bert_encoders.py builds
+#     BERTNormalizer with only the encoder swapped, so SapBERT in this role is
+#     identical to the Semantic Mapping stage asserted above (0.92 / 0.79 / 0.48 /
+#     0.58) and the two tables agree by construction. The encoders never abstain
+#     (coverage 1.0), so precision = TP/N, and on the internal sets N = 300 because any
+#     identifier returned for an unmappable term is a false positive; F1 = 2P/(P+1).
+#     Reproduced by scripts/run_bert_baselines.slurm. ---
 print("\n--- Neural-encoder baselines (Table baselines) ---")
-NEURAL_CSV = DATA / "baselines" / "baseline_neural_encoders.csv"
-if NEURAL_CSV.exists():
-    nb = pd.read_csv(NEURAL_CSV)
-    exp = {"CRAFT:ChEBI": 0.82, "Biosamples:CLO": 0.54,
-           "Internal:ChEBI": 0.17, "Internal:CLO": 0.61}
-    sap = nb[nb["model"] == "sapbert"].set_index("dataset")["accuracy"].to_dict()
-    for ds, want in exp.items():
-        # compare the raw accuracy with tolerance (do not pre-round, or a .xx5
-        # value such as 0.605 rounds to 0.60 and trips the tolerance by an epsilon)
-        check(f"SapBERT (dense NN) {ds}", float(sap.get(ds, -1)), want, tol=0.015)
+
+
+def _enc_f1(model, dataset, denom):
+    p = DATA / "baselines" / f"preds_{model}_{dataset}.csv"
+    if not p.exists():
+        return None
+    d = pd.read_csv(p)
+    pfx = "CHEBI" if "ChEBI" in dataset else "CLO"
+    tp = sum(_canon(r["pred"], pfx) == _canon(r["gold"], pfx) for _, r in d.iterrows())
+    P = tp / denom
+    return 2 * P / (P + 1)
+
+
+ENC_EXPECTED = {
+    "biobert":    {"CRAFT_ChEBI": (4548, 0.83), "Biosamples_CLO": (2121, 0.13),
+                   "Internal_ChEBI": (300, 0.11), "Internal_CLO": (300, 0.22)},
+    "pubmedbert": {"CRAFT_ChEBI": (4548, 0.82), "Biosamples_CLO": (2121, 0.07),
+                   "Internal_ChEBI": (300, 0.06), "Internal_CLO": (300, 0.17)},
+    "krissbert":  {"CRAFT_ChEBI": (4548, 0.85), "Biosamples_CLO": (2121, 0.58),
+                   "Internal_ChEBI": (300, 0.24), "Internal_CLO": (300, 0.49)},
+}
+if (DATA / "baselines" / "preds_krissbert_CRAFT_ChEBI.csv").exists():
+    for _m, _exp in ENC_EXPECTED.items():
+        for _ds, (_denom, _want) in _exp.items():
+            check(f"{_m} F1 {_ds}", _enc_f1(_m, _ds, _denom), _want, tol=0.015)
 else:
     print(f"  [SKIP] {NEURAL_CSV} not present (run score_encoders_manuscript.py)")
 
