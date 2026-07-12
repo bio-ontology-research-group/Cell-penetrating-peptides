@@ -87,7 +87,7 @@ check("Normalized entries", len(df3), 10799)
 print("\n--- Missingness Table ---")
 miss = {
     "Main Uptake Mechanism": (7699, 71.29),
-    "Subcategory Uptake Mechanism": (9902, 91.69),
+    "Subcategory Uptake Mechanism": (9701, 89.83),
     "Subcellular Localization Category": (5642, 52.25),
     "Cargo Type": (205, 1.90),
     "Cell Line": (174, 1.61),
@@ -143,8 +143,8 @@ for v in mech:
 total_mech = sum(cats_mech.values())
 endo = cats_mech["Endocytosis"]
 direct = cats_mech["Direct penetration"]
-check("Endocytosis %", round(endo / total_mech * 100, 2), 76.14, tol=0.01)
-check("Direct penetration %", round(direct / total_mech * 100, 2), 23.86, tol=0.01)
+check("Endocytosis %", round(endo / total_mech * 100, 2), 75.17, tol=0.01)
+check("Direct penetration %", round(direct / total_mech * 100, 2), 24.83, tol=0.01)
 
 # --- Subcategory Uptake Mechanism ---
 print("\n--- Subcategory Uptake Mechanism ---")
@@ -155,11 +155,11 @@ for v in sub:
         cats_sub[p.strip()] += 1
 total_sub = sum(cats_sub.values())
 expected_sub = {
-    "Macropinocytosis": 42.19,
-    "Clathrin-mediated endocytosis": 37.62,
-    "Caveolae-mediated endocytosis": 12.57,
-    "Clathrin and caveolae independent": 5.90,
-    "Phagocytosis": 1.71,
+    "Macropinocytosis": 36.80,
+    "Clathrin-mediated endocytosis": 31.32,
+    "Caveolae-mediated endocytosis": 11.66,
+    "Clathrin and caveolae independent": 18.48,
+    "Phagocytosis": 1.74,
 }
 for name, exp_pct in expected_sub.items():
     actual_pct = round(cats_sub[name] / total_sub * 100, 2)
