@@ -27,7 +27,7 @@ app.url_map.merge_slashes = False
 GITHUB_TTL_URL = "https://raw.githubusercontent.com/bio-ontology-research-group/Cell-penetrating-peptides/main/data/Ontology/CPP_KG_materialized.ttl"
 # Fallback: Zenodo record JSON API for the canonical versioned TTL file.
 # The API endpoint exposes a `files` array with download links.
-ZENODO_API_URL = "https://zenodo.org/api/records/19427198"
+ZENODO_API_URL = "https://zenodo.org/api/records/21031596"
 _HERE = Path(__file__).parent
 LOCAL_TTL_CANDIDATES = [
     _HERE / "../data/Ontology/CPP_KG_materialized.ttl",
@@ -1234,7 +1234,7 @@ def api_smiles_svg():
 
 @app.route("/api/download/ttl")
 def api_download_ttl():
-    return redirect("https://zenodo.org/records/19427198/files/CPP_KG.ttl?download=1", code=302)
+    return redirect("https://zenodo.org/records/21031596/files/CPP_KG.ttl?download=1", code=302)
 
 
 @app.route("/api/download/jsonld")

@@ -455,6 +455,7 @@
     <div id="search-results-wrap" style="display:none;">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <span class="results-info" id="search-results-info"></span>
+        <button class="btn btn-sm btn-outline-success" onclick="downloadCSV('search')"><i class="bi bi-download me-1"></i>CSV</button>
       </div>
       <div class="table-wrapper">
         <table class="table table-sm table-hover mb-0">
@@ -1455,6 +1456,14 @@ async function doSearch() {
 
     document.getElementById('search-results-info').textContent =
       'Found ' + fmt(d.matched_peptides) + ' peptide(s).';
+
+    // Populate the export buffer so the CSV button can dump the full result set.
+    searchData = {
+      columns: ['CPP ID', 'Name', 'Sequence', 'URI'],
+      rows: d.items.map(function(item){
+        return [item.local_id, item.label, item.extra || '', item.uri];
+      })
+    };
 
     var tbody = document.getElementById('search-tbody');
     tbody.innerHTML = d.items.map(function(item) {
